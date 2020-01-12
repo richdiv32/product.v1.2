@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -192,7 +193,17 @@
                 android:background="@drawable/trans_bg"
                 android:ems="10"
                 android:hint="Department"
-                android:inputType="textEmailAddress"
+                android:paddingLeft="20dp"
+                android:textColorHint="@color/white" />
+
+            <EditText
+                android:id="@+id/bio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:ems="10"
+                android:hint="Say something about yourself"
                 android:paddingLeft="20dp"
                 android:textColorHint="@color/white" />
 
@@ -214,7 +225,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="40dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -223,7 +234,7 @@
                     android:layout_height="wrap_content"
                     android:text="Already have an account?"
                     android:textColor="@color/white"
-                    android:textSize="18sp"
+                    android:textSize="14sp"
                     app:drawableTint="@color/white" />
 
                 <TextView

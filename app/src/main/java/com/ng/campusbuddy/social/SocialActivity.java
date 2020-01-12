@@ -12,28 +12,36 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.ng.campusbuddy.education.EducationActivity;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.profile.ProfileActivity;
+import com.ng.campusbuddy.start.WelcomeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import eu.long1.spacetablayout.SpaceTabLayout;
 
 public class SocialActivity extends AppCompatActivity {
     Context mcontext = SocialActivity.this;
 
-    SpaceTabLayout tabLayout;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_social);
+
+        mAuth = FirebaseAuth.getInstance();
 
         SetupNavigationDrawer();
 
@@ -46,17 +54,16 @@ public class SocialActivity extends AppCompatActivity {
         fragmentList.add(new ChatRoomFragment());
         fragmentList.add(new FindFriendFragment());
 
-
         ViewPager viewPager = findViewById(R.id.viewPager);
-        tabLayout = findViewById(R.id.spaceTabLayout);
+        SpaceTabLayout tabLayout = findViewById(R.id.spaceTabLayout);
 
-//        tabLayout.setTabFiveIcon(R.drawable.ic_search);
-//        tabLayout.setTabFourIcon(R.drawable.ic_chat_room);
-
-        //we need the savedInstanceState to get the position
         tabLayout.initialize(viewPager, getSupportFragmentManager(),
                 fragmentList, savedInstanceState);
-
+        tabLayout.setTabOneIcon(R.drawable.ic_feeds);
+        tabLayout.setTabTwoIcon(R.drawable.ic_chat);
+        tabLayout.setTabThreeIcon(R.drawable.ic_match_meet);
+        tabLayout.setTabFourIcon(R.drawable.ic_chat_room);
+        tabLayout.setTabFiveIcon(R.drawable.ic_search);
         /*---------------------------------------------*/
     }
 
@@ -67,6 +74,22 @@ public class SocialActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_drawer);
         View headerview=navigationView.getHeaderView(0);
         RelativeLayout navigationHeader = headerview.findViewById(R.id.nav_header_container);
+
+        // name, prfoile status
+        TextView Username = headerview.findViewById(R.id.nav_username);
+        TextView Profile_status = headerview.findViewById(R.id.nav_status);
+        CircleImageView Profile_image = headerview.findViewById(R.id.image_profile);
+
+        Username.setText(R.string.profile_username);
+        Profile_status.setText(R.string.profile_status);
+
+        //        Loading profile image
+        Glide.with(this)
+                .load(getString(R.string.Profile_Image_link))
+                .thumbnail(0.5f)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(Profile_image);
 
         navigationHeader.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +123,9 @@ public class SocialActivity extends AppCompatActivity {
                         Toast.makeText(mcontext, "Settings", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.nav_log_out:
-                        Toast.makeText(mcontext, "Log Out", Toast.LENGTH_SHORT).show();
+                        mAuth.signOut();
+                        startActivity(new Intent(mcontext, WelcomeActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         break;
                 }
 

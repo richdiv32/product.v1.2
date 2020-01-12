@@ -49,6 +49,7 @@
                     android:layout_height="match_parent"
                     android:layout_toRightOf="@id/nav_button"
                     app:layout_scrollFlags="scroll|enterAlways"
+                    app:tabIndicatorColor="@color/colorPrimary"
                     app:tabMode="fixed">
 
                     <com.google.android.material.tabs.TabItem

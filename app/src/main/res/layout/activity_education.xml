@@ -26,19 +26,17 @@
                 android:layout_height="match_parent" />
 
 
-            <com.luseen.spacenavigation.SpaceNavigationView
-                android:layout_width="match_parent"
+            <eu.long1.spacetablayout.SpaceTabLayout
+                android:backgroundTintMode="screen"
+                app:layout_behavior="eu.long1.spacetablayout.SpaceTabLayoutBehavior"
+                android:id="@+id/spaceTabLayout"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/space"
-                android:layout_gravity="bottom"
-                app:active_centre_button_icon_color="@color/colorPrimary"
-                app:inactive_centre_button_icon_color="@color/colorPrimary"
-                app:active_item_color="@color/white"
-                app:space_background_color="@color/grey"
-                app:inactive_item_color="@color/black"
-                app:centre_button_icon="@drawable/ic_browse"
-                app:centre_button_color="@color/black"
-                app:active_centre_button_background_color="@color/grey"/>
+                app:number_of_tabs="five"
+                app:starting_position="three"
+                app:tab_color="@color/grey"
+                app:button_color="@color/colorPrimary"
+                />
         </FrameLayout>
     </RelativeLayout>
 

@@ -9,24 +9,50 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".education.EducationActivity"></activity>
+        <activity android:name=".profile.FollowersActivity"></activity>
+        <activity android:name=".post.CommentsActivity" />
+        <activity android:name=".social.message.ChatActivity" />
+        <activity android:name=".others.OtherActivity" />
+        <activity android:name=".post.PostActivity" />
+        <activity android:name=".start.IntroActivity" />
+        <activity
+            android:name=".education.EducationActivity"
+            android:theme="@style/DrawerStyle" />
         <activity android:name=".profile.ProfileActivity" />
-        <activity android:name=".home.HomeActivity" />
-        <activity android:name=".auth.ForgotPasswordActivity" />
-        <activity android:name=".auth.SignUpActivity" />
-        <activity android:name=".start.WelcomeActivity" />
-        <activity android:name=".auth.LoginActivity" />
+        <activity
+            android:name=".home.HomeActivity"
+            android:theme="@style/DrawerStyle" /> <!-- Authentication -->
+        <activity
+            android:name=".auth.ForgotPasswordActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/TransStatusBar" />
+        <activity
+            android:name=".auth.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/TransStatusBar" />
+        <activity
+            android:name=".auth.SignUpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/TransStatusBar" />
+        <activity
+            android:name=".start.WelcomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/TransStatusBar" />
         <activity
             android:name=".social.SocialActivity"
-            android:label="@string/title_activity_social"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".start.SplashActivity">
+            android:theme="@style/DrawerStyle" />
+        <activity
+            android:name=".start.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> <!-- Image Cropper -->
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
     </application>
 
 </manifest>

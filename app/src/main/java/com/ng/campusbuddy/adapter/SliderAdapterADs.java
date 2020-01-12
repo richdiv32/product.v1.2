@@ -1,4 +1,4 @@
-package com.ng.campusbuddy.tools;
+package com.ng.campusbuddy.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -32,89 +32,89 @@ public class SliderAdapterADs  extends SliderViewAdapter<SliderAdapterADs.Slider
         switch (position) {
             case 0:
                 Glide.with(viewHolder.itemView)
-                        .load("https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg")
+                        .load(context.getString(R.string.Home_Ad1))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
             case 1:
                 Glide.with(viewHolder.itemView)
-                        .load("https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg")
+                        .load(context.getString(R.string.Home_Ad2))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
             case 2:
                 Glide.with(viewHolder.itemView)
-                        .load("https://scontent-lis1-1.xx.fbcdn.net/v/t1.0-9/41840059_1069527886547900_444387815006928896_n.jpg?_nc_cat=101&_nc_ohc=-oSvdGzrcHMAQmkoKVGjE8-oc00nXBs-u4EPU8KVMtVSr9cVJKmTiEwMQ&_nc_ht=scontent-lis1-1.xx&oh=bb63600bbaae951536618fba930410ce&oe=5E79A614")
+                        .load(context.getString(R.string.Home_Ad3))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
 
             case 3:
                 Glide.with(viewHolder.itemView)
-                        .load("https://hackernoon.com/hn-images/1*j41hMsYft-ifSvXuWOb7Gg.png")
+                        .load(context.getString(R.string.Home_Ad4))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
 
             case 4:
                 Glide.with(viewHolder.itemView)
-                        .load("https://pictures.dealer.com/c/cchorshamfordfd/1795/2c35f4890cabc51f7b68768cf84cd7f3x.jpg?impolicy=downsize&w=568")
+                        .load(context.getString(R.string.Home_Ad5))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
 
             case 5:
                 Glide.with(viewHolder.itemView)
-                        .load("http://random3.net/images/header.jpg")
+                        .load(context.getString(R.string.Home_Ad6))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
 
             case 6:
                 Glide.with(viewHolder.itemView)
-                        .load("https://i.ytimg.com/vi/ivgvRUlLHO8/maxresdefault.jpg")
+                        .load(context.getString(R.string.Home_Ad7))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
 
             case 7:
                 Glide.with(viewHolder.itemView)
-                        .load("https://www.shoutmeloud.com/wp-content/uploads/2015/06/WordPress_Ad_Widget.png")
+                        .load(context.getString(R.string.Home_Ad8))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
 
             case 8:
                 Glide.with(viewHolder.itemView)
-                        .load("https://wpdean.com/wp-content/uploads/2015/12/Advanced-Ads.jpg")
+                        .load(context.getString(R.string.Home_Ad9))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
 
             case 9:
                 Glide.with(viewHolder.itemView)
-                        .load("https://www.currentschoolnews.com/wp-content/uploads/2019/06/College-Student.png")
+                        .load(context.getString(R.string.Home_Ad10))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
 
             case 10:
                 Glide.with(viewHolder.itemView)
-                        .load("https://www.topuniversities.com/sites/default/files/styles/lead_article_image/public/blogs/lead-images/shutterstock_81549778.jpg")
+                        .load(context.getString(R.string.Home_Ad11))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
 
             case 11:
                 Glide.with(viewHolder.itemView)
-                        .load("https://www.pewtrusts.org/-/media/post-launch-images/2018/08/sln_aug2_1/16x9_m.jpg?h=1024&w=1820&la=en&hash=15A02DDD8373CAA1864E8119FDD5D9AEF264F647")
+                        .load(context.getString(R.string.Home_Ad12))
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
 
             default:
                 Glide.with(viewHolder.itemView)
-                        .load("https://study.com/cimages/hub/Being%20a%20Full-Time%20vs.%20Part-Time%20Community%20College%20Student.jpg")
+                        .load("")
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;

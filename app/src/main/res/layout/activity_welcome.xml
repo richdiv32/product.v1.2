@@ -13,7 +13,8 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:srcCompat="@drawable/logo_text_white" />
+        app:srcCompat="@drawable/logo_text_white"
+        android:layout_marginTop="40dp"/>
 
     <TextView
         android:id="@+id/textView3"
