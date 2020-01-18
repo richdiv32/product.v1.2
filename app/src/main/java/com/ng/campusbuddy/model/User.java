@@ -1,6 +1,7 @@
 package com.ng.campusbuddy.model;
 
 public class User {
+    private String profile_status;
     private String id;
     private String username;
     private String fullname;
@@ -15,11 +16,14 @@ public class User {
     private String email;
     private String status;
     private String relationship_status;
+    private String search;
 
     public User(String id, String username, String fullname, String imageurl,
                 String bio, String gender, String birthday, String telephone, String faculty,
-                String department, String institution, String email, String status, String relationship_status) {
+                String department, String institution, String email, String status,
+                String relationship_status, String profile_status, String search) {
         this.id = id;
+        this.profile_status = profile_status;
         this.username = username;
         this.fullname = fullname;
         this.imageurl = imageurl;
@@ -33,9 +37,18 @@ public class User {
         this.email = email;
         this.status = status;
         this.relationship_status = relationship_status;
+        this.search = search;
+
     }
 
     public User() {
+    }
+
+    public String getProfile_status() {
+        return profile_status;
+    }
+    public void setProfile_status(String profile_status) {
+        this.profile_status = profile_status;
     }
 
     public String getId() {
@@ -134,6 +147,13 @@ public class User {
     }
     public void setRelationship_status(String relationship_status) {
         this.relationship_status = relationship_status;
+    }
+
+    public String getSearch() {
+        return search;
+    }
+    public void setSearch(String search) {
+        this.search = search;
     }
 
 }

@@ -1,37 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.appbar.AppBarLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <com.google.android.material.appbar.CollapsingToolbarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
+        app:toolbarId="@+id/toolbar">
 
-        <RelativeLayout
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical">
+            android:layout_height="50dp">
 
-            <ImageView
-                android:id="@+id/nav_button"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_nav_draw"
-                android:tint="@color/grey" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="180dp"
-                android:layout_height="35dp"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/logo_text_red"
-                android:contentDescription="TODO"
-                android:layout_toRightOf="@id/nav_button"/>
-        </RelativeLayout>
-    </androidx.appcompat.widget.Toolbar>
+                <ImageView
+                    android:id="@+id/nav_button"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/ic_nav_draw"
+                    android:tint="@color/grey" />
+
+                <ImageView
+                    android:layout_width="180dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/nav_button"
+                    android:contentDescription="TODO"
+                    android:src="@drawable/logo_text_red" />
+            </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
 
 </com.google.android.material.appbar.AppBarLayout>

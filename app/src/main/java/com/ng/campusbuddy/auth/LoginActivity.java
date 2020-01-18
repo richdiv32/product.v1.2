@@ -80,8 +80,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
-                pd.setMessage("Please wait...");
+                pd.setTitle("Logging In ");
+                pd.setMessage("Please wait.....");
                 pd.show();
+                pd.setCanceledOnTouchOutside(true);
 
                 String str_email = Email.getText().toString();
                 String str_password = Password.getText().toString();

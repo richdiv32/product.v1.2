@@ -1,6 +1,7 @@
 package com.ng.campusbuddy.social;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -8,6 +9,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,13 +21,23 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ng.campusbuddy.education.EducationActivity;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.profile.ProfileActivity;
 import com.ng.campusbuddy.start.WelcomeActivity;
+import com.ng.campusbuddy.notification.Token;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -34,14 +46,16 @@ import eu.long1.spacetablayout.SpaceTabLayout;
 public class SocialActivity extends AppCompatActivity {
     Context mcontext = SocialActivity.this;
 
-    FirebaseAuth mAuth;
+
+    String profileid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_social);
 
-        mAuth = FirebaseAuth.getInstance();
+
+        profileid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         SetupNavigationDrawer();
 
@@ -61,11 +75,21 @@ public class SocialActivity extends AppCompatActivity {
                 fragmentList, savedInstanceState);
         tabLayout.setTabOneIcon(R.drawable.ic_feeds);
         tabLayout.setTabTwoIcon(R.drawable.ic_chat);
-        tabLayout.setTabThreeIcon(R.drawable.ic_match_meet);
+        tabLayout.setTabThreeIcon(R.drawable.ic_match_up);
         tabLayout.setTabFourIcon(R.drawable.ic_chat_room);
         tabLayout.setTabFiveIcon(R.drawable.ic_search);
         /*---------------------------------------------*/
+
+
+//        updateToken(FirebaseInstanceId.getInstance().getToken());
     }
+
+
+//    public void updateToken(String token){
+//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
+//        Token mToken = new Token(token);
+//        ref.child(userid).setValue(mToken);
+//    }
 
 
     private void SetupNavigationDrawer() {
@@ -76,20 +100,61 @@ public class SocialActivity extends AppCompatActivity {
         RelativeLayout navigationHeader = headerview.findViewById(R.id.nav_header_container);
 
         // name, prfoile status
-        TextView Username = headerview.findViewById(R.id.nav_username);
-        TextView Profile_status = headerview.findViewById(R.id.nav_status);
-        CircleImageView Profile_image = headerview.findViewById(R.id.image_profile);
-
-        Username.setText(R.string.profile_username);
-        Profile_status.setText(R.string.profile_status);
+        final TextView Username = headerview.findViewById(R.id.nav_username);
+        final TextView Profile_status = headerview.findViewById(R.id.nav_status);
+        final CircleImageView Profile_image = headerview.findViewById(R.id.image_profile);
+        final TextView Followers = headerview.findViewById(R.id.followers);
+        final TextView Following = headerview.findViewById(R.id.following);
 
         //        Loading profile image
-        Glide.with(this)
-                .load(getString(R.string.Profile_Image_link))
-                .thumbnail(0.5f)
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(Profile_image);
+        DatabaseReference Nav_reference = FirebaseDatabase.getInstance().getReference().child("Users");
+        Nav_reference.child(profileid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    String profile_image = dataSnapshot.child("imageurl").getValue().toString();
+                    String username = dataSnapshot.child("username").getValue().toString();
+                    String profile_status = dataSnapshot.child("profile_status").getValue().toString();
+
+                    Glide.with(mcontext)
+                            .load(profile_image)
+                            .into(Profile_image);
+                    Username.setText(username);
+                    Profile_status.setText(profile_status);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference Followers_reference = FirebaseDatabase.getInstance().getReference("Follow").child(profileid).child("followers");
+        Followers_reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Followers.setText(""+dataSnapshot.getChildrenCount());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Follow").child(profileid).child("following");
+        reference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Following.setText(""+dataSnapshot.getChildrenCount());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         navigationHeader.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +188,7 @@ public class SocialActivity extends AppCompatActivity {
                         Toast.makeText(mcontext, "Settings", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.nav_log_out:
+                        FirebaseAuth mAuth = FirebaseAuth.getInstance();
                         mAuth.signOut();
                         startActivity(new Intent(mcontext, WelcomeActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
@@ -133,4 +199,6 @@ public class SocialActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

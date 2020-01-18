@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Campus Buddy</string>
 
+    <!--Admod-->
+    <string name="App_ID">ca-app-pub-8641069722196673~9557545849</string>
+    <string name="BANNER_adUnitId">ca-app-pub-8641069722196673/2581073958</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -8,24 +12,36 @@
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
 
-    <!--Nav Header-->
-    <string name="profile_username">Kingdiv32</string>
-    <string name="profile_status">the best way up is one step at a time</string>
-    <string name="Profile_Image_link">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
 
     <!-- Home ADs slides-->
     <string name="Home_Ad1">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad2">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
-    <string name="Home_Ad3">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
-    <string name="Home_Ad4">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
-    <string name="Home_Ad5">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
-    <string name="Home_Ad6">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
-    <string name="Home_Ad7">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
-    <string name="Home_Ad8">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
-    <string name="Home_Ad9">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
-    <string name="Home_Ad10">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
-    <string name="Home_Ad11">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
-    <string name="Home_Ad12">https://www.fastweb.com/uploads/article_photo/photo/2037648/crop635w_iStock-629189720.jpg</string>
+    <string name="Home_Ad2">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad3">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad4">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad5">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad6">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad7">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad8">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad9">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad10">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad11">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad12">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
 
 </resources>

@@ -10,8 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <include layout="@layout/app_bar"
-            android:id="@+id/toolbar_edu"/>
+
 
         <FrameLayout
             android:layout_width="match_parent"

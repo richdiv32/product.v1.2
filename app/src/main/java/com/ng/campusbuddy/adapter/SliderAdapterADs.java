@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ng.campusbuddy.R;
@@ -26,8 +27,15 @@ public class SliderAdapterADs  extends SliderViewAdapter<SliderAdapterADs.Slider
     }
 
     @Override
-    public void onBindViewHolder(SliderAdapterVH viewHolder, int position) {
+    public void onBindViewHolder(SliderAdapterVH viewHolder, final int position) {
         viewHolder.textViewDescription.setText("This is slider item " + position);
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "you clicked" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         switch (position) {
             case 0:

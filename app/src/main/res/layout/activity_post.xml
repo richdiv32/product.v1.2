@@ -78,6 +78,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/bar"
+        android:layout_marginTop="2dp"
         android:fillViewport="true">
 
         <LinearLayout
@@ -99,7 +100,9 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginBottom="10dp"
-                    android:background="@drawable/profile_bg" />
+                    android:background="@drawable/profile_bg"
+                    app:civ_border_color="@color/colorPrimary"
+                    app:civ_border_width="2dp"/>
 
                 <TextView
                     android:id="@+id/username"
@@ -129,8 +132,8 @@
                     android:layout_below="@id/image_added"
                     android:background="@color/space_transparent"
                     android:ems="10"
-                    android:maxLines="5"
                     android:hint="Type something here..."
+                    android:maxLines="5"
                     android:padding="20dp"
                     android:textColor="@color/grey" />
 

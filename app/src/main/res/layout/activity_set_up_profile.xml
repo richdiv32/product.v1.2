@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/auth_bg"
+    tools:context=".auth.SetUpProfileActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="40dp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginRight="-20dp"
+                    android:background="@drawable/profile_bg" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignBottom="@id/profile_image"
+                    android:layout_marginLeft="-20dp"
+                    android:layout_toRightOf="@id/profile_image"
+                    android:background="@drawable/edit_profile_pic" />
+
+            </RelativeLayout>
+
+
+            <EditText
+                android:id="@+id/fullname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:drawableLeft="@drawable/ic_fullname"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/white"
+                android:ems="10"
+                android:hint="Name"
+                android:inputType="textPersonName"
+                android:paddingLeft="20dp"
+                android:textColorHint="@color/white" />
+
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="55dp"
+                android:text="Day/Month"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/birthday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:drawableLeft="@drawable/ic_birthday"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/white"
+                android:ems="10"
+                android:hint="Birthday"
+                android:inputType="date"
+                android:paddingLeft="20dp"
+                android:textColorHint="@color/white" />
+
+            <EditText
+                android:id="@+id/gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:drawableLeft="@drawable/ic_relationship"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/white"
+                android:ems="10"
+                android:hint="Gender"
+                android:paddingLeft="20dp"
+                android:textColorHint="@color/white" />
+
+            <EditText
+                android:id="@+id/relationship_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:drawableLeft="@drawable/ic_like"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/white"
+                android:ems="10"
+                android:hint="Relationship_status"
+                android:paddingLeft="20dp"
+                android:textColorHint="@color/white" />
+
+
+            <EditText
+                android:id="@+id/telephone_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:drawableLeft="@drawable/ic_telephone"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/white"
+                android:ems="10"
+                android:hint="Telephone"
+                android:inputType="phone"
+                android:paddingLeft="20dp"
+                android:textColorHint="@color/white" />
+
+            <EditText
+                android:id="@+id/institution"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:drawableLeft="@drawable/ic_institution"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/white"
+                android:ems="10"
+                android:hint="Institution"
+                android:paddingLeft="20dp"
+                android:textColorHint="@color/white" />
+
+            <EditText
+                android:id="@+id/faculty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:drawableLeft="@drawable/ic_faculty"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/white"
+                android:ems="10"
+                android:hint="Faculty"
+                android:paddingLeft="20dp"
+                android:textColorHint="@color/white" />
+
+            <EditText
+                android:id="@+id/department"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:drawableLeft="@drawable/ic_department"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/white"
+                android:ems="10"
+                android:hint="Department"
+                android:paddingLeft="20dp"
+                android:textColorHint="@color/white" />
+
+            <EditText
+                android:id="@+id/bio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:drawableLeft="@drawable/ic_fullname"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/white"
+                android:ems="10"
+                android:hint="About you"
+                android:paddingLeft="20dp"
+                android:textColorHint="@color/white" />
+
+
+            <Button
+                android:id="@+id/btn_finish"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="40dp"
+                android:background="@drawable/button_gradient"
+                android:text="Register"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</RelativeLayout>

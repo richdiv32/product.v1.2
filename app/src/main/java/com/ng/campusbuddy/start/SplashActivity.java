@@ -6,6 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -15,24 +19,11 @@ import com.ng.campusbuddy.social.SocialActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static int SPLASH_SCREEN_TIME_OUT=3000;
-//    After completion of 2000 ms, the next activity will get started.
+    TextView tv;
+    ImageView iv;
 
-    FirebaseUser firebaseUser;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-//        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-//
-//        //check if user is null
-//        if (firebaseUser != null){
-//            Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
-//            startActivity(intent);
-//            finish();
-//        }
-    }
+    private static int SPLASH_SCREEN_TIME_OUT=1500;
+//    After completion of 1500 ms (1.5s), the next activity will get started.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +37,13 @@ public class SplashActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_splash);
+
+        tv = findViewById(R.id.tv);
+        iv = findViewById(R.id.iv);
+
+        Animation myanim = AnimationUtils.loadAnimation(this, R.anim.splash_anim);
+        tv.startAnimation(myanim);
+        iv.startAnimation(myanim);
 
         new Handler().postDelayed(new Runnable() {
             @Override

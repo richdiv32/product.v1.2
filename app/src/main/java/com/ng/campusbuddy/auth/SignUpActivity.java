@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,8 +21,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.home.HomeActivity;
-import com.ng.campusbuddy.social.SocialActivity;
 
 import java.util.HashMap;
 
@@ -43,6 +40,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         InitLogIn();
         InitSignUp();
+
     }
 
     private void InitLogIn() {
@@ -59,64 +57,52 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void InitSignUp() {
 
-        final EditText Fullname = findViewById(R.id.fullname);
         final EditText Username = findViewById(R.id.username);
         final EditText Email = findViewById(R.id.email);
         final EditText Password = findViewById(R.id.password);
         final EditText Comfirm_password = findViewById(R.id.confirm_password);
-        final EditText Birthday = findViewById(R.id.birthday);
-        final EditText Relationship_status = findViewById(R.id.relationship_status);
-        final EditText Telephone = findViewById(R.id.telephone_number);
-        final EditText Institution = findViewById(R.id.institution);
-        final EditText Faculty = findViewById(R.id.faculty);
-        final EditText Department = findViewById(R.id.department);
-        final EditText Bio = findViewById(R.id.bio);
+
 
         Button SignUp = findViewById(R.id.btn_sign_up);
+
+
 
         SignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 pd = new ProgressDialog(SignUpActivity.this);
-                pd.setMessage("Please wait...");
+                pd.setTitle("Creating New Account");
+                pd.setMessage("Please wait, this will only take seconds");
                 pd.show();
+                pd.setCanceledOnTouchOutside(true);
 
-                String str_fullname = Fullname.getText().toString();
-                String str_username = Username.getText().toString();
+                String str_username = Username.getText().toString().toLowerCase();
                 String str_email = Email.getText().toString();
                 String str_password = Password.getText().toString();
                 String str_confirm_password = Comfirm_password.getText().toString();
-                String str_birthday = Birthday.getText().toString();
-                String str_relationship_status = Relationship_status.getText().toString();
-                String str_telephone = Telephone.getText().toString();
-                String str_institution = Institution.getText().toString();
-                String str_faculty = Faculty.getText().toString();
-                String str_department = Department.getText().toString();
-                String str_bio = Bio.getText().toString();
 
 
-                if (TextUtils.isEmpty(str_username) || TextUtils.isEmpty(str_fullname) || TextUtils.isEmpty(str_email)
-                        || TextUtils.isEmpty(str_password) || TextUtils.isEmpty(str_confirm_password) || TextUtils.isEmpty(str_birthday)
-                        || TextUtils.isEmpty(str_relationship_status) || TextUtils.isEmpty(str_telephone) || TextUtils.isEmpty(str_institution)
-                        || TextUtils.isEmpty(str_faculty) || TextUtils.isEmpty(str_department) || TextUtils.isEmpty(str_bio)){
+                if (TextUtils.isEmpty(str_username)  || TextUtils.isEmpty(str_email)
+                        || TextUtils.isEmpty(str_password) || TextUtils.isEmpty(str_confirm_password)){
                     Toast.makeText(SignUpActivity.this, "All fields are required!", Toast.LENGTH_SHORT).show();
-                } else if(str_password.length() < 6){
+                }
+                else if(str_password.length() < 6){
                     Toast.makeText(SignUpActivity.this, "Password must have 6 characters!", Toast.LENGTH_SHORT).show();
-                } else {
-                    register(str_username, str_fullname, str_email, str_password, str_confirm_password,
-                            str_birthday, str_relationship_status, str_telephone, str_institution,
-                            str_faculty, str_department, str_bio);
+                }
+                else if(!str_password.equals(str_confirm_password)){
+                    Toast.makeText(SignUpActivity.this, "Your password does not match with your confirm password", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    register(str_username, str_email, str_password, str_confirm_password);
                 }
 
             }
         });
     }
 
-    private void register(final String Username, final String Fullname, final String Email, String Password,
-                          String Confirm_password, final String Birthday, final String Relationship_status,
-                          final String Telephone, final String Institution, final String Faculty, final String Department,
-                          final String Bio) {
+    private void register(final String Username, final String Email, String Password,
+                          String Confirm_password) {
 
         mAuth.createUserWithEmailAndPassword(Email, Password)
                 .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
@@ -130,17 +116,20 @@ public class SignUpActivity extends AppCompatActivity {
                             HashMap<String, Object> map = new HashMap<>();
                             map.put("id", userID);
                             map.put("username", Username.toLowerCase());
-                            map.put("fullname", Fullname);
+                            map.put("fullname", "");
                             map.put("email", Email);
-                            map.put("imageurl", "https://firebasestorage.googleapis.com/v0/b/campus-buddy-2019.appspot.com/o/profile_image.svg?alt=media&token=549d47e6-6355-4367-bf69-0df75853401f");
-                            map.put("status", "offline");
-                            map.put("birthday", Birthday);
-                            map.put("telephone", Telephone);
-                            map.put("relations_status", Relationship_status);
-                            map.put("institution", Institution);
-                            map.put("faculty", Faculty);
-                            map.put("department", Department);
-                            map.put("bio", Bio);
+                           map.put("imageurl", "");
+                            map.put("online_status", "online");
+                            map.put("search", Username.toLowerCase());
+                            map.put("birthday", "");
+                            map.put("telephone", "");
+                            map.put("relationship_status", "");
+                            map.put("institution", "");
+                            map.put("faculty", "");
+                            map.put("department", "");
+                            map.put("bio", "");
+                            map.put("gender", "");
+                            map.put("profile_status", "Hey there, I am on Campus Buddy");
 
 
                             reference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -148,7 +137,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()){
                                         pd.dismiss();
-                                        Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
+                                        Intent intent = new Intent(SignUpActivity.this, SetUpProfileActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
                                     }
@@ -161,6 +150,4 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
 }

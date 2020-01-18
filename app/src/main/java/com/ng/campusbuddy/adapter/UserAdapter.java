@@ -22,8 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.model.User;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.profile.ProfileActivity;
-import com.ng.campusbuddy.social.MessagesFragment;
+import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.SocialActivity;
 import com.ng.campusbuddy.social.message.ChatActivity;
 
@@ -38,15 +37,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
 
     private Context mContext;
     private List<User> mUsers;
-//    private boolean isFragment;
     private boolean isActivity;
+
 
     private FirebaseUser firebaseUser;
 
     public UserAdapter(Context context, List<User> users, boolean isActivity){
         mContext = context;
         mUsers = users;
-//        this.isFragment = isFragment;
         this.isActivity = isActivity;
     }
 
@@ -75,6 +73,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
 
         if (user.getId().equals(firebaseUser.getUid())){
             holder.btn_follow.setVisibility(View.GONE);
+            holder.btn_message.setVisibility(View.GONE);
         }
 
 
@@ -87,17 +86,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                     editor.putString("profileid", user.getId());
                     editor.apply();
 
-                    mContext.startActivity(new Intent(mContext, ProfileActivity.class));
+                    mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
 
                 }
-//                if (isFragment) {
-//                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-//                    editor.putString("profileid", user.getId());
-//                    editor.apply();
-//
-//                    ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-//                            new ProfileFragment()).commit();
-//                }
                 else {
                     Intent intent = new Intent(mContext, SocialActivity.class);
                     intent.putExtra("publisherid", user.getId());

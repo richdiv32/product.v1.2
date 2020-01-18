@@ -14,7 +14,7 @@
         android:background="@drawable/splash_bg"/>
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/iv"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -27,7 +27,7 @@
         app:srcCompat="@drawable/logo_text_white" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="version 1.2"
@@ -37,7 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/iv"
         app:layout_constraintVertical_bias="0.952" />
 
 

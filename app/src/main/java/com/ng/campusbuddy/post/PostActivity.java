@@ -52,7 +52,7 @@ public class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        Init();
+//        Init();
 
         image_added = findViewById(R.id.image_added);
         done = findViewById(R.id.done);
@@ -73,22 +73,22 @@ public class PostActivity extends AppCompatActivity {
                 .start(PostActivity.this);
     }
 
-    private void Init() {
-
-        TextView Username = findViewById(R.id.username);
-        CircleImageView Profile_image = findViewById(R.id.image_profile);
-
-        // Username
-        Username.setText(R.string.profile_username);
-
-        //        Loading profile image
-        Glide.with(this)
-                .load(getString(R.string.Profile_Image_link))
-                .thumbnail(0.5f)
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(Profile_image);
-    }
+//    private void Init() {
+//
+//        TextView Username = findViewById(R.id.username);
+//        CircleImageView Profile_image = findViewById(R.id.image_profile);
+//
+//        // Username
+//        Username.setText(R.string.profile_username);
+//
+//        //        Loading profile image
+//        Glide.with(this)
+//                .load(getString(R.string.Profile_Image_link))
+//                .thumbnail(0.5f)
+//                .centerCrop()
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .into(Profile_image);
+//    }
 
     private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();

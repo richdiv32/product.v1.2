@@ -2,14 +2,28 @@
 <resources>
     <color name="colorPrimary">#FF0000</color>
     <color name="colorPrimaryDark">#A20404</color>
-    <color name="colorAccent">#E21414</color>
+    <color name="colorAccent">#FC3737</color>
 
     <color name="white">#fff</color>
     <color name="black">#000000</color>
-    <color name="grey">#646363</color>
+    <color name="grey">#8890A6</color>
 
     <!-- colors for button style -->
 
     <color name="gradient_start_color">#4c84ff</color>
     <color name="gradient_end_color">#18a3fe</color>
+
+    <color name="fab_color_pressed">#007787</color>
+    <color name="fab_color_shadow">#44000000</color>
+
+    <color name="btn_default_light_normal">#00000000</color>
+    <color name="btn_default_light_pressed">#40ffffff</color>
+    <color name="btn_send_normal">#02c754</color>
+    <color name="btn_send_pressed">#006633</color>
+    <color name="btn_default_shadow">#99000000</color>
+    <color name="btn_context_menu_normal">#ffffff</color>
+    <color name="btn_context_menu_pressed">#40000000</color>
+    <color name="btn_context_menu_text_red">#ffff0000</color>
+
+    <color name="text_like_counter">#2b5a83</color>
 </resources>
