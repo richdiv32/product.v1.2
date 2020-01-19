@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ng.campusbuddy.R;
@@ -20,6 +21,7 @@ public class WelcomeActivity extends AppCompatActivity {
     Button LogIn,SignUp;
 
     FirebaseUser firebaseUser;
+
 
     @Override
     protected void onStart() {
@@ -53,6 +55,7 @@ public class WelcomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(WelcomeActivity.this, LoginActivity.class);
                 startActivity(i);
+                Animatoo.animateSlideRight(WelcomeActivity.this);
             }
         });
     }
@@ -64,6 +67,7 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(WelcomeActivity.this, SignUpActivity.class));
+                Animatoo.animateSlideLeft(WelcomeActivity.this);
             }
         });
     }

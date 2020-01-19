@@ -27,7 +27,14 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
+        //this will update the tokens
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user!= null){
+            updateToken(s);
+        }
+
     }
+
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {

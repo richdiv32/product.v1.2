@@ -1,6 +1,7 @@
 package com.ng.campusbuddy.profile;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.adapter.MyPhotosAdapter;
 import com.ng.campusbuddy.model.Post;
 import com.ng.campusbuddy.model.User;
+import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,6 +69,13 @@ public class UserProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPref sharedPref = new SharedPref(this);
+        if (sharedPref.loadNightModeState() == true){
+            setTheme(R.style.AppDarkTheme);
+        }
+        else{
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_user);
 

@@ -8,7 +8,10 @@
     android:fadingEdge="horizontal"
     android:fitsSystemWindows="true"
     app:headerLayout="@layout/nav_header"
-    app:itemIconTint="@color/colorPrimary"
-    app:menu="@menu/nav_menu">
+    app:itemIconTint="?attr/colorPrimary"
+    app:menu="@menu/nav_menu"
+    app:elevation="3dp"
+    app:itemTextColor="?attr/textcolor"
+    android:background="?attr/cardbackground">
 
 </com.google.android.material.navigation.NavigationView>

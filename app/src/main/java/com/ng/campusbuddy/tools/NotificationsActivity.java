@@ -1,6 +1,7 @@
 package com.ng.campusbuddy.tools;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.adapter.NotificationAdapter;
 import com.ng.campusbuddy.model.Notification;
+import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +35,13 @@ public class NotificationsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPref sharedPref = new SharedPref(this);
+        if (sharedPref.loadNightModeState() == true){
+            setTheme(R.style.AppDarkTheme);
+        }
+        else{
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
 

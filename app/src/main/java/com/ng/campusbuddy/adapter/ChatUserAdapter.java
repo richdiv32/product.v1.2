@@ -2,6 +2,7 @@ package com.ng.campusbuddy.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,11 +25,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.model.Chat;
 import com.ng.campusbuddy.model.User;
+import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.SocialActivity;
 import com.ng.campusbuddy.social.message.ChatActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHolder> {
 
@@ -87,12 +93,25 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
             holder.img_off.setVisibility(View.GONE);
         }
 
+        holder.profile_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                editor.putString("userid", user.getId());
+                editor.apply();
+
+                ((FragmentActivity)mContext).startActivity(new Intent(mContext, UserProfileActivity.class));
+                Animatoo.animateZoom(mContext);
+            }
+        });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ChatActivity.class);
                 intent.putExtra("userid", user.getId());
                 mContext.startActivity(intent);
+                Animatoo.animateZoom(mContext);
             }
         });
     }

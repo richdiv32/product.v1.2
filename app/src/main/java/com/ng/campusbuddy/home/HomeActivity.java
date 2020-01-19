@@ -3,6 +3,7 @@ package com.ng.campusbuddy.home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
@@ -15,17 +16,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ng.campusbuddy.auth.SetUpProfileActivity;
 import com.ng.campusbuddy.education.EducationActivity;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.profile.ProfileActivity;
@@ -33,6 +37,8 @@ import com.ng.campusbuddy.social.SocialActivity;
 import com.ng.campusbuddy.adapter.SliderAdapterADs;
 import com.ng.campusbuddy.start.WelcomeActivity;
 import com.ng.campusbuddy.tools.NotificationsActivity;
+import com.ng.campusbuddy.tools.SettingsActivity;
+import com.ng.campusbuddy.utils.SharedPref;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -45,15 +51,29 @@ public class HomeActivity extends AppCompatActivity {
 
     String profileid;
 
+    FirebaseUser firebaseUser;
+    FirebaseAuth mAuth;
+    DatabaseReference user_Ref;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPref sharedPref = new SharedPref(this);
+        if (sharedPref.loadNightModeState() == true){
+            setTheme(R.style.AppDarkTheme);
+        }
+        else{
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
         AdMod();
 
-
+        mAuth = FirebaseAuth.getInstance();
         profileid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        user_Ref = FirebaseDatabase.getInstance().getReference().child("Users");
 
         SetupNavigationDrawer();
         ADimageslider();
@@ -61,6 +81,44 @@ public class HomeActivity extends AppCompatActivity {
 
         LoadImage();
 
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+        firebaseUser = mAuth.getCurrentUser();
+
+        //check if user is null
+        if (firebaseUser == null){
+            startActivity(new Intent(mcontext, WelcomeActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            finish();
+        }
+//        else {
+//            final String current_uid = mAuth.getCurrentUser().getUid();
+//
+//            user_Ref.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    if(!dataSnapshot.hasChild(current_uid)){
+//                        startActivity(new Intent(mcontext, SetUpProfileActivity.class)
+//                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+//                        finish();
+//                    }
+//                    else {
+//                        Toast.makeText(mcontext, "Welcome to Campus Buddy", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
+//        }
     }
 
     private void AdMod() {
@@ -187,6 +245,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent profile = new Intent(mcontext, ProfileActivity.class);
                 startActivity(profile);
+                Animatoo.animateSplit(mcontext);
             }
         });
 
@@ -201,24 +260,29 @@ public class HomeActivity extends AppCompatActivity {
                     case R.id.nav_education:
                         Intent education = new Intent(mcontext, EducationActivity.class);
                         startActivity(education);
+                        Animatoo.animateSlideLeft(mcontext);
                         finish();
                         break;
                     case R.id.nav_social:
                         Intent social = new Intent(mcontext, SocialActivity.class);
                         startActivity(social);
+                        Animatoo.animateSlideLeft(mcontext);
                         finish();
                         break;
                     case R.id.nav_notifications:
                         startActivity(new Intent(mcontext, NotificationsActivity.class));
+                        Animatoo.animateSlideLeft(mcontext);
                         break;
                     case R.id.nav_settings:
-                        Toast.makeText(mcontext, "Settings", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(mcontext, SettingsActivity.class));
+                        Animatoo .animateSlideLeft(mcontext);
                         break;
                     case R.id.nav_log_out:
                         FirebaseAuth mAuth = FirebaseAuth.getInstance();
                         mAuth.signOut();
                         startActivity(new Intent(mcontext, WelcomeActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                        Animatoo.animateShrink(mcontext);
                         break;
                 }
 

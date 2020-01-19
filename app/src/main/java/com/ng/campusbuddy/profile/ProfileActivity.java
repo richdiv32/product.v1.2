@@ -3,6 +3,7 @@ package com.ng.campusbuddy.profile;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -31,6 +32,7 @@ import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.adapter.MyPhotosAdapter;
 import com.ng.campusbuddy.model.Post;
 import com.ng.campusbuddy.model.User;
+import com.ng.campusbuddy.utils.SharedPref;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -56,7 +58,7 @@ public class ProfileActivity extends AppCompatActivity {
     ImageButton my_photos, saved_photos, Info;
 
     TextView Bio, Birthday, Gender, Relationship_status
-            , Institution, Faculty, Department, Email, Telephone;
+            , Institution, Faculty, Department,Telephone;
 
     private LinearLayout profile_info_layout;
 
@@ -71,6 +73,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPref sharedPref = new SharedPref(this);
+        if (sharedPref.loadNightModeState() == true){
+            setTheme(R.style.AppDarkTheme);
+        }
+        else{
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
@@ -92,7 +101,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         Bio = findViewById(R.id.bio);
         Birthday = findViewById(R.id.birthday);
-        Email = findViewById(R.id.email);
         Relationship_status = findViewById(R.id.relationship_status);
         Institution = findViewById(R.id.institution);
         Faculty = findViewById(R.id.faculty);
@@ -159,7 +167,6 @@ public class ProfileActivity extends AppCompatActivity {
                         User user = dataSnapshot.getValue(User.class);
                         Bio.setText(user.getBio());
                         Birthday.setText(user.getBirthday());
-                        Email.setText(user.getEmail());
                         Gender.setText(user.getGender());
                         Institution.setText(user.getInstitution());
                         Faculty.setText(user.getFaculty());

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -87,12 +88,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                     editor.apply();
 
                     mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
+                    Animatoo.animateSplit(mContext);
 
                 }
                 else {
                     Intent intent = new Intent(mContext, SocialActivity.class);
                     intent.putExtra("publisherid", user.getId());
                     mContext.startActivity(intent);
+                    Animatoo.animateSplit(mContext);
                 }
             }
         });
@@ -124,6 +127,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                 Intent message = new Intent(mContext, ChatActivity.class);
                 message.putExtra("userid", user.getId());
                 mContext.startActivity(message);
+                Animatoo.animateSlideUp(mContext);
 
 
             }

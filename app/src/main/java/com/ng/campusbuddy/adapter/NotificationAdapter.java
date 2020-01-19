@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -74,6 +75,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     intent.putExtra("postid", notification.getPostid());
                     intent.putExtra("publisherid", notification.getPublisher());
                     mContext.startActivity(intent);
+                    Animatoo.animateZoom(mContext);
 
 //                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
 //                    editor.putString("postid", notification.getPostid());
@@ -92,6 +94,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     editor.apply();
 
                     mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
+                    Animatoo.animateSplit(mContext);
                 }
             }
         });

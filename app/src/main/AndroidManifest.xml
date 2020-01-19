@@ -13,37 +13,46 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".post.story.StoryActivity"></activity>
-        <activity android:name=".post.story.AddStoryActivity" />
         <activity
             android:name=".tools.SettingsActivity"
-            android:label="@string/title_activity_settings" />
-        <activity android:name=".auth.SetUpProfileActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".profile.UserProfileActivity"
-            android:screenOrientation="portrait"/>
+            android:label="@string/title_activity_settings"></activity>
+        <activity android:name=".post.story.StoryActivity" />
+        <activity android:name=".post.story.AddStoryActivity" />
+        <activity
+            android:name=".auth.SetUpProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".profile.UserProfileActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".profile.EditProfileActivity"
             android:parentActivityName=".profile.ProfileActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity android:name=".profile.FollowersActivity" />
         <activity android:name=".post.PostDetailActivity" />
         <activity android:name=".social.message.ChatActivity" />
         <activity android:name=".tools.NotificationsActivity" />
-        <activity android:name=".post.PostActivity" />
-        <activity android:name=".start.IntroActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".post.PostActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".start.IntroActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".education.EducationActivity"
             android:theme="@style/DrawerStyle" />
-        <activity android:name=".profile.ProfileActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".profile.ProfileActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".home.HomeActivity"
-            android:theme="@style/DrawerStyle" />
-
-        <!-- Authentication -->
+            android:theme="@style/DrawerStyle" /> <!-- Authentication -->
         <activity
             android:name=".auth.ForgotPasswordActivity"
             android:screenOrientation="portrait"
@@ -72,8 +81,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <!-- Image Cropper -->
+        </activity> <!-- Image Cropper -->
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
@@ -82,24 +90,25 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713" />
 
-<!--        <service android:name=".notification.MyFirebaseMessaging"-->
-<!--            android:stopWithTask="false">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.firebase.MESSAGING_EVENT"/>-->
-<!--            </intent-filter>-->
-<!--        </service>-->
+        <service
+            android:name=".notification.MyFirebaseMessaging"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <provider
-            android:authorities="com.ng.campusbuddy.fileprovider"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="com.ng.campusbuddy.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/paths"/>
+                android:resource="@xml/paths" />
         </provider>
-
-
     </application>
 
 </manifest>

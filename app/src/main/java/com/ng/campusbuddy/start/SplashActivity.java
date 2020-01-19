@@ -1,6 +1,7 @@
 package com.ng.campusbuddy.start;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,11 +12,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.auth.LoginActivity;
 import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.social.SocialActivity;
+import com.ng.campusbuddy.utils.SharedPref;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -27,6 +31,13 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPref sharedPref = new SharedPref(this);
+        if (sharedPref.loadNightModeState() == true){
+            setTheme(R.style.AppDarkTheme);
+        }
+        else{
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
@@ -50,6 +61,7 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 Intent splash = new Intent(SplashActivity.this, IntroActivity.class);
                 startActivity(splash);
+                Animatoo.animateSpin(SplashActivity.this);
                 finish();
             }
         }, SPLASH_SCREEN_TIME_OUT);

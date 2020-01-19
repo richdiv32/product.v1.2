@@ -9,7 +9,7 @@
         android:id="@+id/bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#fff">
+        android:background="?attr/appbarcolor">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -21,8 +21,7 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#fff">
+                android:layout_height="match_parent">
 
 
             </androidx.appcompat.widget.Toolbar>
@@ -50,6 +49,7 @@
                     android:layout_toRightOf="@id/nav_button"
                     android:gravity="center"
                     android:text="Find Friends"
+                    android:textColor="?attr/title_textcolor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -68,11 +68,13 @@
                         android:layout_marginRight="20dp"
                         android:layout_marginBottom="10dp"
                         android:layout_weight="1"
+                        android:textColorHint="?attr/textcolor"
                         android:background="@color/space_transparent"
                         android:drawableRight="@drawable/ic_search"
                         android:drawableTint="@color/colorPrimary"
                         android:hint="Search..."
-                        android:textColor="@color/black" />
+                        android:textColor="?attr/title_textcolor"
+                        android:drawableEnd="@drawable/ic_search" />
 
                 </LinearLayout>
             </RelativeLayout>
@@ -83,8 +85,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-
+        android:background="?attr/backgroundcolor"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <RelativeLayout

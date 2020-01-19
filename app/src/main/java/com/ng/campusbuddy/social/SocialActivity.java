@@ -3,6 +3,7 @@ package com.ng.campusbuddy.social;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -17,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.navigation.NavigationView;
@@ -35,6 +37,9 @@ import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.profile.ProfileActivity;
 import com.ng.campusbuddy.start.WelcomeActivity;
 import com.ng.campusbuddy.notification.Token;
+import com.ng.campusbuddy.tools.NotificationsActivity;
+import com.ng.campusbuddy.tools.SettingsActivity;
+import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +56,13 @@ public class SocialActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPref sharedPref = new SharedPref(this);
+        if (sharedPref.loadNightModeState() == true){
+            setTheme(R.style.AppDarkTheme);
+        }
+        else{
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_social);
 
@@ -161,6 +173,7 @@ public class SocialActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent profile = new Intent(mcontext, ProfileActivity.class);
                 startActivity(profile);
+                Animatoo.animateSplit(mcontext);
             }
         });
 
@@ -171,27 +184,32 @@ public class SocialActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()){
                     case R.id.nav_home:
                         startActivity(new Intent(mcontext, HomeActivity.class));
+                        Animatoo.animateSlideLeft(mcontext);
                         finish();
                         break;
                     case R.id.nav_education:
                         Intent education = new Intent(mcontext, EducationActivity.class);
                         startActivity(education);
+                        Animatoo.animateSlideLeft(mcontext);
                         finish();
                         break;
                     case R.id.nav_social:
                         Toast.makeText(mcontext, "Social", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.nav_notifications:
-                        Toast.makeText(mcontext, "Notifications", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(mcontext, NotificationsActivity.class));
+                        Animatoo.animateSlideLeft(mcontext);
                         break;
                     case R.id.nav_settings:
-                        Toast.makeText(mcontext, "Settings", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(mcontext, SettingsActivity.class));
+                        Animatoo .animateSlideLeft(mcontext);
                         break;
                     case R.id.nav_log_out:
                         FirebaseAuth mAuth = FirebaseAuth.getInstance();
                         mAuth.signOut();
                         startActivity(new Intent(mcontext, WelcomeActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                        Animatoo.animateShrink(mcontext);
                         break;
                 }
 

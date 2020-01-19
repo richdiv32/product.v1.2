@@ -25,13 +25,14 @@
             android:layout_height="wrap_content"
             android:text=""
             android:textStyle="bold"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="?attr/title_textcolor"
             android:id="@+id/username"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/comment"
+            android:textColor="?attr/textcolor"
             android:text=""
             android:maxLines="5"/>
 

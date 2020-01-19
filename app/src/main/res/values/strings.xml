@@ -15,17 +15,17 @@
 
     <!-- Home ADs slides-->
     <string name="Home_Ad1">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad2">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad3">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad4">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad5">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad6">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad7">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad2">https://images.app.goo.gl/Xz4VSMcoRU3NVVfw6</string>
+    <string name="Home_Ad3">https://images.app.goo.gl/EASgxkVgijSdntFJ6</string>
+    <string name="Home_Ad4">https://images.app.goo.gl/Xz4VSMcoRU3NVVfw6</string>
+    <string name="Home_Ad5">https://images.app.goo.gl/yGPPzFrQPrkH7vpt5</string>
+    <string name="Home_Ad6">https://images.app.goo.gl/LfmpQgJkhmsWjS6e8</string>
+    <string name="Home_Ad7">https://images.app.goo.gl/Xz4VSMcoRU3NVVfw6</string>
     <string name="Home_Ad8">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad9">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad10">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad11">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
-    <string name="Home_Ad12">https://www.usnews.com/dims4/USNEWS/0bc5df8/2147483647/thumbnail/640x420/quality/85/?url=http%3A%2F%2Fcom-usnews-beam-media.s3.amazonaws.com%2F7c%2F97%2F0e47788848c0b14cff75b90d9b66%2F141017-studying-stock.jpg</string>
+    <string name="Home_Ad9">https://images.app.goo.gl/xbeUWX998rADeaMt7</string>
+    <string name="Home_Ad10">https://images.app.goo.gl/yGPPzFrQPrkH7vpt5</string>
+    <string name="Home_Ad11">https://images.app.goo.gl/xbeUWX998rADeaMt7</string>
+    <string name="Home_Ad12">https://images.app.goo.gl/EASgxkVgijSdntFJ6</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Titles -->

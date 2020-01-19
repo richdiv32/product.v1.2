@@ -8,8 +8,9 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="6dp"
-        app:cardCornerRadius="2dp">
+        app:cardElevation="3dp"
+        app:cardCornerRadius="3dp"
+        app:cardBackgroundColor="?attr/cardbackground">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -19,9 +20,10 @@
                 android:id="@+id/image_profile"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_margin="5dp"
                 android:src="@drawable/profile_bg"
-                app:civ_border_width="0.5dp"
-                app:civ_border_color="@color/colorPrimary"/>
+                app:civ_border_color="@color/colorPrimary"
+                app:civ_border_width="0.5dp" />
 
 
 
@@ -52,6 +54,7 @@
                     android:layout_marginTop="5dp"
                     android:maxLines="1"
                     android:text="Full Name"
+                    android:textColor="?attr/title_textcolor"
                     android:visibility="visible"/>
 
             </LinearLayout>

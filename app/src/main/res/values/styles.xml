@@ -1,12 +1,45 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
+    <!--Light/Day Theme-->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">#ff0000</item>
+        <item name="colorPrimaryDark">#A20404</item>
+        <item name="colorAccent">#FC3737</item>
+        <item name="appbarcolor">#ffffff</item>
+        <item name="backgroundcolor">#fcfcfc</item>
+        <item name="cardbackground">#ffffff</item>
+        <item name="title_textcolor">#000000</item>
+        <item name="textcolor">#808080</item>
+        <item name="tintcolor">#ffffff</item>
+        <item name="buttoncolor">#FF0000</item>
+
+        <item name="android:popupAnimationStyle">@style/WindowAnimationTransition</item>
 <!--        <item name="android:windowLightStatusBar" tools:targetApi="23">@color/black</item>-->
+    </style>
+
+    <!--Dark/Night Theme-->
+    <style name="AppDarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#212121</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorAccent">#FC3737</item>
+        <item name="appbarcolor">#212121</item>
+        <item name="backgroundcolor">#303030</item>
+        <item name="cardbackground">#424242</item>
+        <item name="title_textcolor">#FFFFFF</item>
+        <item name="textcolor">#ffffff</item>
+        <item name="tintcolor">#ffffff</item>
+        <item name="buttoncolor">#FF0000</item>
+
+        <item name="android:popupAnimationStyle">@style/WindowAnimationTransition</item>
+        <!--        <item name="android:windowLightStatusBar" tools:targetApi="23">@color/black</item>-->
+    </style>
+
+    <style name="WindowAnimationTransition">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
     <style name="DrawerStyle" parent="Theme.AppCompat.Light.NoActionBar">

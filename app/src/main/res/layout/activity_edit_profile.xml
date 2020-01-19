@@ -2,8 +2,6 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,12 +9,11 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white">
+        android:background="?attr/appbarcolor">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="@color/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
             app:toolbarId="@+id/toolbar">
 
@@ -37,14 +34,14 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_arrow_back"
-                        android:tint="@color/black" />
+                        android:tint="?attr/title_textcolor" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:text="Edit Profile"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/title_textcolor"
                         android:textSize="18sp"
                         android:textStyle="normal" />
 
@@ -57,7 +54,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginRight="10dp"
                         android:text="Cancel"
-                        android:textColor="@color/grey"
+                        android:textColor="?attr/textcolor"
                         android:textSize="16sp" />
 
                 </RelativeLayout>
@@ -69,6 +66,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="50dp"
+        android:background="?attr/backgroundcolor"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
@@ -90,7 +88,7 @@
                     android:layout_height="150dp"
                     android:layout_gravity="center"
                     android:background="@drawable/profile_bg"
-                    app:civ_border_color="@color/colorPrimary"
+                    app:civ_border_color="?attr/colorPrimary"
                     app:civ_border_width="2dp" />
 
                 <ImageButton
@@ -117,6 +115,8 @@
                     android:drawableStart="@drawable/ic_username"
                     android:drawableLeft="@drawable/ic_username"
                     android:drawablePadding="10dp"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"
                     android:hint="Username" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -131,6 +131,8 @@
                     android:layout_marginBottom="20dp"
                     android:drawableLeft="@drawable/ic_profile_status"
                     android:drawablePadding="10dp"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"
                     android:hint="Profile Status" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -156,7 +158,7 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="center_horizontal"
                 android:text="Details"
-                android:textColor="@color/black"
+                android:textColor="?attr/title_textcolor"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -169,6 +171,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_fullname"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"
                     android:drawablePadding="10dp"
                     android:hint="Fullname" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -182,8 +186,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_birthday"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"
                     android:drawablePadding="10dp"
-                    android:hint="Birthday" />
+                    android:hint="Birthday"
+                    android:inputType="date"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -196,7 +203,10 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_telephone"
                     android:drawablePadding="10dp"
-                    android:hint="Telephone" />
+                    android:hint="Telephone"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"
+                    android:inputType="phone"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -209,7 +219,9 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_relationship"
                     android:drawablePadding="10dp"
-                    android:hint="Gender" />
+                    android:hint="Gender"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -220,7 +232,7 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="center_horizontal"
                 android:text="School"
-                android:textColor="@color/black"
+                android:textColor="?attr/title_textcolor"
                 android:textSize="18sp" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -231,6 +243,8 @@
                     android:id="@+id/institution"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"
                     android:drawableLeft="@drawable/ic_institution"
                     android:drawablePadding="10dp"
                     android:hint="Institution" />
@@ -246,6 +260,8 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_faculty"
                     android:drawablePadding="10dp"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"
                     android:hint="Faculty" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -259,6 +275,8 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_department"
                     android:drawablePadding="10dp"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"
                     android:hint="Department" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -270,7 +288,7 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="center_horizontal"
                 android:text="Personal"
-                android:textColor="@color/black"
+                android:textColor="?attr/title_textcolor"
                 android:textSize="18sp" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -283,6 +301,8 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_like"
                     android:drawablePadding="10dp"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"
                     android:hint="Relationship Status" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -296,7 +316,9 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_fullname"
                     android:drawablePadding="10dp"
-                    android:hint="About you" />
+                    android:hint="About you"
+                    android:textColorHint="?attr/textcolor"
+                    android:textColor="?attr/title_textcolor"/>
             </com.google.android.material.textfield.TextInputLayout>
 
 

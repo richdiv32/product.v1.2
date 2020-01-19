@@ -24,6 +24,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -127,6 +128,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 editor.apply();
 
                 ((FragmentActivity)mContext).startActivity(new Intent(mContext, UserProfileActivity.class));
+                Animatoo.animateZoom(mContext);
             }
         });
 
@@ -138,6 +140,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 editor.apply();
 
                 ((FragmentActivity)mContext).startActivity(new Intent(mContext, UserProfileActivity.class));
+                Animatoo.animateZoom(mContext);
             }
         });
 
@@ -149,6 +152,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 editor.apply();
 
                 ((FragmentActivity)mContext).startActivity(new Intent(mContext, UserProfileActivity.class));
+                Animatoo.animateZoom(mContext);
             }
         });
 //
@@ -159,6 +163,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 intent.putExtra("postid", post.getPostid());
                 intent.putExtra("publisherid", post.getPublisher());
                 mContext.startActivity(intent);
+                Animatoo.animateShrink(mContext);
             }
         });
 
@@ -185,6 +190,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 intent.putExtra("postid", post.getPostid());
                 intent.putExtra("publisherid", post.getPublisher());
                 mContext.startActivity(intent);
+                Animatoo.animateShrink(mContext);
             }
         });
 
@@ -199,6 +205,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 intent.putExtra("postid", post.getPostid());
                 intent.putExtra("publisherid", post.getPublisher());
                 mContext.startActivity(intent);
+                Animatoo.animateShrink(mContext);
 
             }
         });
@@ -210,6 +217,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 intent.putExtra("id", post.getPostid());
                 intent.putExtra("title", "likes");
                 mContext.startActivity(intent);
+                Animatoo.animateShrink(mContext);
             }
         });
 
