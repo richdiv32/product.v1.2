@@ -1,4 +1,4 @@
-package com.ng.campusbuddy.adapter;
+package com.ng.campusbuddy.model;
 
 public class ScreenItem {
 

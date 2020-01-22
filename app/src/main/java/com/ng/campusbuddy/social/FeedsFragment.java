@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.agrawalsuneet.dotsloader.loaders.LazyLoader;
@@ -43,6 +46,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedsFragment extends Fragment {
 
+    private RecyclerView UsersPostrecyclerView;
+    private List<Post> UserpostList;
+
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
     private List<Post> postList;
@@ -51,16 +57,19 @@ public class FeedsFragment extends Fragment {
     private StoryAdapter storyAdapter;
     private List<Story> storyList;
 
+
+
     private List<String> followingList;
 
     ProgressBar progress_circular;
     LazyLoader lazyLoader;
 
-
-
     FloatingActionButton post_fab;
 
     SliderView sliderView;
+
+    ImageButton UsersPost, FollowPost;
+    ImageView Line_1, Line_2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,6 +87,19 @@ public class FeedsFragment extends Fragment {
         postAdapter = new PostAdapter(getContext(), postList);
         recyclerView.setAdapter(postAdapter);
 
+
+        UsersPostrecyclerView = view.findViewById(R.id.users_post_recycler);
+        UsersPostrecyclerView.setHasFixedSize(true);
+        LinearLayoutManager uLayoutManager = new LinearLayoutManager(getContext());
+        uLayoutManager.setReverseLayout(true);
+        uLayoutManager.setStackFromEnd(true);
+        UsersPostrecyclerView.setLayoutManager(uLayoutManager);
+        UserpostList = new ArrayList<>();
+        postAdapter = new PostAdapter(getContext(), UserpostList);
+        UsersPostrecyclerView.setAdapter(postAdapter);
+
+
+
         recyclerView_story = view.findViewById(R.id.recycler_view_story);
         recyclerView_story.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
@@ -87,7 +109,10 @@ public class FeedsFragment extends Fragment {
         storyAdapter = new StoryAdapter(getContext(), storyList);
         recyclerView_story.setAdapter(storyAdapter);
 
+
+
         progress_circular = view.findViewById(R.id.progress_circular);
+
 //        lazyLoader = view.findViewById(R.id.progress_dot);
 //        LazyLoader loader = new LazyLoader(getActivity(), 30, 20, ContextCompat.getColor(getActivity(), R.color.loader_selected),
 //                ContextCompat.getColor(getActivity(), R.color.loader_selected), ContextCompat.getColor(getActivity(), R.color.loader_selected));
@@ -108,7 +133,51 @@ public class FeedsFragment extends Fragment {
 
         sliderView = view.findViewById(R.id.ADsSlider);
         ADimageslider();
+
+        UsersPost = view.findViewById(R.id.users_post);
+        FollowPost = view.findViewById(R.id.follow_post);
+        Line_1 = view.findViewById(R.id.line_1);
+        Line_2 = view.findViewById(R.id.line_2);
+
+        recyclerView.setVisibility(View.VISIBLE);
+        recyclerView_story.setVisibility(View.VISIBLE);
+        UsersPostrecyclerView.setVisibility(View.GONE);
+
+        Init();
+
+        loadAllPosts();
+
         return view;
+    }
+
+    private void Init() {
+
+
+        FollowPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.setVisibility(View.VISIBLE);
+                recyclerView_story.setVisibility(View.VISIBLE);
+                UsersPostrecyclerView.setVisibility(View.GONE);
+                Line_1.setVisibility(View.VISIBLE);
+                Line_2.setVisibility(View.GONE);
+
+            }
+        });
+
+        UsersPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.setVisibility(View.GONE);
+                recyclerView_story.setVisibility(View.GONE);
+                UsersPostrecyclerView.setVisibility(View.VISIBLE);
+                Line_1.setVisibility(View.GONE);
+                Line_2.setVisibility(View.VISIBLE);
+
+
+            }
+        });
+
     }
 
     private void ADimageslider() {
@@ -124,7 +193,6 @@ public class FeedsFragment extends Fragment {
         sliderView.startAutoCycle();
     }
 
-
     private void PostInit() {
         post_fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +201,6 @@ public class FeedsFragment extends Fragment {
             }
         });
     }
-
 
     private void checkFollowing(){
         followingList = new ArrayList<>();
@@ -216,6 +283,31 @@ public class FeedsFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void loadAllPosts() {
+        //path of all posts
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        //get all data from this ref
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds:dataSnapshot.getChildren()){
+                    Post post = ds.getValue(Post.class);
+
+                    UserpostList.add(post);
+
+                }
+
+                readPosts();
+                readStory();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });

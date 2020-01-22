@@ -15,10 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,6 +45,40 @@ public class LoginActivity extends AppCompatActivity {
         InitSignUp();
         InitForgotPassword();
 
+        TextView verification = findViewById(R.id.resen_verifiaction_link);
+        verification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText Email = findViewById(R.id.email);
+                final EditText Password = findViewById(R.id.password);
+
+                String str_email = Email.getText().toString();
+                String str_password = Password.getText().toString();
+
+                if (TextUtils.isEmpty(str_email) || TextUtils.isEmpty(str_password)){
+                    Toast.makeText(LoginActivity.this, "All fields are required!", Toast.LENGTH_SHORT).show();
+                }
+                else {
+
+                    auth.signInWithEmailAndPassword(str_email, str_password)
+                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        SendVerificationEmail();
+                                    }
+                                    else {
+                                        String message = task.getException().getMessage();
+                                        Toast.makeText(LoginActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+
+            }
+        });
+
+
     }
 
     private void InitForgotPassword() {
@@ -51,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
+                Animatoo.animateSwipeLeft(LoginActivity.this);
             }
         });
     }
@@ -62,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
+                Animatoo.animateSwipeRight(LoginActivity.this);
                 finish();
             }
         });
@@ -98,32 +136,79 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
 
-                                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users")
-                                                .child(auth.getCurrentUser().getUid());
+//                                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users")
+//                                                .child(auth.getCurrentUser().getUid());
+//
+//                                        reference.addValueEventListener(new ValueEventListener() {
+//                                            @Override
+//                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                                pd.dismiss();
+//                                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+//                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                                startActivity(intent);
+//                                                finish();
+//                                            }
+//
+//                                            @Override
+//                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                                                pd.dismiss();
+//                                            }
+//                                        });
 
-                                        reference.addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                pd.dismiss();
-                                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
-                                                finish();
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                pd.dismiss();
-                                            }
-                                        });
-                                    } else {
+                                        CheckVerification();
+                                    }
+                                    else {
                                         pd.dismiss();
-                                        Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                        String message = task.getException().getMessage();
+                                        Toast.makeText(LoginActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
                 }
             }
         });
+    }
+
+    private void CheckVerification() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Boolean emailCheck = user.isEmailVerified();
+
+        if (emailCheck ){
+            startActivity(new Intent(this, HomeActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            Animatoo.animateZoom(this);
+            finish();
+        }
+        else {
+            Toast.makeText(this, "Please check your mail to verify your account first", Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
+        }
+    }
+
+    private void SendVerificationEmail() {
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null){
+            user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+
+                        Toast.makeText(LoginActivity.this, "Weldon, We sent a verifcation mail to you. Please check your email...", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+                        Animatoo.animateSwipeRight(LoginActivity.this);
+                        finish();
+                        auth.signOut();
+                    }
+                    else {
+                        String message = task.getException().getMessage();
+                        Toast.makeText(LoginActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                        auth.signOut();
+                    }
+                }
+            });
+        }
+
     }
 }

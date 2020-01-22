@@ -88,7 +88,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        storageRef = FirebaseStorage.getInstance().getReference("uploads");
+        storageRef = FirebaseStorage.getInstance().getReference("profile_image");
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
@@ -134,9 +134,9 @@ public class EditProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 updateProfile(fullname.getText().toString(),
                         username.getText().toString(),
-                        bio.getText().toString(),Birthday.getText().toString(),  Relationship_status.getText().toString(),
-                        Telephone.getText().toString(), Institution.getText().toString(), Faculty.getText().toString(),
-                        Department.getText().toString(), Profile_status.getText().toString(), Gender.getText().toString());
+                        bio.getText().toString(),Birthday.getText().toString(),  Relationship_status.getText().toString().toLowerCase(),
+                        Telephone.getText().toString(), Institution.getText().toString().toUpperCase(), Faculty.getText().toString().toUpperCase(),
+                        Department.getText().toString().toUpperCase(), Profile_status.getText().toString(), Gender.getText().toString().toLowerCase());
             }
         });
 

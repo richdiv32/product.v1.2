@@ -255,10 +255,13 @@ public class ProfileActivity extends AppCompatActivity {
                     String username = dataSnapshot.child("username").getValue().toString();
                     String profile_status = dataSnapshot.child("profile_status").getValue().toString();
 
-//                    Glide.with(getApplicationContext())
-//                            .load(profile_image)
-//                            .into(image_profile);
-                    Picasso.get().load(profile_image).into(image_profile);
+                    if(profile_image.isEmpty()){
+                        Picasso.get().load(R.drawable.profile_bg).into(image_profile);
+                    }
+                    else {
+                        Picasso.get().load(profile_image).into(image_profile);
+                    }
+
 
                     Fullname.setText(fullname);
                     Username.setText(username);

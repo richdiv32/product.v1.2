@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.auth.LoginActivity;
+import com.ng.campusbuddy.auth.SetUpProfileActivity;
 import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.social.SocialActivity;
 import com.ng.campusbuddy.utils.SharedPref;
@@ -59,9 +60,10 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+//                Intent splash = new Intent(SplashActivity.this, IntroActivity.class);
                 Intent splash = new Intent(SplashActivity.this, IntroActivity.class);
                 startActivity(splash);
-                Animatoo.animateSpin(SplashActivity.this);
+                Animatoo.animateZoom(SplashActivity.this);
                 finish();
             }
         }, SPLASH_SCREEN_TIME_OUT);

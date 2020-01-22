@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.model.ScreenItem;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +33,11 @@ public class IntroViewPagerAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        @SuppressLint("InflateParams") View layoutScreen = Objects.requireNonNull(inflater).inflate(R.layout.layout_screen,null);
+        @SuppressLint("InflateParams") View layoutScreen = null;
+//        @SuppressLint("InflateParams") View layoutScreen = Objects.requireNonNull(inflater).inflate(R.layout.layout_screen,null);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            layoutScreen = Objects.requireNonNull(inflater).inflate(R.layout.layout_screen,null);
+        }
 
         ImageView imgSlide = layoutScreen.findViewById(R.id.intro_img);
         TextView title = layoutScreen.findViewById(R.id.intro_title);

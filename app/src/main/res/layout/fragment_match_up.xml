@@ -1,10 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".social.MatchUpFragment"
-    android:background="#E91E63">
+    android:background="?attr/backgroundcolor"
+    tools:context=".social.MatchUpFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.lorentzos.flingswipe.SwipeFlingAdapterView
+            android:id="@+id/match_card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:max_visible="10"
+            app:min_adapter_stack="5"
+            app:rotation_degrees="16">
+
+        </com.lorentzos.flingswipe.SwipeFlingAdapterView>
+
+        <ImageButton
+            android:id="@+id/like_btn"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_circle"
+            android:src="@drawable/ic_match_up"
+            android:tint="@android:color/holo_blue_dark" />
+
+        <ImageButton
+            android:id="@+id/love_btn"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_circle"
+            android:src="@drawable/ic_match_up"
+            android:tint="@color/colorPrimary" />
+
+    </RelativeLayout>
 
 
-</FrameLayout>
+</RelativeLayout>

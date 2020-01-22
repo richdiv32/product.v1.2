@@ -42,6 +42,7 @@ import com.ng.campusbuddy.model.User;
 import com.ng.campusbuddy.post.PostDetailActivity;
 import com.ng.campusbuddy.profile.FollowersActivity;
 import com.ng.campusbuddy.profile.UserProfileActivity;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -402,7 +403,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(mContext).load(user.getImageurl()).into(image_profile);
+                Picasso.get().load(user.getImageurl()).into(image_profile);
                 username.setText(user.getUsername());
                 publisher.setText(user.getUsername());
             }

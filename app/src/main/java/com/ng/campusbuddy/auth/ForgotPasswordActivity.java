@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +43,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent back = new Intent(ForgotPasswordActivity.this, LoginActivity.class);
                 back.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                Animatoo.animateSwipeRight(ForgotPasswordActivity.this);
                 startActivity(back);
 
             }
@@ -68,6 +70,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                             if (task.isSuccessful()){
                                 Toast.makeText(ForgotPasswordActivity.this, "Please check you Email", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
+                                Animatoo.animateSwipeRight(ForgotPasswordActivity.this);
                             } else {
                                 String error = task.getException().getMessage();
                                 Toast.makeText(ForgotPasswordActivity.this, error, Toast.LENGTH_SHORT).show();

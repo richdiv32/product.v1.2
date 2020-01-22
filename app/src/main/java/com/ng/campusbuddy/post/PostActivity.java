@@ -3,6 +3,7 @@ package com.ng.campusbuddy.post;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -12,10 +13,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.Continuation;
@@ -23,15 +27,21 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.model.Post;
+import com.ng.campusbuddy.profile.ProfileActivity;
 import com.ng.campusbuddy.social.SocialActivity;
 import com.ng.campusbuddy.utils.SharedPref;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.HashMap;
@@ -45,8 +55,6 @@ public class PostActivity extends AppCompatActivity {
     private StorageTask uploadTask;
     StorageReference storageRef;
 
-    ImageView image_added;
-    TextView done;
     EditText description;
 
     @Override
@@ -61,14 +69,27 @@ public class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-//        Init();
-
-        image_added = findViewById(R.id.image_added);
-        done = findViewById(R.id.done);
         description = findViewById(R.id.description);
 
         storageRef = FirebaseStorage.getInstance().getReference("posts");
 
+
+
+        Init();
+//        LoadUserInfo();
+        LoadImage();
+    }
+
+    private void Init() {
+        ImageButton Back = findViewById(R.id.nav_button);
+        Back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        TextView done = findViewById(R.id.done);
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,28 +97,125 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
+        ImageView image_added = findViewById(R.id.image_added);
+        image_added.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CropImage.activity()
+                        .setAspectRatio(1,1)
+                        .start(PostActivity.this);
+            }
+        });
 
-        CropImage.activity()
-                .setAspectRatio(1,1)
-                .start(PostActivity.this);
+
+        final RelativeLayout ImageLayout = findViewById(R.id.post_imageLayout);
+        final CardView TextLayout = findViewById(R.id.post_textLayout);
+
+        ImageLayout.setVisibility(View.VISIBLE);
+        TextLayout.setVisibility(View.GONE);
+
+        ImageButton Button_post_text = findViewById(R.id.btn_post_text);
+        Button_post_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageLayout.setVisibility(View.GONE);
+                TextLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        ImageButton Button_post_image = findViewById(R.id.btn_post_image);
+        Button_post_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageLayout.setVisibility(View.VISIBLE);
+                TextLayout.setVisibility(View.GONE);
+            }
+        });
+
+
+
+
     }
 
-//    private void Init() {
+//    private void LoadUserInfo() {
 //
-//        TextView Username = findViewById(R.id.username);
-//        CircleImageView Profile_image = findViewById(R.id.image_profile);
+//        final CircleImageView Profile_image = findViewById(R.id.image_profile);
+//        final TextView Username = findViewById(R.id.nav_username);
 //
-//        // Username
-//        Username.setText(R.string.profile_username);
+//        Profile_image.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(PostActivity.this, ProfileActivity.class));
+//                Animatoo.animateSplit(PostActivity.this);
+//            }
+//        });
 //
 //        //        Loading profile image
-//        Glide.with(this)
-//                .load(getString(R.string.Profile_Image_link))
-//                .thumbnail(0.5f)
-//                .centerCrop()
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .into(Profile_image);
+//        String profileid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//        DatabaseReference Nav_reference = FirebaseDatabase.getInstance().getReference().child("Users");
+//        Nav_reference.child(profileid).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.exists()){
+//                    String profile_image = dataSnapshot.child("imageurl").getValue().toString();
+//                    String username = dataSnapshot.child("username").getValue().toString();
+//
+//
+//                    Picasso.get()
+//                            .load(profile_image)
+//                            .centerCrop()
+//                            .into(Profile_image);
+//
+//
+////                    Username.setText(username);
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 //    }
+
+    private void LoadImage() {
+
+        final CircleImageView Profile_image = findViewById(R.id.image_profile);
+        final TextView Username = findViewById(R.id.username);
+
+        Profile_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(PostActivity.this, ProfileActivity.class));
+                Animatoo.animateSplit(PostActivity.this);
+            }
+        });
+
+        //        Loading profile image
+        String profileid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference Nav_reference = FirebaseDatabase.getInstance().getReference().child("Users");
+        Nav_reference.child(profileid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    String profile_image = dataSnapshot.child("imageurl").getValue().toString();
+                    String username = dataSnapshot.child("username").getValue().toString();
+
+                    Glide.with(getApplicationContext())
+                            .load(profile_image)
+                            .into(Profile_image);
+
+                    Username.setText(username);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();
@@ -171,10 +289,11 @@ public class PostActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             mImageUri = result.getUri();
 
+            ImageView image_added = findViewById(R.id.image_added);
             image_added.setImageURI(mImageUri);
         } else {
             Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(PostActivity.this, SocialActivity.class));
+            startActivity(new Intent(PostActivity.this, PostActivity.class));
             finish();
         }
     }

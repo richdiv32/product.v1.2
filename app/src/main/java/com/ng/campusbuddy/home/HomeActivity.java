@@ -42,6 +42,10 @@ import com.ng.campusbuddy.utils.SharedPref;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -54,6 +58,36 @@ public class HomeActivity extends AppCompatActivity {
     FirebaseUser firebaseUser;
     FirebaseAuth mAuth;
     DatabaseReference user_Ref;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        firebaseUser = mAuth.getCurrentUser();
+
+        //check if user is null
+        if (firebaseUser != null) {
+            final String current_uid = firebaseUser.getUid();
+
+            DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
+            UserRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (!dataSnapshot.hasChild(current_uid)) {
+                        startActivity(new Intent(mcontext, SetUpProfileActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        }
+    }
 
 
 
@@ -84,43 +118,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
-        firebaseUser = mAuth.getCurrentUser();
-
-        //check if user is null
-        if (firebaseUser == null){
-            startActivity(new Intent(mcontext, WelcomeActivity.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-            finish();
-        }
-//        else {
-//            final String current_uid = mAuth.getCurrentUser().getUid();
-//
-//            user_Ref.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    if(!dataSnapshot.hasChild(current_uid)){
-//                        startActivity(new Intent(mcontext, SetUpProfileActivity.class)
-//                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-//                        finish();
-//                    }
-//                    else {
-//                        Toast.makeText(mcontext, "Welcome to Campus Buddy", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                }
-//            });
-//        }
-    }
-
     private void AdMod() {
         MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
         AdView mAdview = findViewById(R.id.adView);
@@ -132,8 +129,9 @@ public class HomeActivity extends AppCompatActivity {
 
         SliderView sliderView = findViewById(R.id.ADsSlider);
         SliderAdapterADs adapter = new SliderAdapterADs(this);
-        sliderView.setSliderAdapter(adapter);
+//        List<SliderAdapterADs> sliderArrayList = new ArrayList<>();
 
+        sliderView.setSliderAdapter(adapter);
         sliderView.setIndicatorAnimation(IndicatorAnimations.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
         sliderView.setSliderTransformAnimation(SliderAnimations.CUBEINROTATIONTRANSFORMATION);
         sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
@@ -146,6 +144,15 @@ public class HomeActivity extends AppCompatActivity {
     private void LoadImage() {
 
         final CircleImageView Profile_image = findViewById(R.id.image_profile);
+
+        Profile_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mcontext, ProfileActivity.class));
+                Animatoo.animateSplit(mcontext);
+            }
+        });
+
         //        Loading profile image
         String profileid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference Nav_reference = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -193,18 +200,16 @@ public class HomeActivity extends AppCompatActivity {
                     String username = dataSnapshot.child("username").getValue().toString();
                     String profile_status = dataSnapshot.child("profile_status").getValue().toString();
 
-                    Glide.with(getApplicationContext())
-                            .load(profile_image)
-                            .into(Profile_image);
 
-//                    Picasso.get(HomeActivity.this)
-//                            .load(profile_image)
-//                            .centerCrop()
-//                            .into(Profile_image);
-
-
+                    Picasso.get().load(profile_image).into(Profile_image);
                     Username.setText(username);
                     Profile_status.setText(profile_status);
+                }
+                else{
+
+                    Picasso.get().load(R.drawable.profile_bg).into(Profile_image);
+                    Username.setText("Username");
+                    Profile_status.setText("Hey there, am on Campus Buddy");
                 }
             }
 
@@ -243,8 +248,7 @@ public class HomeActivity extends AppCompatActivity {
         navigationHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent profile = new Intent(mcontext, ProfileActivity.class);
-                startActivity(profile);
+                startActivity(new Intent(mcontext, ProfileActivity.class));
                 Animatoo.animateSplit(mcontext);
             }
         });

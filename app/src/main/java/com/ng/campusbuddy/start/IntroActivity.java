@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.google.android.material.tabs.TabLayout;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.adapter.IntroViewPagerAdapter;
-import com.ng.campusbuddy.adapter.ScreenItem;
+import com.ng.campusbuddy.model.ScreenItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,10 +64,10 @@ public class IntroActivity extends AppCompatActivity {
 
         // fill list screen
         final List<ScreenItem> mList = new ArrayList<>();
-        mList.add(new ScreenItem("EDUCATIVE","Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, consectetur  consectetur adipiscing elit",R.drawable.slide_education));
-        mList.add(new ScreenItem("SOCIALIZE","Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, consectetur  consectetur adipiscing elit",R.drawable.slide_social));
-        mList.add(new ScreenItem("ENTERTAINING","Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, consectetur  consectetur adipiscing elit",R.drawable.slide_entertainment));
-        mList.add(new ScreenItem("LUCRATIVE","Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, consectetur  consectetur adipiscing elit",R.drawable.slide_work));
+        mList.add(new ScreenItem("INQUIRE","Be Updated on recent information's, tips, gist and more revolving on campus",R.drawable.slide_education));
+        mList.add(new ScreenItem("LEARN","Cultivating a much better Academic life made easy, get easy access to crucial academic related resources to aid your College Education",R.drawable.slide_social));
+        mList.add(new ScreenItem("CONNECT","Stay in touch with friends and colleagues on campus. Build your social life by posting and engaging in our social platform by acquiring more followers",R.drawable.slide_entertainment));
+        mList.add(new ScreenItem("GROW","Establish yourself and become to better version of yourself",R.drawable.slide_work));
 
         // setup viewpager
         screenPager =findViewById(R.id.screen_viewpager);

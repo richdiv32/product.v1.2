@@ -80,10 +80,9 @@
         android:background="@drawable/chat_bg"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
 
             <androidx.recyclerview.widget.RecyclerView
@@ -93,7 +92,7 @@
 
             </androidx.recyclerview.widget.RecyclerView>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </androidx.core.widget.NestedScrollView>
 

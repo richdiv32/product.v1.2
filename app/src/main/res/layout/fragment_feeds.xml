@@ -49,8 +49,67 @@
                     android:layout_toRightOf="@id/nav_button"/>
 
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@+id/nav_button"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageButton
+                            android:id="@+id/follow_post"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@color/space_transparent"
+                            android:src="@drawable/ic_follow_post"
+                            android:tint="?attr/textcolor" />
+
+                        <ImageView
+                            android:id="@+id/line_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:tint="?attr/textcolor"
+                            app:srcCompat="@drawable/background2" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageButton
+                            android:id="@+id/users_post"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/ic_globe"
+                            android:tint="?attr/textcolor" />
+
+                        <ImageView
+                            android:id="@+id/line_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:tint="?attr/textcolor"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/background2" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </RelativeLayout>
+
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -83,18 +142,27 @@
                 app:sliderIndicatorSelectedColor="#5A5A5A"
                 app:sliderIndicatorUnselectedColor="@color/colorPrimary"
                 app:sliderScrollTimeInSec="1"
-                app:sliderStartAutoCycle="true" />
+                app:sliderStartAutoCycle="true">
+
+            </com.smarteist.autoimageslider.SliderView>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/recycler_view_story"
-                android:layout_margin="5dp"/>
-
-            <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/recycler_view" />
+                android:layout_margin="5dp">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/users_post_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </LinearLayout>
 
@@ -103,13 +171,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
         <ProgressBar
             android:id="@+id/progress_circular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:outlineAmbientShadowColor="@color/grey"
-            android:progressTint="@color/black"/>
+            android:progressTint="@color/black" />
 
 <!--        <com.agrawalsuneet.dotsloader.loaders.LazyLoader-->
 <!--            android:id="@+id/progress_dot"-->

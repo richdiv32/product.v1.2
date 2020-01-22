@@ -15,7 +15,7 @@
         <item name="tintcolor">#ffffff</item>
         <item name="buttoncolor">#FF0000</item>
 
-        <item name="android:popupAnimationStyle">@style/WindowAnimationTransition</item>
+<!--        <item name="android:popupAnimationStyle">@style/WindowAnimationTransition</item>-->
 <!--        <item name="android:windowLightStatusBar" tools:targetApi="23">@color/black</item>-->
     </style>
 
@@ -33,7 +33,7 @@
         <item name="tintcolor">#ffffff</item>
         <item name="buttoncolor">#FF0000</item>
 
-        <item name="android:popupAnimationStyle">@style/WindowAnimationTransition</item>
+<!--        <item name="android:popupAnimationStyle">@style/WindowAnimationTransition</item>-->
         <!--        <item name="android:windowLightStatusBar" tools:targetApi="23">@color/black</item>-->
     </style>
 

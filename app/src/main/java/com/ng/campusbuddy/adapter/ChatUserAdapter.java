@@ -61,6 +61,7 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
 
 
         final User user = mUsers.get(position);
+
         holder.username.setText(user.getUsername());
 //        Glide.with(mContext).load(user.getImageurl()).into(holder.profile_image);
 
@@ -88,7 +89,8 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
                 holder.img_on.setVisibility(View.GONE);
                 holder.img_off.setVisibility(View.VISIBLE);
             }
-        } else {
+        }
+        else {
             holder.img_on.setVisibility(View.GONE);
             holder.img_off.setVisibility(View.GONE);
         }
@@ -155,6 +157,13 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
                         if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
                                 chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
                             theLastMessage = chat.getMessage();
+
+//                            if (chat.getType().equals("image")){
+//                                theLastMessage = "Sent a photo";
+//                            }
+//                            else {
+//                                theLastMessage = chat.getMessage();
+//                            }
                         }
                     }
                 }

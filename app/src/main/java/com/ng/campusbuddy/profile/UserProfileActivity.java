@@ -54,7 +54,7 @@ public class UserProfileActivity extends AppCompatActivity {
     ImageButton my_photos, saved_photos, Info;
 
     TextView Bio, Birthday, Gender, Relationship_status
-            , Institution, Faculty, Department, Email, Telephone;
+            , Institution, Faculty, Department,Telephone;
 
     private LinearLayout profile_info_layout;
 
@@ -99,7 +99,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
         Bio = findViewById(R.id.bio);
         Birthday = findViewById(R.id.birthday);
-        Email = findViewById(R.id.email);
         Relationship_status = findViewById(R.id.relationship_status);
         Institution = findViewById(R.id.institution);
         Faculty = findViewById(R.id.faculty);
@@ -192,7 +191,6 @@ public class UserProfileActivity extends AppCompatActivity {
                         User user = dataSnapshot.getValue(User.class);
                         Bio.setText(user.getBio());
                         Birthday.setText(user.getBirthday());
-                        Email.setText(user.getEmail());
                         Gender.setText(user.getGender());
                         Institution.setText(user.getInstitution());
                         Faculty.setText(user.getFaculty());

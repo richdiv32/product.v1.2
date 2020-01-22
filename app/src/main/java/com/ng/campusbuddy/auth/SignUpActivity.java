@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -50,6 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                Animatoo.animateSwipeLeft(SignUpActivity.this);
                 finish();
             }
         });
@@ -57,7 +59,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void InitSignUp() {
 
-        final EditText Username = findViewById(R.id.username);
         final EditText Email = findViewById(R.id.email);
         final EditText Password = findViewById(R.id.password);
         final EditText Comfirm_password = findViewById(R.id.confirm_password);
@@ -77,14 +78,12 @@ public class SignUpActivity extends AppCompatActivity {
                 pd.show();
                 pd.setCanceledOnTouchOutside(true);
 
-                String str_username = Username.getText().toString().toLowerCase();
                 String str_email = Email.getText().toString();
                 String str_password = Password.getText().toString();
                 String str_confirm_password = Comfirm_password.getText().toString();
 
 
-                if (TextUtils.isEmpty(str_username)  || TextUtils.isEmpty(str_email)
-                        || TextUtils.isEmpty(str_password) || TextUtils.isEmpty(str_confirm_password)){
+                if (TextUtils.isEmpty(str_email) || TextUtils.isEmpty(str_password) || TextUtils.isEmpty(str_confirm_password)){
                     Toast.makeText(SignUpActivity.this, "All fields are required!", Toast.LENGTH_SHORT).show();
                 }
                 else if(str_password.length() < 6){
@@ -94,14 +93,14 @@ public class SignUpActivity extends AppCompatActivity {
                     Toast.makeText(SignUpActivity.this, "Your password does not match with your confirm password", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    register(str_username, str_email, str_password, str_confirm_password);
+                    register(str_email, str_password, str_confirm_password);
                 }
 
             }
         });
     }
 
-    private void register(final String Username, final String Email, String Password,
+    private void register(final String Email, String Password,
                           String Confirm_password) {
 
         mAuth.createUserWithEmailAndPassword(Email, Password)
@@ -109,45 +108,42 @@ public class SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
-                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                            String userID = firebaseUser.getUid();
 
-                            reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
-                            HashMap<String, Object> map = new HashMap<>();
-                            map.put("id", userID);
-                            map.put("username", Username.toLowerCase());
-                            map.put("fullname", "");
-                            map.put("email", Email);
-                           map.put("imageurl", "");
-                            map.put("online_status", "online");
-                            map.put("search", Username.toLowerCase());
-                            map.put("birthday", "");
-                            map.put("telephone", "");
-                            map.put("relationship_status", "");
-                            map.put("institution", "");
-                            map.put("faculty", "");
-                            map.put("department", "");
-                            map.put("bio", "");
-                            map.put("gender", "");
-                            map.put("profile_status", "Hey there, I am on Campus Buddy");
-
-
-                            reference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
-                                        pd.dismiss();
-                                        Intent intent = new Intent(SignUpActivity.this, SetUpProfileActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
-                                    }
-                                }
-                            });
-                        } else {
+                            SendVerificationEmail();
+                        }
+                        else {
                             pd.dismiss();
-                            Toast.makeText(SignUpActivity.this, "You can't register with this email or password", Toast.LENGTH_SHORT).show();
+                            String message = task.getException().getMessage();
+                            Toast.makeText(SignUpActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    private void SendVerificationEmail() {
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null){
+            user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+
+                        Toast.makeText(SignUpActivity.this, "Weldon, We sent a verifcation mail to you. Please check your email...", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                        Animatoo.animateSwipeRight(SignUpActivity.this);
+                        finish();
+                        mAuth.signOut();
+                    }
+                    else {
+                        String message = task.getException().getMessage();
+                        Toast.makeText(SignUpActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                        mAuth.signOut();
+                    }
+                }
+            });
+        }
+
     }
 }

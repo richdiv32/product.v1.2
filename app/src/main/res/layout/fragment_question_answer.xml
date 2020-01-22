@@ -4,8 +4,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".education.QuestionAnswerFragment"
-    android:background="#FFEB3B">
-
-
-
-</FrameLayout>
+    android:background="#FFEB3B"/>

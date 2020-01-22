@@ -26,6 +26,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.model.Chat;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.List;
@@ -65,18 +66,34 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         Chat chat = mChat.get(position);
 
-
         String timeStamp = mChat.get(position).getTimestamp();
+        String type = mChat.get(position).getType();
 
         //converting time stamp to dd/mm/yyyy hh:mm am/pm
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(Long.parseLong(timeStamp));
         String dateTime = DateFormat.format("hh:mm aa, dd/MM", cal).toString();
 
-        holder.show_message.setText(chat.getMessage());
         holder.txt_date.setText(dateTime);
 
 
+        if (type.equals("text")){
+            //text message
+            holder.show_message.setVisibility(View.VISIBLE);
+            holder.show_image.setVisibility(View.GONE);
+
+            holder.show_message.setText(chat.getMessage());
+        }
+        else {
+            //image
+            holder.show_message.setVisibility(View.GONE);
+            holder.show_image.setVisibility(View.VISIBLE);
+
+            Picasso.get()
+                    .load(chat.getMessage())
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.show_image);
+        }
 
         if (imageurl.equals("default")){
             holder.profile_image.setImageResource(R.mipmap.ic_launcher);
@@ -168,7 +185,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public  class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView show_message;
-        public ImageView profile_image;
+        public ImageView profile_image, show_image;
         public TextView txt_seen, txt_date;
         public RelativeLayout messageLayout; //for click listner to show delete
 
@@ -176,6 +193,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             super(itemView);
 
             show_message = itemView.findViewById(R.id.show_message);
+            show_image = itemView.findViewById(R.id.show_image);
             profile_image = itemView.findViewById(R.id.profile_image);
             txt_seen = itemView.findViewById(R.id.txt_seen);
             txt_date = itemView.findViewById(R.id.txt_date);
