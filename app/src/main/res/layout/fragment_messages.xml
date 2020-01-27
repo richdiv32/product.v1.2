@@ -67,10 +67,11 @@
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_chat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/recycler_view_chat"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"

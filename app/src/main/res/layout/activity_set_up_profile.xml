@@ -101,6 +101,37 @@
                 android:paddingLeft="20dp"
                 android:textColorHint="@color/white" />
 
+            <RadioGroup
+                android:id="@+id/gender_group"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/trans_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:drawableRight="@drawable/ic_relationship"
+                    android:soundEffectsEnabled="true"
+                    android:text="male"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:drawableRight="@drawable/ic_relationship"
+                    android:soundEffectsEnabled="true"
+                    android:text="female"
+                    android:textColor="@color/white" />
+            </RadioGroup>
+
             <EditText
                 android:id="@+id/gender"
                 android:layout_width="match_parent"
@@ -113,7 +144,8 @@
                 android:ems="10"
                 android:hint="Gender"
                 android:paddingLeft="20dp"
-                android:textColorHint="@color/white" />
+                android:textColorHint="@color/white"
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/relationship_status"

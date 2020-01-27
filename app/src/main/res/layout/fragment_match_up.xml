@@ -5,11 +5,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/backgroundcolor"
-    tools:context=".social.MatchUpFragment">
+    tools:context=".social.fragments.MatchUpFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/appbarcolor">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Match Up"
+                    android:textColor="?attr/title_textcolor"
+                    android:textSize="30dp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="DO YOU LIKE HIM / HER?"
+            android:textColor="?attr/textcolor"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/bar">
 
         <com.lorentzos.flingswipe.SwipeFlingAdapterView
             android:id="@+id/match_card"
@@ -21,21 +61,13 @@
 
         </com.lorentzos.flingswipe.SwipeFlingAdapterView>
 
-        <ImageButton
-            android:id="@+id/like_btn"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bg_circle"
-            android:src="@drawable/ic_match_up"
-            android:tint="@android:color/holo_blue_dark" />
 
         <ImageButton
             android:id="@+id/love_btn"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_centerVertical="false"
             android:background="@drawable/bg_circle"
             android:src="@drawable/ic_match_up"
             android:tint="@color/colorPrimary" />

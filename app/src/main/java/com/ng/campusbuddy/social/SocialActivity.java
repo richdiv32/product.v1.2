@@ -1,16 +1,13 @@
 package com.ng.campusbuddy.social;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,29 +17,28 @@ import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.ng.campusbuddy.education.EducationActivity;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.profile.ProfileActivity;
+import com.ng.campusbuddy.social.fragments.ChatRoomFragment;
+import com.ng.campusbuddy.social.fragments.FeedsFragment;
+import com.ng.campusbuddy.social.fragments.FindFriendFragment;
+import com.ng.campusbuddy.social.fragments.MatchUpFragment;
+import com.ng.campusbuddy.social.fragments.MessagesFragment;
 import com.ng.campusbuddy.start.WelcomeActivity;
-import com.ng.campusbuddy.notification.Token;
 import com.ng.campusbuddy.tools.NotificationsActivity;
 import com.ng.campusbuddy.tools.SettingsActivity;
 import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -128,7 +124,7 @@ public class SocialActivity extends AppCompatActivity {
                     String username = dataSnapshot.child("username").getValue().toString();
                     String profile_status = dataSnapshot.child("profile_status").getValue().toString();
 
-                    Glide.with(mcontext)
+                    Glide.with(getApplicationContext())
                             .load(profile_image)
                             .into(Profile_image);
                     Username.setText(username);

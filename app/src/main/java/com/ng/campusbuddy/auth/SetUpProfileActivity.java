@@ -14,15 +14,15 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -31,15 +31,10 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.home.HomeActivity;
-import com.ng.campusbuddy.post.PostActivity;
-import com.ng.campusbuddy.profile.EditProfileActivity;
-import com.ng.campusbuddy.social.SocialActivity;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -58,7 +53,9 @@ public class SetUpProfileActivity extends AppCompatActivity {
 
 
     EditText Username,Fullname,Birthday,Relationship_status,Telephone,Institution
-            ,Faculty,Department,Bio,Gender;
+            ,Faculty,Department,Bio;
+
+    RadioGroup mRadioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +74,8 @@ public class SetUpProfileActivity extends AppCompatActivity {
         Faculty = findViewById(R.id.faculty);
         Department = findViewById(R.id.department);
         Bio = findViewById(R.id.bio);
-        Gender = findViewById(R.id.gender);
+
+        mRadioGroup = findViewById(R.id.gender_group);
 
         Init();
     }
@@ -105,50 +103,6 @@ public class SetUpProfileActivity extends AppCompatActivity {
         });
     }
 
-//    private void SaveInfo() {
-//
-//        pd = new ProgressDialog(SetUpProfileActivity.this);
-//        pd.setTitle("That's All");
-//        pd.setMessage("Setting up a profile page for you, Please Wait.....");
-//        pd.show();
-//        pd.setCanceledOnTouchOutside(true);
-//
-//
-//
-//
-//        else if (mImageUri == null){
-//            Toast.makeText(this, "Select a profile image", Toast.LENGTH_SHORT).show();
-//        }
-//
-//        else {
-//            UploadData(str_username, str_fullname, str_birthday, str_gender, str_relationship_status,
-//                    str_telephone, str_institution, str_faculty, str_department, str_bio);
-//
-//            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-//            DatabaseReference User_reference = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
-//
-//            User_reference.updateChildren(map)
-//                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                @Override
-//                public void onComplete(@NonNull Task<Void> task) {
-//                    if (task.isSuccessful()){
-//                        pd.dismiss();
-//                        Toast.makeText(SetUpProfileActivity.this, "Welcome to Campus Buddy", Toast.LENGTH_SHORT).show();
-//                        startActivity(new Intent(SetUpProfileActivity.this, HomeActivity.class)
-//                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-//                        Animatoo.animateSlideUp(SetUpProfileActivity.this);
-//                        finish();
-//                    }
-//                    else {
-//                        pd.dismiss();
-//                        String message = task.getException().getMessage();
-//                        Toast.makeText(SetUpProfileActivity.this, "Error Occurred: " + message, Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            });
-//        }
-//    }
-
 
     private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();
@@ -161,6 +115,10 @@ public class SetUpProfileActivity extends AppCompatActivity {
         pd.setMessage("Saving");
         pd.show();
 
+        int selectId = mRadioGroup.getCheckedRadioButtonId();
+        final RadioButton radioButton = findViewById(selectId);
+
+
         final String str_username = Username.getText().toString().toLowerCase();
         final String str_fullname = Fullname.getText().toString();
         final String str_birthday = Birthday.getText().toString();
@@ -170,15 +128,27 @@ public class SetUpProfileActivity extends AppCompatActivity {
         final String str_faculty = Faculty.getText().toString().toUpperCase();
         final String str_department = Department.getText().toString().toUpperCase();
         final String str_bio = Bio.getText().toString();
-        final String str_gender = Gender.getText().toString().toLowerCase();
+
+
 
         if (TextUtils.isEmpty(str_username)  || TextUtils.isEmpty(str_fullname) || TextUtils.isEmpty(str_birthday) || TextUtils.isEmpty(str_relationship_status)
                 || TextUtils.isEmpty(str_telephone) || TextUtils.isEmpty(str_institution)
                 || TextUtils.isEmpty(str_faculty) || TextUtils.isEmpty(str_department) || TextUtils.isEmpty(str_bio)
-                || TextUtils.isEmpty(str_bio) || TextUtils.isEmpty(str_gender)){
+                || TextUtils.isEmpty(str_bio)){
             Toast.makeText(SetUpProfileActivity.this, "All fields are required!", Toast.LENGTH_SHORT).show();
+            pd.dismiss();
         }
-        else if (mImageUri != null){
+        else if(radioButton.getText() == null){
+            Toast.makeText(SetUpProfileActivity.this, "Select your gender", Toast.LENGTH_SHORT).show();
+            pd.dismiss();
+            return;
+        }
+        else if (mImageUri == null){
+            Toast.makeText(SetUpProfileActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
+            pd.dismiss();
+        }
+        else {
+
             StorageReference storageRef = FirebaseStorage.getInstance().getReference("profile_image");
             final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
                     + "." + getFileExtension(mImageUri));
@@ -208,13 +178,13 @@ public class SetUpProfileActivity extends AppCompatActivity {
                         map.put("username", str_username);
                         map.put("fullname", str_fullname);
                         map.put("birthday", str_birthday);
-                        map.put("gender", str_gender);
                         map.put("relationship_status", str_relationship_status);
                         map.put("telephone", str_telephone);
                         map.put("institution", str_institution);
                         map.put("faculty", str_faculty);
                         map.put("department", str_department);
                         map.put("bio", str_bio);
+                        map.put("gender", radioButton.getText().toString());
                         map.put("id", userid);
                         map.put("online_status", "online");
                         map.put("profile_status", "Hey there, I am on Campus Buddy");
@@ -236,9 +206,6 @@ public class SetUpProfileActivity extends AppCompatActivity {
                     Toast.makeText(SetUpProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-
-        } else {
-            Toast.makeText(SetUpProfileActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
         }
     }
 

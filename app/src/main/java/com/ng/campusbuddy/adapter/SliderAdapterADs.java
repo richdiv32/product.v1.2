@@ -1,6 +1,7 @@
 package com.ng.campusbuddy.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
+
 import com.ng.campusbuddy.R;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 
@@ -16,9 +20,12 @@ public class SliderAdapterADs  extends SliderViewAdapter<SliderAdapterADs.Slider
 
     private Context context;
 
+
     public SliderAdapterADs(Context context) {
         this.context = context;
     }
+
+
 
     @Override
     public SliderAdapterVH onCreateViewHolder(ViewGroup parent) {
@@ -28,7 +35,9 @@ public class SliderAdapterADs  extends SliderViewAdapter<SliderAdapterADs.Slider
 
     @Override
     public void onBindViewHolder(SliderAdapterVH viewHolder, final int position) {
+
         viewHolder.textViewDescription.setText("This is slider item " + position);
+
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,6 +45,7 @@ public class SliderAdapterADs  extends SliderViewAdapter<SliderAdapterADs.Slider
                 Toast.makeText(context, "you clicked" + position, Toast.LENGTH_SHORT).show();
             }
         });
+
 
         switch (position) {
             case 0:
@@ -122,7 +132,7 @@ public class SliderAdapterADs  extends SliderViewAdapter<SliderAdapterADs.Slider
 
             default:
                 Glide.with(viewHolder.itemView)
-                        .load("")
+                        .load(R.drawable.placeholder)
                         .centerCrop()
                         .into(viewHolder.imageViewBackground);
                 break;
@@ -150,4 +160,6 @@ public class SliderAdapterADs  extends SliderViewAdapter<SliderAdapterADs.Slider
             this.itemView = itemView;
         }
     }
+
+    
 }

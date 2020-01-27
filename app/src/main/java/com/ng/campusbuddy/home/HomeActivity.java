@@ -3,13 +3,13 @@ package com.ng.campusbuddy.home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -21,6 +21,8 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,12 +31,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ng.campusbuddy.adapter.SliderAdapterADs;
 import com.ng.campusbuddy.auth.SetUpProfileActivity;
 import com.ng.campusbuddy.education.EducationActivity;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.model.AD;
 import com.ng.campusbuddy.profile.ProfileActivity;
 import com.ng.campusbuddy.social.SocialActivity;
-import com.ng.campusbuddy.adapter.SliderAdapterADs;
 import com.ng.campusbuddy.start.WelcomeActivity;
 import com.ng.campusbuddy.tools.NotificationsActivity;
 import com.ng.campusbuddy.tools.SettingsActivity;
@@ -127,11 +130,10 @@ public class HomeActivity extends AppCompatActivity {
 
     private void ADimageslider() {
 
-        SliderView sliderView = findViewById(R.id.ADsSlider);
+        final SliderView sliderView = findViewById(R.id.ADsSlider);
         SliderAdapterADs adapter = new SliderAdapterADs(this);
-//        List<SliderAdapterADs> sliderArrayList = new ArrayList<>();
-
         sliderView.setSliderAdapter(adapter);
+
         sliderView.setIndicatorAnimation(IndicatorAnimations.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
         sliderView.setSliderTransformAnimation(SliderAnimations.CUBEINROTATIONTRANSFORMATION);
         sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);

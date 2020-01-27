@@ -1,7 +1,6 @@
 package com.ng.campusbuddy.tools;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,6 +9,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,7 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.adapter.NotificationAdapter;
-import com.ng.campusbuddy.model.Notification;
+import com.ng.campusbuddy.utils.Notification;
 import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;
@@ -67,7 +69,15 @@ public class NotificationsActivity extends AppCompatActivity {
         recyclerView.setAdapter(notificationAdapter);
 
         readNotifications();
+        AdMod();
 
+    }
+
+    private void AdMod() {
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        AdView mAdview = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdview.loadAd(adRequest);
     }
 
     private void readNotifications(){

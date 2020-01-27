@@ -18,11 +18,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.ng.campusbuddy.model.Notification;
-import com.ng.campusbuddy.model.Post;
-import com.ng.campusbuddy.model.User;
+import com.ng.campusbuddy.utils.Notification;
+import com.ng.campusbuddy.social.post.Post;
+import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.post.PostDetailActivity;
+import com.ng.campusbuddy.social.post.PostDetailActivity;
 import com.ng.campusbuddy.profile.UserProfileActivity;
 
 import java.util.List;

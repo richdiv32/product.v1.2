@@ -16,11 +16,13 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".social.message.GroupChatActivity"></activity>
+        <activity android:name=".social.matches.MatchesActivity" />
         <activity
             android:name=".tools.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
-        <activity android:name=".post.story.StoryActivity" />
-        <activity android:name=".post.story.AddStoryActivity" />
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".social.post.story.StoryActivity" />
+        <activity android:name=".social.post.story.AddStoryActivity" />
         <activity
             android:name=".auth.SetUpProfileActivity"
             android:screenOrientation="portrait" />
@@ -32,10 +34,10 @@
             android:parentActivityName=".profile.ProfileActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".profile.FollowersActivity" />
-        <activity android:name=".post.PostDetailActivity" />
+        <activity android:name=".social.post.PostDetailActivity" />
         <activity android:name=".social.message.ChatActivity" />
         <activity android:name=".tools.NotificationsActivity" />
-        <activity android:name=".post.PostActivity">
+        <activity android:name=".social.post.PostActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -49,6 +51,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".education.EducationActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/DrawerStyle" />
         <activity
             android:name=".profile.ProfileActivity"
@@ -94,7 +97,7 @@
             android:value="ca-app-pub-3940256099942544~3347511713" />
 
         <service
-            android:name=".notification.MyFirebaseMessaging"
+            android:name=".utils.FirebaseMessaging"
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false">

@@ -16,15 +16,17 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/auth_bg"/>
+            android:id="@+id/image"
+            android:scaleType="centerCrop"/>
 
         <TextView
-            android:id="@+id/match_text"
+            android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="@color/white"
-            android:textSize="40sp" />
+            android:textSize="40sp"
+            android:visibility="gone"/>
     </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

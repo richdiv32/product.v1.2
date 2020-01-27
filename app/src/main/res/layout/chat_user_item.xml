@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp"
+    android:id="@+id/chatUserLayout"
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
@@ -23,7 +24,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@id/profile_image"
                 android:text="username"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="?attr/title_textcolor"/>
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
@@ -70,7 +72,7 @@
                 android:layout_toRightOf="@id/profile_image"
                 android:maxLines="1"
                 android:paddingTop="5dp"
-                android:textColor="@color/colorPrimaryDark" />
+                android:textColor="?attr/textcolor" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 

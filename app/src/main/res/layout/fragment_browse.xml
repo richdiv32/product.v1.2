@@ -73,7 +73,44 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical" >
+
+            <ViewFlipper
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/AD_filpper"
+                android:flipInterval="3000"
+                android:autoStart="true"
+                android:inAnimation="@android:anim/slide_in_left"
+                android:outAnimation="@android:anim/slide_out_right"
+                android:scrollIndicators="bottom"
+                tools:targetApi="m">
+
+                <ImageView
+                    android:id="@+id/ad_1_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/placeholder" />
+
+                <ImageView
+                    android:id="@+id/ad_2_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/placeholder" />
+
+                <ImageView
+                    android:id="@+id/ad_3_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/placeholder" />
+
+            </ViewFlipper>
+
+
+        </RelativeLayout>
 
     </androidx.core.widget.NestedScrollView>
 

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,12 @@ public class LoginActivity extends AppCompatActivity {
         verification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
+                pd.setTitle("Sending Verification Code");
+                pd.setMessage("Please wait.....");
+                pd.show();
+                pd.setCanceledOnTouchOutside(true);
+
                 final EditText Email = findViewById(R.id.email);
                 final EditText Password = findViewById(R.id.password);
 
@@ -56,7 +63,8 @@ public class LoginActivity extends AppCompatActivity {
                 String str_password = Password.getText().toString();
 
                 if (TextUtils.isEmpty(str_email) || TextUtils.isEmpty(str_password)){
-                    Toast.makeText(LoginActivity.this, "All fields are required!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Input your email and password", Toast.LENGTH_SHORT).show();
+
                 }
                 else {
 
@@ -65,9 +73,11 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+                                        pd.dismiss();
                                         SendVerificationEmail();
                                     }
                                     else {
+                                        pd.dismiss();
                                         String message = task.getException().getMessage();
                                         Toast.makeText(LoginActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
                                     }
@@ -128,6 +138,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(str_email) || TextUtils.isEmpty(str_password)){
                     Toast.makeText(LoginActivity.this, "All fields are required!", Toast.LENGTH_SHORT).show();
+                    pd.dismiss();
                 } else {
 
                     auth.signInWithEmailAndPassword(str_email, str_password)
@@ -135,27 +146,8 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-
-//                                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users")
-//                                                .child(auth.getCurrentUser().getUid());
-//
-//                                        reference.addValueEventListener(new ValueEventListener() {
-//                                            @Override
-//                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                                pd.dismiss();
-//                                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-//                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                                startActivity(intent);
-//                                                finish();
-//                                            }
-//
-//                                            @Override
-//                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                                                pd.dismiss();
-//                                            }
-//                                        });
-
                                         CheckVerification();
+                                        pd.dismiss();
                                     }
                                     else {
                                         pd.dismiss();
@@ -170,6 +162,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void CheckVerification() {
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Boolean emailCheck = user.isEmailVerified();
 
@@ -210,5 +203,16 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
+    }
+
+    private void googleauth(){
+        ImageButton GoogleAuth = findViewById(R.id.google_btn);
+
+        GoogleAuth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 }

@@ -64,9 +64,9 @@ public class IntroActivity extends AppCompatActivity {
 
         // fill list screen
         final List<ScreenItem> mList = new ArrayList<>();
-        mList.add(new ScreenItem("INQUIRE","Be Updated on recent information's, tips, gist and more revolving on campus",R.drawable.slide_education));
-        mList.add(new ScreenItem("LEARN","Cultivating a much better Academic life made easy, get easy access to crucial academic related resources to aid your College Education",R.drawable.slide_social));
-        mList.add(new ScreenItem("CONNECT","Stay in touch with friends and colleagues on campus. Build your social life by posting and engaging in our social platform by acquiring more followers",R.drawable.slide_entertainment));
+        mList.add(new ScreenItem("INQUIRE","Be Updated on recent information's, tips, gist and more revolving on campus",R.drawable.slide_entertainment));
+        mList.add(new ScreenItem("LEARN","Cultivating a much better Academic life made easy, get easy access to crucial academic related resources to aid your College Education",R.drawable.slide_education));
+        mList.add(new ScreenItem("CONNECT","Stay in touch with friends and colleagues on campus. Build your social life by posting and engaging in our social platform by acquiring more followers",R.drawable.slide_social));
         mList.add(new ScreenItem("GROW","Establish yourself and become to better version of yourself",R.drawable.slide_work));
 
         // setup viewpager

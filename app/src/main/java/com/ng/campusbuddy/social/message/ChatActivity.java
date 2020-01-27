@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -50,15 +51,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.adapter.MessageAdapter;
-import com.ng.campusbuddy.model.Chat;
-import com.ng.campusbuddy.model.User;
-import com.ng.campusbuddy.notification.Data;
-import com.ng.campusbuddy.notification.MyResponse;
-import com.ng.campusbuddy.notification.Token;
-import com.ng.campusbuddy.notification.Sender;
+import com.ng.campusbuddy.social.User;
+import com.ng.campusbuddy.utils.Data;
+import com.ng.campusbuddy.utils.SharedPref;
+import com.ng.campusbuddy.utils.Token;
+import com.ng.campusbuddy.utils.Sender;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,17 +100,27 @@ public class ChatActivity extends AppCompatActivity {
     //permissions constants
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
+
     //image pick constants
     private static final int IMAGE_PICK_CAMERA_CODE = 300;
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
+
     //permissions array
     String[] cameraPermissions;
     String[] storagePermissions;
+
     //for image
     Uri image_rui = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPref sharedPref = new SharedPref(this);
+        if (sharedPref.loadNightModeState() == true){
+            setTheme(R.style.AppDarkTheme);
+        }
+        else{
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
@@ -140,6 +148,7 @@ public class ChatActivity extends AppCompatActivity {
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
 
+        //volley request
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
 
@@ -164,12 +173,14 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 notify = true;
-                String msg = text_send.getText().toString();
+                String msg = text_send.getText().toString().trim();
                 if (!msg.equals("")){
                     sendMessage(fuser.getUid(), userid, msg);
                 } else {
                     Toast.makeText(ChatActivity.this, "You can't send empty message", Toast.LENGTH_SHORT).show();
                 }
+
+                //reset edittext after sending message
                 text_send.setText("");
             }
         });
@@ -427,7 +438,7 @@ public class ChatActivity extends AppCompatActivity {
                             hashMap.put("message", downloadUri);
                             hashMap.put("timestamp", timeStamp);
                             hashMap.put("type", "image");
-                            hashMap.put("", false);
+                            hashMap.put("isSeen", false);
 
                             databaseReference.child("Chats").push().setValue(hashMap);
 
@@ -499,6 +510,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         //failed
+                        Toast.makeText(ChatActivity.this, "Error Occured", Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
                     }
                 });
@@ -512,8 +524,12 @@ public class ChatActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(fuser.getUid(), R.mipmap.ic_launcher_round, username+": "+message, "New Message",
-                            userid);
+                    Data data = new Data(""+fuser.getUid(),
+                            R.mipmap.ic_launcher_foreground,
+                            ""+username+": "+message,
+                            "New Message",
+                            ""+userid,
+                            "ChatNotification");
 
                     Sender sender = new Sender(data, token.getToken());
 
@@ -525,11 +541,12 @@ public class ChatActivity extends AppCompatActivity {
                                     @Override
                                     public void onResponse(JSONObject response) {
                                         //response of the request
+                                        Log.d("JSON_RESPONSE", "onResponse: "+response.toString());
                                     }
                                 }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-
+                                Log.d("JSON_RESPONSE", "onResponse: "+error.toString());
                             }
                         }){
                             @Override
@@ -539,6 +556,9 @@ public class ChatActivity extends AppCompatActivity {
                                 headers.put("Content-Type", "application/json");
                                 headers.put("Authorization", "key= AAAAwTB5AhQ:APA91bEu8Ma29SIWNCWcdcuI93O6cgybCefaEa-m97bHCHkATKekLfV1OHcSA8YnqD74tp9Bvua_31AAZ9vrSwii-dDmCt00IA2UPn1IrGzW9Yi0Yo0GmlrCRbfVUiizVCFxK9qQqaSS");
 
+                                //TODO : Ckeck Google server key
+                                // AIzaSyCu-GjMjBy2C_8jgeOGCI9YNFrprRQkqew
+
                                 return headers;
                             }
                         };
@@ -547,7 +567,7 @@ public class ChatActivity extends AppCompatActivity {
                         requestQueue.add(jsonObjectRequest);
                     }
                     catch (JSONException e){
-
+                        e.printStackTrace();
                     }
 
                 }
@@ -593,11 +613,11 @@ public class ChatActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private void status(String status){
+    private void status(String online_status){
         reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
 
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("online_status", status);
+        hashMap.put("online_status", online_status);
 
         reference.updateChildren(hashMap);
     }

@@ -1,7 +1,6 @@
 package com.ng.campusbuddy.profile;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +12,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,9 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.adapter.MyPhotosAdapter;
-import com.ng.campusbuddy.model.Post;
-import com.ng.campusbuddy.model.User;
+import com.ng.campusbuddy.social.post.Post;
+import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;

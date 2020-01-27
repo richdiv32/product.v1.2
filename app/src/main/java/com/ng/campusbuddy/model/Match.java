@@ -1,38 +1,36 @@
 package com.ng.campusbuddy.model;
 
+
+
 public class Match {
+    private String userId;
+    private String name;
+    private String profileImageUrl;
 
-    private String id;
-    private String imageurl;
-    private String gender;
-
-    public Match(String id, String imageurl, String gender) {
-        this.id = id;
-        this.imageurl = imageurl;
-        this.gender = gender;
+    public Match(String userId, String name, String profileImageUrl){
+        this.userId = userId;
+        this.name = name;
+        this.profileImageUrl = profileImageUrl;
     }
 
-    public String getId() {
-        return id;
+    public String getUserId(){
+        return userId;
+    }
+    public void setUserID(String userID){
+        this.userId = userId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getName(){
+        return name;
+    }
+    public void setName(String name){
+        this.name = name;
     }
 
-    public String getImageurl() {
-        return imageurl;
+    public String getProfileImageUrl(){
+        return profileImageUrl;
     }
-
-    public void setImageurl(String imageurl) {
-        this.imageurl = imageurl;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setProfileImageUrl(String profileImageUrl){
+        this.profileImageUrl = profileImageUrl;
     }
 }
