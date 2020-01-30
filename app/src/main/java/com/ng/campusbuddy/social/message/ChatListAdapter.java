@@ -24,7 +24,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.social.User;
@@ -35,7 +34,7 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHolder> {
+public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> {
 
     private Context mContext;
     private List<User> mUsers;
@@ -44,7 +43,7 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
     String theLastMessage;
     private FirebaseUser firebaseUser;
 
-    public ChatUserAdapter(Context mContext, List<User> mUsers, boolean ischat){
+    public ChatListAdapter(Context mContext, List<User> mUsers, boolean ischat){
         this.mUsers = mUsers;
         this.mContext = mContext;
         this.ischat = ischat;
@@ -82,7 +81,7 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
         }
 
         if (ischat){
-            if (user.getStatus().equals("online")){
+            if (user.getOnline_status().equals("online")){
                 holder.img_on.setVisibility(View.VISIBLE);
                 holder.img_off.setVisibility(View.GONE);
             } else {

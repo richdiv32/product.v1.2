@@ -14,6 +14,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,7 +116,7 @@ public class PostActivity extends AppCompatActivity {
 
 
         final RelativeLayout ImageLayout = findViewById(R.id.post_imageLayout);
-        final CardView TextLayout = findViewById(R.id.post_textLayout);
+        final LinearLayout TextLayout = findViewById(R.id.post_textLayout);
 
         ImageLayout.setVisibility(View.VISIBLE);
         TextLayout.setVisibility(View.GONE);

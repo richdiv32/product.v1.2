@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/chat_bg">
+    android:background="?attr/backgroundcolor">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:background="?attr/appbarcolor">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
             app:toolbarId="@+id/toolbar">
 
@@ -22,7 +22,7 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="70dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -39,33 +39,40 @@
                         app:srcCompat="@drawable/ic_arrow_back"
                         tools:ignore="VectorDrawableCompat" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/profile_image"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                    <RelativeLayout
+                        android:id="@+id/profile_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_toRightOf="@id/back_btn"
-                        android:background="@drawable/profile_bg" />
+                        android:layout_toRightOf="@id/back_btn">
 
-                    <TextView
-                        android:id="@+id/username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="false"
-                        android:layout_marginLeft="5dp"
-                        android:layout_toRightOf="@id/profile_image"
-                        android:text="Username"
-                        android:textColor="?attr/title_textcolor"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/username"
+                            android:layout_alignLeft="@id/username"
+                            android:layout_toRightOf="@id/profile_image"
+                            android:textColor="?attr/textcolor" />
 
-                    <TextView
-                        android:id="@+id/status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/username"
-                        android:layout_alignLeft="@id/username"
-                        android:textColor="?attr/textcolor" />
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/profile_image"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/profile_bg" />
+
+                        <TextView
+                            android:id="@+id/username"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_toRightOf="@id/profile_image"
+                            android:text="Username"
+                            android:textColor="?attr/title_textcolor"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
 
                 </RelativeLayout>
 
@@ -78,6 +85,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="54dp"
+        android:background="@drawable/chat_bg"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <RelativeLayout

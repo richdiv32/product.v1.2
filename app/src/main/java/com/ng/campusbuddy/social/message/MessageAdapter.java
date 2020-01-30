@@ -112,37 +112,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             holder.txt_seen.setVisibility(View.GONE);
         }
 
-        //click to show delete dialog
-//        holder.messageLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //show delete message confirm dialog
-//                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-//                builder.setTitle("Delete");
-//                builder.setMessage("Are you sure to delete this message?");
-//                //delete button
-//                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                        deleteMessage(position);
-//
-//                    }
-//                });
-//                //cancel delete button
-//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        //dismiss dialog
-//                        dialog.dismiss();
-//                    }
-//                });
-//
-//                //create and show dialog
-//                builder.create().show();
-//            }
-//        });
-
         holder.messageLayout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

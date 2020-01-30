@@ -14,13 +14,13 @@ public class User {
     private String department;
     private String institution;
     private String email;
-    private String status;
+    private String online_status;
     private String relationship_status;
     private String search;
 
     public User(String id, String username, String fullname, String imageurl,
                 String bio, String gender, String birthday, String telephone, String faculty,
-                String department, String institution, String email, String status,
+                String department, String institution, String email, String online_status,
                 String relationship_status, String profile_status, String search) {
         this.id = id;
         this.profile_status = profile_status;
@@ -35,7 +35,7 @@ public class User {
         this.department = department;
         this.institution = institution;
         this.email = email;
-        this.status = status;
+        this.online_status = online_status;
         this.relationship_status = relationship_status;
         this.search = search;
 
@@ -135,11 +135,12 @@ public class User {
         this.email = email;
     }
 
-    public String getStatus() {
-        return status;
+    public String getOnline_status() {
+        return online_status;
     }
-    public void setStatus(String status) {
-        this.status = status;
+
+    public void setOnline_status(String online_status) {
+        this.online_status = online_status;
     }
 
     public String getRelationship_status() {

@@ -1,6 +1,8 @@
 package com.ng.campusbuddy.social;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
@@ -9,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
@@ -97,6 +101,44 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
             }
         });
 
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                // show delete message confirm dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Block");
+                builder.setMessage("Are you sure to block this user?");
+                //delete button
+                builder.setPositiveButton("Block", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+//                        deleteChat(position);
+                        Toast.makeText(mContext, "User Blocked", Toast.LENGTH_SHORT).show();
+
+                        holder.btn_follow.setVisibility(View.GONE);
+                        holder.btn_message.setVisibility(View.GONE);
+                        holder.block_img.setVisibility(View.VISIBLE);
+
+                    }
+                });
+                //cancel delete button
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //dismiss dialog
+                        dialog.dismiss();
+                    }
+                });
+
+                //create and show dialog
+                builder.create().show();
+
+                return false;
+            }
+        });
+
         holder.btn_follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,6 +197,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
         public CircleImageView image_profile;
         public Button btn_follow;
         public Button btn_message;
+        public ImageView block_img;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -164,6 +207,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
             image_profile = itemView.findViewById(R.id.image_profile);
             btn_follow = itemView.findViewById(R.id.btn_follow);
             btn_message = itemView.findViewById(R.id.btn_message);
+            block_img = itemView.findViewById(R.id.blocked_image);
         }
     }
 

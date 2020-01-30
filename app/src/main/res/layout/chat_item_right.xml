@@ -27,7 +27,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"
             android:text="02/03/2020 05:59PM"
-            android:textColor="@color/grey"
+            android:textColor="?attr/title_textcolor"
             android:textSize="12sp" />
 
         <LinearLayout

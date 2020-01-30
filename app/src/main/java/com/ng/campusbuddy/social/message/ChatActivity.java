@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,6 +54,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.utils.Data;
 import com.ng.campusbuddy.utils.SharedPref;
@@ -81,7 +84,7 @@ public class ChatActivity extends AppCompatActivity {
     DatabaseReference reference;
     ValueEventListener seenListener;
 
-    ImageButton btn_send, back_btn, attach_btn;
+    ImageButton btn_send, back_btn, attach_btn, emoji_btn;
     EditText text_send;
 
     MessageAdapter messageAdapter;
@@ -160,14 +163,59 @@ public class ChatActivity extends AppCompatActivity {
 
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
-        btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_send);
         online_status = findViewById(R.id.status);
-        attach_btn = findViewById(R.id.btn_attachment);
 
         intent = getIntent();
         userid = intent.getStringExtra("userid");
         fuser = FirebaseAuth.getInstance().getCurrentUser();
+
+
+
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                username.setText(user.getUsername());
+
+                if (user.getImageurl().equals("default")){
+                    profile_image.setImageResource(R.mipmap.ic_launcher);
+                } else {
+                    //and this
+                    Glide.with(getApplicationContext()).load(user.getImageurl()).into(profile_image);
+                }
+
+                if (user.getOnline_status().equals("online")){
+                    online_status.setText(user.getOnline_status());
+                }
+                else {
+                    //converting time stamp to dd/mm/yyyy hh:mm am/pm
+                    Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+                    cal.setTimeInMillis(Long.parseLong(user.getOnline_status()));
+                    String dateTime = DateFormat.format("dd/MM/yy, hh:mm aa", cal).toString();
+
+                    online_status.setText("Last seen at: " + dateTime);
+                }
+
+                readMesagges(fuser.getUid(), userid, user.getImageurl());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        Init();
+        seenMessage(userid);
+    }
+
+    private void Init(){
+        attach_btn = findViewById(R.id.btn_attachment);
+        emoji_btn = findViewById(R.id.emoji_btn);
+        btn_send = findViewById(R.id.btn_send);
 
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,45 +240,28 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-
-
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
-
-        reference.addValueEventListener(new ValueEventListener() {
+        emoji_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                username.setText(user.getUsername());
-
-                if (user.getImageurl().equals("default")){
-                    profile_image.setImageResource(R.mipmap.ic_launcher);
-                } else {
-                    //and this
-                    Glide.with(getApplicationContext()).load(user.getImageurl()).into(profile_image);
-                }
-
-                if (user.getStatus().equals("online")){
-                    online_status.setText(user.getStatus());
-                }
-                else {
-                    //converting time stamp to dd/mm/yyyy hh:mm am/pm
-                    Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-                    cal.setTimeInMillis(Long.parseLong(user.getStatus()));
-                    String dateTime = DateFormat.format("dd/MM/yy, hh:mm aa", cal).toString();
-
-                    online_status.setText("Last seen at: " + dateTime);
-                }
-
-                readMesagges(fuser.getUid(), userid, user.getImageurl());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            public void onClick(View v) {
+                Toast.makeText(ChatActivity.this, "Send awesome emoji, soon :)", Toast.LENGTH_SHORT).show();
             }
         });
 
-        seenMessage(userid);
+        RelativeLayout Profile_layout = findViewById(R.id.profile_layout);
+        Profile_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                editor.putString("profileid", userid);
+                editor.apply();
+
+                getApplicationContext().startActivity(new Intent(getApplicationContext(), UserProfileActivity.class));
+                Animatoo.animateSplit(ChatActivity.this);
+            }
+        });
+
+
     }
 
     private void showImagePickDialog() {
@@ -696,10 +727,16 @@ public class ChatActivity extends AppCompatActivity {
 
                 //send uri to firebase storage
                 sendImageMessage(image_rui);
+
+                //set uri to local output
+
             }
             else if (requestCode == IMAGE_PICK_CAMERA_CODE){
                 //image is picked from camera, get uri of image
                 sendImageMessage(image_rui);
+            }
+            else {
+                Toast.makeText(this, "Image sending unsuccessful", Toast.LENGTH_SHORT).show();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

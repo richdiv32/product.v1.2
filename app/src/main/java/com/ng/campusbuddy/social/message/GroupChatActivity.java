@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,11 +22,14 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.service.quicksettings.Tile;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +43,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -57,6 +62,7 @@ import com.ng.campusbuddy.utils.Data;
 import com.ng.campusbuddy.utils.Sender;
 import com.ng.campusbuddy.utils.SharedPref;
 import com.ng.campusbuddy.utils.Token;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,7 +79,7 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class GroupChatActivity extends AppCompatActivity {
-    CircleImageView profile_image;
+    CircleImageView group_image;
     TextView title, description;
 
     FirebaseUser fuser;
@@ -90,7 +96,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
     Intent intent;
 
-    String userid;
+    String groupid;
 
     //volley request queue for notification
     private RequestQueue requestQueue;
@@ -157,16 +163,16 @@ public class GroupChatActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        profile_image = findViewById(R.id.profile_image);
+        group_image = findViewById(R.id.profile_image);
         title = findViewById(R.id.title);
         btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_send);
         description = findViewById(R.id.description);
         attach_btn = findViewById(R.id.btn_attachment);
 
-//        intent = getIntent();
-//        userid = intent.getStringExtra("userid");
-//        fuser = FirebaseAuth.getInstance().getCurrentUser();
+        intent = getIntent();
+        groupid = intent.getStringExtra("groupid");
+        fuser = FirebaseAuth.getInstance().getCurrentUser();
 
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,43 +198,40 @@ public class GroupChatActivity extends AppCompatActivity {
         });
 
 
-//        reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
-//
-//        reference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                User user = dataSnapshot.getValue(User.class);
-//                username.setText(user.getUsername());
-//
-//                if (user.getImageurl().equals("default")){
-//                    profile_image.setImageResource(R.mipmap.ic_launcher);
-//                } else {
-//                    //and this
-//                    Glide.with(getApplicationContext()).load(user.getImageurl()).into(profile_image);
-//                }
-//
-//                if (user.getStatus().equals("online")){
-//                    online_status.setText(user.getStatus());
-//                }
-//                else {
-//                    //converting time stamp to dd/mm/yyyy hh:mm am/pm
-//                    Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-//                    cal.setTimeInMillis(Long.parseLong(user.getStatus()));
-//                    String dateTime = DateFormat.format("dd/MM/yy, hh:mm aa", cal).toString();
-//
-//                    online_status.setText("Last seen at: " + dateTime);
-//                }
-//
+        reference = FirebaseDatabase.getInstance().getReference().child("Grouplist")
+                .child(fuser.getUid());
+
+
+        reference.child(groupid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Grouplist grouplist = dataSnapshot.getValue(Grouplist.class);
+
+                title.setText(grouplist.getTitle());
+
+                if (grouplist.getGroupimage().equals("")){
+                    group_image.setImageResource(R.mipmap.ic_launcher);
+                }
+                else {
+
+                    Picasso.get()
+                            .load(grouplist.getGroupimage())
+                            .placeholder(R.drawable.placeholder)
+                            .into(group_image);
+                }
+
+
 //                readMesagges(fuser.getUid(), userid, user.getImageurl());
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 //        seenMessage(userid);
+        SetupNavigationDrawer();
     }
 
     private void showImagePickDialog() {
@@ -611,39 +614,7 @@ public class GroupChatActivity extends AppCompatActivity {
         editor.apply();
     }
 
-//    private void status(String online_status){
-//        reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-//
-//        HashMap<String, Object> hashMap = new HashMap<>();
-//        hashMap.put("online_status", online_status);
-//
-//        reference.updateChildren(hashMap);
-//    }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        status("online");
-//        currentUser(userid);
-//    }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        status("online");
-//        currentUser(userid);
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//
-//        String timestamp = String.valueOf(System.currentTimeMillis());
-//
-//        reference.removeEventListener(seenListener);
-//        status(timestamp);
-//        currentUser("none");
-//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -705,6 +676,170 @@ public class GroupChatActivity extends AppCompatActivity {
 
     }
 
+    private void SetupNavigationDrawer() {
+
+        DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
+        NavigationView navigationView = findViewById(R.id.nav_drawer);
+        View headerview=navigationView.getHeaderView(0);
+        RelativeLayout navigationHeader = headerview.findViewById(R.id.nav_header_container);
+        ImageButton EditButton = headerview.findViewById(R.id.edit_button);
+        ImageButton AddButton = headerview.findViewById(R.id.add_user);
+
+        // name, prfoile status
+        final TextView Title = headerview.findViewById(R.id.group_title);
+        final TextView Creator = headerview.findViewById(R.id.creator);
+        final ImageView Group_image = headerview.findViewById(R.id.group_image);
+
+//        //        Loading profile image
+//        DatabaseReference Nav_reference = FirebaseDatabase.getInstance().getReference().child("Grouplist")
+//                .child(fuser.getUid());
+//
+//        Nav_reference.child(groupid).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+////                if (dataSnapshot.exists()){
+////                    String group_image = dataSnapshot.child("groupimage").getValue().toString();
+////                    String title = dataSnapshot.child("title").getValue().toString();
+//////                    String creator = dataSnapshot.child("profile_status").getValue().toString();
+////
+////
+////                    Picasso.get().load(group_image).into(Group_image);
+////                    Title.setText(title);
+//////                    Profile_status.setText(profile_status);
+////                }
+////                else{
+////
+////                    Picasso.get().load(R.drawable.chat_bg).into(Group_image);
+//////                    Username.setText("Username");
+//////                    Profile_status.setText("Hey there, am on Campus Buddy");
+////                }
+//
+//                Grouplist grouplist = dataSnapshot.getValue(Grouplist.class);
+//
+//                Title.setText(grouplist.getTitle());
+//
+//                if (grouplist.getGroupimage().equals("")){
+//                    Group_image.setImageResource(R.drawable.chat_bg);
+//                }
+//                else {
+//
+//                    Picasso.get()
+//                            .load(grouplist.getGroupimage())
+//                            .placeholder(R.drawable.placeholder)
+//                            .into(Group_image);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+
+        DatabaseReference Nav_reference = FirebaseDatabase.getInstance().getReference().child("Grouplist")
+                .child(fuser.getUid());
+
+
+        Nav_reference.child(groupid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Grouplist grouplist = dataSnapshot.getValue(Grouplist.class);
+
+                if (dataSnapshot.exists()){
+                    Title.setText(grouplist.getTitle());
+
+                    if (grouplist.getGroupimage().equals("")){
+                        Group_image.setImageResource(R.drawable.chat_bg);
+                    }
+                    else {
+
+                        Picasso.get()
+                                .load(grouplist.getGroupimage())
+                                .placeholder(R.drawable.placeholder)
+                                .into(Group_image);
+                    }
+                }
+//                else {
+//
+//                    Picasso.get().load(R.drawable.auth_bg).into(Group_image);
+//                    Title.setText("Title");
+//                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
+        navigationHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(GroupChatActivity.this, "Edit Group Image", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        EditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(GroupChatActivity.this, "Edit Group Name", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(GroupChatActivity.this, "Add User", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+//        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+//
+//                switch (menuItem.getItemId()){
+//                    case R.id.nav_home:
+//                        Toast.makeText(mcontext, "Home", Toast.LENGTH_SHORT).show();
+//                        break;
+//                    case R.id.nav_education:
+//                        Intent education = new Intent(mcontext, EducationActivity.class);
+//                        startActivity(education);
+//                        Animatoo.animateSlideLeft(mcontext);
+//                        finish();
+//                        break;
+//                    case R.id.nav_social:
+//                        Intent social = new Intent(mcontext, SocialActivity.class);
+//                        startActivity(social);
+//                        Animatoo.animateSlideLeft(mcontext);
+//                        finish();
+//                        break;
+//                    case R.id.nav_notifications:
+//                        startActivity(new Intent(mcontext, NotificationsActivity.class));
+//                        Animatoo.animateSlideLeft(mcontext);
+//                        break;
+//                    case R.id.nav_settings:
+//                        startActivity(new Intent(mcontext, SettingsActivity.class));
+//                        Animatoo .animateSlideLeft(mcontext);
+//                        break;
+//                    case R.id.nav_log_out:
+//                        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+//                        mAuth.signOut();
+//                        startActivity(new Intent(mcontext, WelcomeActivity.class)
+//                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+//                        Animatoo.animateShrink(mcontext);
+//                        break;
+//                }
+//
+//                return false;
+//            }
+//        });
+    }
 
 }
 

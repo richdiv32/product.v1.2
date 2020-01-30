@@ -14,11 +14,11 @@ import java.util.List;
 
 
 public class MatchesAdapter extends RecyclerView.Adapter<MatchesViewHolders>{
-    private List<MatchesObject> matchesList;
+    private List<Matches> matchesList;
     private Context context;
 
 
-    public MatchesAdapter(List<MatchesObject> matchesList, Context context){
+    public MatchesAdapter(List<Matches> matchesList, Context context){
         this.matchesList = matchesList;
         this.context = context;
     }

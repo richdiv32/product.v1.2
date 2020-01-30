@@ -2,34 +2,21 @@ package com.ng.campusbuddy.social.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.view.MenuItemCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 import android.widget.ViewFlipper;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
-import com.daimajia.slider.library.Animations.DescriptionAnimation;
-import com.daimajia.slider.library.SliderLayout;
-import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.TextSliderView;
-import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -38,20 +25,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.social.post.PostAdapter;
-import com.ng.campusbuddy.adapter.SliderAdapterADs;
-import com.ng.campusbuddy.social.post.story.StoryAdapter;
+import com.ng.campusbuddy.social.post.AllPostAdapter;
 import com.ng.campusbuddy.social.post.Post;
-import com.ng.campusbuddy.social.post.story.Story;
 import com.ng.campusbuddy.social.post.PostActivity;
-
+import com.ng.campusbuddy.social.post.PostAdapter;
+import com.ng.campusbuddy.social.post.story.Story;
+import com.ng.campusbuddy.social.post.story.StoryAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FeedsFragment extends Fragment {
+    View view;
 
     private RecyclerView UsersPostrecyclerView;
+    private AllPostAdapter AllpostAdapter;
     private List<Post> UserpostList;
 
     private RecyclerView recyclerView;
@@ -62,29 +50,24 @@ public class FeedsFragment extends Fragment {
     private StoryAdapter storyAdapter;
     private List<Story> storyList;
 
-
-
     private List<String> followingList;
 
-    ProgressBar progress_circular;
-
-    FloatingActionButton post_fab;
-
-    ImageButton UsersPost, FollowPost;
-    ImageView Line_1, Line_2;
-
-    ViewFlipper AdFlipper;
-    ImageView AD1_iv,AD2_iv,AD3_iv
-            , AD4_iv, AD5_iv, AD6_iv, AD7_iv
-            , AD8_iv, AD9_iv , AD10_iv, AD11_iv, AD12_iv;
+//    ProgressBar progress_circular;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_feeds, container, false);
+        view = inflater.inflate(R.layout.fragment_feeds, container, false);
 
-
+        UsersPostrecyclerView = view.findViewById(R.id.users_post_recycler);
+        UsersPostrecyclerView.setHasFixedSize(true);
+        LinearLayoutManager uLayoutManager = new LinearLayoutManager(getContext());
+        uLayoutManager.setReverseLayout(true);
+        uLayoutManager.setStackFromEnd(true);
+        UsersPostrecyclerView.setLayoutManager(uLayoutManager);
+        UserpostList = new ArrayList<>();
+        AllpostAdapter = new AllPostAdapter(getContext(), UserpostList);
+        UsersPostrecyclerView.setAdapter(AllpostAdapter);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -96,18 +79,6 @@ public class FeedsFragment extends Fragment {
         postAdapter = new PostAdapter(getContext(), postList);
         recyclerView.setAdapter(postAdapter);
 
-
-        UsersPostrecyclerView = view.findViewById(R.id.users_post_recycler);
-        UsersPostrecyclerView.setHasFixedSize(true);
-        LinearLayoutManager uLayoutManager = new LinearLayoutManager(getContext());
-        uLayoutManager.setReverseLayout(true);
-        uLayoutManager.setStackFromEnd(true);
-        UsersPostrecyclerView.setLayoutManager(uLayoutManager);
-        UserpostList = new ArrayList<>();
-        postAdapter = new PostAdapter(getContext(), UserpostList);
-        UsersPostrecyclerView.setAdapter(postAdapter);
-
-
         recyclerView_story = view.findViewById(R.id.recycler_view_story);
         recyclerView_story.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
@@ -117,123 +88,23 @@ public class FeedsFragment extends Fragment {
         storyAdapter = new StoryAdapter(getContext(), storyList);
         recyclerView_story.setAdapter(storyAdapter);
 
-        progress_circular = view.findViewById(R.id.progress_circular);
-
 
         checkFollowing();
+        loadAllPosts();
 
-        post_fab = view.findViewById(R.id.post_fab);
-        PostInit();
-
-
-        AdFlipper = view.findViewById(R.id.AD_filpper);
-        AD1_iv = view.findViewById(R.id.ad_1_iv);
-        AD2_iv = view.findViewById(R.id.ad_2_iv);
-        AD3_iv = view.findViewById(R.id.ad_3_iv);
-        AD4_iv = view.findViewById(R.id.ad_4_iv);
-        AD5_iv = view.findViewById(R.id.ad_5_iv);
-        AD6_iv = view.findViewById(R.id.ad_6_iv);
-        AD7_iv = view.findViewById(R.id.ad_7_iv);
-        AD8_iv = view.findViewById(R.id.ad_8_iv);
-        AD9_iv = view.findViewById(R.id.ad_9_iv);
-        AD10_iv = view.findViewById(R.id.ad_10_iv);
-        AD11_iv = view.findViewById(R.id.ad_11_iv);
-        AD12_iv = view.findViewById(R.id.ad_12_iv);
         ADslider();
-
-        UsersPost = view.findViewById(R.id.users_post);
-        FollowPost = view.findViewById(R.id.follow_post);
-        Line_1 = view.findViewById(R.id.line_1);
-        Line_2 = view.findViewById(R.id.line_2);
-
-
         Init();
-
+        PostInit();
 
         return view;
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        //inflating menu
-        inflater.inflate(R.menu.feed_menu, menu);
-
-        //search view to search post
-        MenuItem item = menu.findItem(R.id.app_bar_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-
-        //search listner
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                //called when button is pressed
-                if (!TextUtils.isEmpty(query)){
-                    searchPosts(query);
-                }
-                else {
-                    checkFollowing();
-                    loadAllPosts();
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String query) {
-                //called when letter is typed
-                if (!TextUtils.isEmpty(query)){
-                    searchPosts(query);
-                }
-                else {
-                    checkFollowing();
-                    loadAllPosts();
-                }
-                return false;
-            }
-        });
-
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void searchPosts(final String searchquery) {
-
-        //path of all posts
-        final DatabaseReference Postref = FirebaseDatabase.getInstance().getReference("Posts");
-        //get all data from this ref
-        Postref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                UserpostList.clear();
-                postList.clear();
-                for (DataSnapshot ds:dataSnapshot.getChildren()){
-                    Post post = ds.getValue(Post.class);
-
-                    if (post.getDescription().toLowerCase().contains(searchquery.toLowerCase())){
-
-                        UserpostList.add(post);
-                        postList.add(post);
-                    }
-
-
-                }
-
-                postAdapter.notifyDataSetChanged();
-                progress_circular.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     private void Init() {
 
+        ImageButton UsersPost = view.findViewById(R.id.users_post);
+        ImageButton FollowPost = view.findViewById(R.id.follow_post);
+        final ImageView Line_1 = view.findViewById(R.id.line_1);
+        final ImageView Line_2 = view.findViewById(R.id.line_2);
 
         FollowPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -262,13 +133,35 @@ public class FeedsFragment extends Fragment {
             }
         });
 
+//        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//
+//                //implement Handler to wait for 3 seconds and then update UI
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        //cancel the visual indication of a refresh
+//                        swipeRefreshLayout.setRefreshing(false);
+//
+//                        checkFollowing();
+//                        loadAllPosts();
+//                    }
+//                }, 3000);
+//            }
+//        });
+
     }
 
     private void PostInit() {
+        FloatingActionButton post_fab = view.findViewById(R.id.post_fab);
+
         post_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), PostActivity.class));
+                Animatoo.animateShrink(getContext());
             }
         });
     }
@@ -315,8 +208,7 @@ public class FeedsFragment extends Fragment {
                 }
 
                 postAdapter.notifyDataSetChanged();
-                progress_circular.setVisibility(View.GONE);
-//                lazyLoader.setVisibility(View.GONE);
+//                progress_circular.setVisibility(View.GONE);
             }
 
             @Override
@@ -373,9 +265,8 @@ public class FeedsFragment extends Fragment {
                     UserpostList.add(post);
 
                 }
-                
-                postAdapter.notifyDataSetChanged();
-                progress_circular.setVisibility(View.GONE);
+
+                AllpostAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -386,6 +277,20 @@ public class FeedsFragment extends Fragment {
     }
 
     private void ADslider() {
+
+        ViewFlipper AdFlipper = view.findViewById(R.id.AD_filpper);
+        final ImageView AD1_iv = view.findViewById(R.id.ad_1_iv);
+        final ImageView AD2_iv = view.findViewById(R.id.ad_2_iv);
+        final ImageView AD3_iv = view.findViewById(R.id.ad_3_iv);
+        final ImageView AD4_iv = view.findViewById(R.id.ad_4_iv);
+        final ImageView AD5_iv = view.findViewById(R.id.ad_5_iv);
+        final ImageView AD6_iv = view.findViewById(R.id.ad_6_iv);
+        final ImageView AD7_iv = view.findViewById(R.id.ad_7_iv);
+        final ImageView AD8_iv = view.findViewById(R.id.ad_8_iv);
+        final ImageView AD9_iv = view.findViewById(R.id.ad_9_iv);
+        final ImageView AD10_iv = view.findViewById(R.id.ad_10_iv);
+        final ImageView AD11_iv = view.findViewById(R.id.ad_11_iv);
+        final ImageView AD12_iv = view.findViewById(R.id.ad_12_iv);
 
         AdFlipper.setFlipInterval(3000);
         AdFlipper.setAutoStart(true);

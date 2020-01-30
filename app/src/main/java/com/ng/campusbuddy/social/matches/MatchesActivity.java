@@ -52,7 +52,7 @@ public class MatchesActivity extends AppCompatActivity {
 
         cusrrentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setHasFixedSize(true);
         mMatchesLayoutManager = new LinearLayoutManager(MatchesActivity.this);
@@ -105,7 +105,7 @@ public class MatchesActivity extends AppCompatActivity {
                     }
 
 
-                    MatchesObject obj = new MatchesObject(userId, name, profileImageUrl);
+                    Matches obj = new Matches(userId, name, profileImageUrl);
                     resultsMatches.add(obj);
                     mMatchesAdapter.notifyDataSetChanged();
                 }
@@ -119,8 +119,8 @@ public class MatchesActivity extends AppCompatActivity {
 
     }
 
-    private ArrayList<MatchesObject> resultsMatches = new ArrayList<MatchesObject>();
-    private List<MatchesObject> getDataSetMatches() {
+    private ArrayList<Matches> resultsMatches = new ArrayList<Matches>();
+    private List<Matches> getDataSetMatches() {
         return resultsMatches;
     }
 

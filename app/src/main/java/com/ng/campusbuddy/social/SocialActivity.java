@@ -214,5 +214,19 @@ public class SocialActivity extends AppCompatActivity {
         });
     }
 
+    static final int TIME_INTERVAL = 2000;
+    long mBackPressed;
+
+    @Override
+    public void onBackPressed() {
+        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()){
+            super.onBackPressed();
+            return;
+        }
+        else {
+            Toast.makeText(mcontext, "Tap again to exit", Toast.LENGTH_SHORT).show();
+        }
+        mBackPressed = System.currentTimeMillis();
+    }
 
 }

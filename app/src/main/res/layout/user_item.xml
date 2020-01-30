@@ -16,6 +16,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <ImageView
+                android:id="@+id/blocked_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="50dp"
+                android:tint="?attr/colorPrimary"
+                android:visibility="gone"
+                app:srcCompat="@drawable/met_ic_clear" />
+
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/image_profile"
                 android:layout_width="50dp"

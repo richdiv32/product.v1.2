@@ -1,11 +1,12 @@
 package com.ng.campusbuddy.social.matches;
 
 
-public class MatchesObject {
+public class Matches {
     private String userId;
     private String name;
     private String profileImageUrl;
-    public MatchesObject (String userId, String name, String profileImageUrl){
+
+    public Matches(String userId, String name, String profileImageUrl){
         this.userId = userId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;

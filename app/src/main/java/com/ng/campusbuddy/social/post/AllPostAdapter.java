@@ -5,11 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -24,6 +19,11 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -37,9 +37,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.profile.FollowersActivity;
 import com.ng.campusbuddy.profile.UserProfileActivity;
+import com.ng.campusbuddy.social.User;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -49,14 +49,14 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolder> {
+public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageViewHolder> {
 
     private Context mContext;
     private List<Post> mPosts;
 
     private FirebaseUser firebaseUser;
 
-    public PostAdapter(Context context, List<Post> posts){
+    public AllPostAdapter(Context context, List<Post> posts){
         mContext = context;
         mPosts = posts;
     }
