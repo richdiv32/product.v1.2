@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -24,15 +25,16 @@ import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.adapter.MatchArrayAdapter;
-import com.ng.campusbuddy.education.EducationActivity;
-import com.ng.campusbuddy.model.Match;
-import com.ng.campusbuddy.social.matches.MatchesActivity;
+import com.ng.campusbuddy.social.match.Match;
+import com.ng.campusbuddy.social.match.MatchesActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 public class MatchUpFragment extends Fragment {
+    View view;
 
     private Match cards_data[];
     private MatchArrayAdapter arrayAdapter;
@@ -50,32 +52,34 @@ public class MatchUpFragment extends Fragment {
 
     ImageButton Love_btn;
 
+    Match obj;
+    String userId;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_match_up, container, false);
+        view = inflater.inflate(R.layout.fragment_match_up, container, false);
 
 
         Love_btn = view.findViewById(R.id.love_btn);
-
         Love_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToMatches(view);
+                startActivity(new Intent(getActivity(), MatchesActivity.class));
+                Animatoo.animateSlideUp(getActivity());
             }
         });
 
 
         usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        mAuth = FirebaseAuth.getInstance();
-        currentUId = mAuth.getCurrentUser().getUid();
+        currentUId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         checkUserSex();
 
-        rowItems = new ArrayList<Match>();
+        rowItems = new ArrayList<>();
 
-        arrayAdapter = new MatchArrayAdapter(getActivity(), R.layout.match_up_item, rowItems );
+        arrayAdapter = new MatchArrayAdapter(getActivity(), R.layout.item_match_up, rowItems );
 
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) view.findViewById(R.id.match_card);
 
@@ -91,8 +95,8 @@ public class MatchUpFragment extends Fragment {
             @Override
             public void onLeftCardExit(Object dataObject) {
 
-                Match obj = (Match) dataObject;
-                String userId = obj.getUserId();
+                obj = (Match) dataObject;
+                userId= obj.getUserId();
                 usersDb.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
                 Toast.makeText(getActivity(), "NOPE", Toast.LENGTH_SHORT).show();
             }
@@ -123,7 +127,7 @@ public class MatchUpFragment extends Fragment {
         flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
             @Override
             public void onItemClicked(int itemPosition, Object dataObject) {
-                Toast.makeText(getActivity(), "Item Clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "I like you too", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -131,7 +135,7 @@ public class MatchUpFragment extends Fragment {
         return view;
     }
 
-    private void isConnectionMatch(String userId) {
+    private void isConnectionMatch(final String userId) {
         DatabaseReference currentUserConnectionsDb = usersDb.child(currentUId).child("connections").child("yes").child(userId);
         currentUserConnectionsDb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -139,10 +143,10 @@ public class MatchUpFragment extends Fragment {
                 if (dataSnapshot.exists()){
                     Toast.makeText(getActivity(), "Matched", Toast.LENGTH_LONG).show();
 
-                    String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
+//                    String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
 
-                    usersDb.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentUId).child("ChatId").setValue(key);
-                    usersDb.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).child("ChatId").setValue(key);
+                    usersDb.child(userId).child("connections").child("matches").child(currentUId).child("userId").setValue(currentUId);
+                    usersDb.child(currentUId).child("connections").child("matches").child(userId).child("userId").setValue(userId);
                 }
             }
 
@@ -187,15 +191,19 @@ public class MatchUpFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.child("gender").getValue() != null) {
-                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
-                            && !dataSnapshot.child("connections").child("yes").hasChild(currentUId) && dataSnapshot.child("gender")
-                            .getValue().toString().equals(oppositeUserSex)) {
+//                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
+//                            && !dataSnapshot.child("connections").child("yes").hasChild(currentUId) && dataSnapshot.child("gender")
+//                            .getValue().toString().equals(oppositeUserSex)) {
+//                        String profileImageUrl = dataSnapshot.child("imageurl").getValue().toString();
+//                        Match item = new Match(dataSnapshot.getKey(), dataSnapshot.child("username").getValue().toString(), profileImageUrl);
+//                        rowItems.add(item);
+//                        arrayAdapter.notifyDataSetChanged();
+//                    }
+                    if (dataSnapshot.exists() && dataSnapshot.child("gender").getValue().toString().equals(oppositeUserSex)) {
                         String profileImageUrl = dataSnapshot.child("imageurl").getValue().toString();
-//                        if (!dataSnapshot.child("imageurl").getValue().equals("default")) {
-//                            profileImageUrl = dataSnapshot.child("imageurl").getValue().toString();
-//                        }
                         Match item = new Match(dataSnapshot.getKey(), dataSnapshot.child("username").getValue().toString(), profileImageUrl);
                         rowItems.add(item);
+                        Collections.shuffle(rowItems);//randomize the array list
                         arrayAdapter.notifyDataSetChanged();
                     }
                 }
@@ -216,12 +224,6 @@ public class MatchUpFragment extends Fragment {
         });
     }
 
-
-    public void goToMatches(View view) {
-        Intent intent = new Intent(getActivity(), MatchesActivity.class);
-        startActivity(intent);
-        return;
-    }
 
 
 }

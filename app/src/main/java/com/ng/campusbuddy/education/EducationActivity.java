@@ -1,7 +1,7 @@
 package com.ng.campusbuddy.education;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -10,10 +10,12 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,8 +30,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.luseen.spacenavigation.SpaceNavigationView;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.education.fragment.BookmarkFragment;
+import com.ng.campusbuddy.education.fragment.BrowseFragment;
+import com.ng.campusbuddy.education.fragment.QuestionAnswerFragment;
+import com.ng.campusbuddy.education.fragment.ShelfFragment;
+import com.ng.campusbuddy.education.fragment.TimeTableFragment;
 import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.profile.ProfileActivity;
 import com.ng.campusbuddy.social.SocialActivity;
@@ -40,7 +46,6 @@ import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import eu.long1.spacetablayout.SpaceTabLayout;
@@ -48,13 +53,13 @@ import eu.long1.spacetablayout.SpaceTabLayout;
 public class EducationActivity extends AppCompatActivity {
     Context mcontext = EducationActivity.this;
 
-    SpaceNavigationView spaceNavigationView;
     Toolbar toolbar;
 
 //    FirebaseUser firebaseUser;
     String profileid;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPref sharedPref = new SharedPref(this);
@@ -64,11 +69,22 @@ public class EducationActivity extends AppCompatActivity {
         else{
             setTheme(R.style.AppTheme);
         }
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            Window w = getWindow();
+            //removes status bar with background
+//            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            //changes status bar background color
+            w.setStatusBarColor(Color.TRANSPARENT);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_education);
 
 
         profileid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
 
 
 
@@ -106,15 +122,8 @@ public class EducationActivity extends AppCompatActivity {
     /*Navigation Drawer*/
     private void SetupNavigationDrawer() {
 
-        DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
+        final DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
         NavigationView navigationView = findViewById(R.id.nav_drawer);
-//        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
-//                drawerLayout, R.string.drawer_open, R.string.drawer_close);
-//        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-//        actionBarDrawerToggle.syncState();
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Objects.requireNonNull(getSupportActionBar()).setDefaultDisplayHomeAsUpEnabled(true);
-//        }
         View headerview = navigationView.getHeaderView(0);
         RelativeLayout navigationHeader = headerview.findViewById(R.id.nav_header_container);
 

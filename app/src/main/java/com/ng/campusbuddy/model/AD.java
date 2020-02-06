@@ -2,37 +2,61 @@ package com.ng.campusbuddy.model;
 
 public class AD {
 
-    String AD_1;
-    String AD_2;
-    String AD_3;
+    String id;
+    String title;
+    String image;
+    String full_image;
+    String description;
 
-    public AD(String AD_1, String AD_2, String AD_3) {
-        this.AD_1 = AD_1;
-        this.AD_2 = AD_2;
-        this.AD_3 = AD_3;
+    public AD(String id, String title, String image, String full_image, String description) {
+        this.id = id;
+        this.title = title;
+        this.image = image;
+        this.full_image = full_image;
+        this.description = description;
     }
 
-    public String getAD_1() {
-        return AD_1;
+    public AD() {
     }
 
-    public void setAD_1(String AD_1) {
-        this.AD_1 = AD_1;
+    public String getId() {
+        return id;
     }
 
-    public String getAD_2() {
-        return AD_2;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setAD_2(String AD_2) {
-        this.AD_2 = AD_2;
+
+    public String getImage() {
+        return image;
     }
 
-    public String getAD_3() {
-        return AD_3;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public void setAD_3(String AD_3) {
-        this.AD_3 = AD_3;
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getFull_image() {
+        return full_image;
+    }
+
+    public void setFull_image(String full_image) {
+        this.full_image = full_image;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

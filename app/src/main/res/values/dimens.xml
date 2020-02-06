@@ -7,6 +7,7 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
 
+
     <!-- (post_detail_image_height - post_author_image_side / 2), for centering by post image bottom line-->
 
     <!-- (post_list_item_image_height - post_list_item_author_image_side / 2), for centering by post image bottom line-->
@@ -14,4 +15,7 @@
     <!--post card content_padding left = card_elevation + card_padding-->
 
 
+    <dimen name="margin_115" >60dp</dimen>
+    <dimen name="margin_145" >105dp</dimen>
+    <dimen name="margin_175">155dp</dimen>
 </resources>

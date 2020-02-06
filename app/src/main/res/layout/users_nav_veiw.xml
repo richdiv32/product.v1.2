@@ -6,28 +6,38 @@
     android:layout_height="match_parent"
     android:layout_gravity="end"
     android:fadingEdge="horizontal"
-    app:headerLayout="@layout/user_nav_header"
+    android:fitsSystemWindows="true"
     app:elevation="3dp"
-    android:background="?attr/cardbackground">
+    android:background="?attr/backgroundcolor"
+    app:headerLayout="@layout/user_nav_header">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/all_users_recycler"
-        android:layout_marginTop="220dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/active_users_recycler"
-        android:layout_marginTop="220dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:layout_marginTop="250dp"
+        android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/offline_users_recycler"
-        android:layout_marginTop="220dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
+        <TextView
+            android:id="@+id/users_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="?attr/cardbackground"
+            android:text="participants"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/group_users_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/active_users_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
 </com.google.android.material.navigation.NavigationView>

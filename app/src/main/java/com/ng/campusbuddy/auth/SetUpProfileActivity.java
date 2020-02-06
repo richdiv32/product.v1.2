@@ -187,6 +187,7 @@ public class SetUpProfileActivity extends AppCompatActivity {
                         map.put("gender", radioButton.getText().toString());
                         map.put("id", userid);
                         map.put("online_status", "online");
+                        map.put("typingTo", "noOne");
                         map.put("profile_status", "Hey there, I am on Campus Buddy");
 
                         reference.child(userid).setValue(map);

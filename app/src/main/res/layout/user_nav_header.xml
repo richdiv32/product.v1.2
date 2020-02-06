@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_header_container"
     android:layout_width="match_parent"
-    android:layout_height="220dp"
+    android:layout_height="250dp"
     android:gravity="bottom"
     android:orientation="vertical">
 
@@ -19,7 +19,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="40dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/bg_circle_gradient"
         android:src="@drawable/ic_edit"
@@ -31,30 +31,36 @@
         android:layout_height="40dp"
         android:layout_alignParentRight="false"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/bg_circle_gradient"
         android:src="@drawable/ic_group_add"
         android:tint="@color/white" />
 
-    <TextView
-        android:id="@+id/group_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/creator"
-        android:layout_marginLeft="10dp"
-        android:text="Group Name"
-        android:textColor="?attr/title_textcolor"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/creator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp"
-        android:text="Created by:"
-        android:textColor="?attr/textcolor" />
+        android:background="@color/semi_transparent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/group_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Group Name"
+            android:textColor="?attr/title_textcolor"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/creator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Created by:"
+            android:textColor="?attr/title_textcolor" />
+    </LinearLayout>
 
 
 </RelativeLayout>

@@ -18,6 +18,9 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="55dp">
 
+            <include layout="@layout/app_bar"
+                android:id="@+id/nav_button"/>
+
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/viewPager"

@@ -12,3 +12,11 @@
 /captures
 .externalNativeBuild
 .cxx
+
+/.idea/
+/screenies/
+/gen/
+/release-keystore.properties
+/keystore.jks
+/appconfig.properties
+

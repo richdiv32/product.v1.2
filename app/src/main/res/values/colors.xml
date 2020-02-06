@@ -7,6 +7,7 @@
     <color name="white">#fff</color>
     <color name="black">#000000</color>
     <color name="grey">#8890A6</color>
+    <color name="semi_transparent">#6F8890A6</color>
 
     <!-- colors for button style -->
 

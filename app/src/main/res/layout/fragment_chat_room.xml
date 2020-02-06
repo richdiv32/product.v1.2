@@ -43,7 +43,7 @@
                     android:tint="@color/grey" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_alignBottom="@id/nav_button"
@@ -74,32 +74,10 @@
             tools:context=".social.fragments.ChatRoomFragment">
 
 
-            <LinearLayout
-                android:id="@+id/l"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/roomlist_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:orientation="horizontal">
-
-                <ListView
-                    android:id="@+id/recent_chat_room_list_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                </ListView>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/l"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical">
-
-                <ListView
-                    android:id="@+id/chat_room_list_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </LinearLayout>
+                android:layout_height="match_parent" />
 
         </RelativeLayout>
 

@@ -81,28 +81,55 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+
+
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_chat_fab"
+        android:id="@+id/counsel_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="50dp"
-        android:src="@drawable/ic_chat"
+        android:layout_marginBottom="55dp"
+        android:layout_marginRight="25dp"
+        android:src="@drawable/ic_fullname"
         android:tint="@color/white"
-        app:backgroundTint="@color/colorPrimary" />
+        app:backgroundTint="#2196F3"
+        app:fabSize="mini" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_group_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
+        android:layout_marginBottom="55dp"
         android:layout_marginRight="25dp"
-        android:layout_marginBottom="115dp"
         android:src="@drawable/ic_group_chat"
         android:tint="@color/white"
-        app:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="#4CAF50"
         app:fabSize="mini" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_chat_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="25dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="55dp"
+        android:src="@drawable/ic_chat"
+        android:tint="@color/white"
+        app:backgroundTint="#FFC107"
+        app:fabSize="mini" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/message_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/ic_add"
+        android:tint="@color/white"
+        app:backgroundTint="@color/colorPrimary" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

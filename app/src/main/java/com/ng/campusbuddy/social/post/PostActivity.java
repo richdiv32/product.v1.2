@@ -1,14 +1,18 @@
 package com.ng.campusbuddy.social.post;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -64,6 +68,19 @@ public class PostActivity extends AppCompatActivity {
 
     EditText description;
 
+    Intent intent;
+
+    //permissions constants
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int STORAGE_REQUEST_CODE = 200;
+
+    //image pick constants
+    private static final int IMAGE_PICK_CAMERA_CODE = 300;
+    private static final int IMAGE_PICK_GALLERY_CODE = 400;
+
+    //for image
+    Uri image_rui = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPref sharedPref = new SharedPref(this);
@@ -80,11 +97,92 @@ public class PostActivity extends AppCompatActivity {
 
         storageRef = FirebaseStorage.getInstance().getReference("posts");
 
+        //get data through intent from previous activities adapter
+        intent = getIntent();
 
+        //detect if note fab was clicked
+        String notes = intent.getStringExtra("Notes");
+//        String postText = intent.getStringExtra("Notes");
+        if (notes == null){
+
+            final RelativeLayout ImageLayout = findViewById(R.id.post_imageLayout);
+            final LinearLayout TextLayout = findViewById(R.id.post_textLayout);
+
+            ImageLayout.setVisibility(View.GONE);
+            TextLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            final RelativeLayout ImageLayout = findViewById(R.id.post_imageLayout);
+            final LinearLayout TextLayout = findViewById(R.id.post_textLayout);
+
+            ImageLayout.setVisibility(View.VISIBLE);
+            TextLayout.setVisibility(View.GONE);
+        }
+
+        //get image from camera
+        String image_path = intent.getStringExtra("imagePath");
+        if (image_path != null){
+            Uri fileUri = Uri.parse(image_path);
+            //set to imageview
+            ImageView image_added = findViewById(R.id.image_added);
+            image_added.setImageURI(fileUri);
+
+            final RelativeLayout ImageLayout = findViewById(R.id.post_imageLayout);
+            final LinearLayout TextLayout = findViewById(R.id.post_textLayout);
+
+            ImageLayout.setVisibility(View.VISIBLE);
+            TextLayout.setVisibility(View.GONE);
+        }
+
+
+
+        //get data and its type from intent
+        String action = intent.getAction();
+        String type = intent.getType();
+        if (Intent.ACTION_SEND.equals(action) && type != null){
+
+            if ("text/plain".equals(type)){
+                //text type data
+                handleSendText(intent);
+            }
+            else if (type.startsWith("image")){
+                //image type data
+                handleSendImage(intent);
+            }
+
+            final RelativeLayout ImageLayout = findViewById(R.id.post_imageLayout);
+            final LinearLayout TextLayout = findViewById(R.id.post_textLayout);
+
+            ImageLayout.setVisibility(View.VISIBLE);
+            TextLayout.setVisibility(View.GONE);
+        }
 
         Init();
 //        LoadUserInfo();
         LoadImage();
+    }
+
+    private void handleSendText(Intent intent) {
+        //handle received text
+        String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (sharedText != null){
+            //set to description edit text
+            description.setText(sharedText);
+        }
+
+    }
+
+    private void handleSendImage(Intent intent) {
+        //handle received image(url)
+        Uri imageURI = (Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (imageURI != null){
+            mImageUri = imageURI;
+            //set to imageview
+            ImageView image_added = findViewById(R.id.image_added);
+            image_added.setImageURI(mImageUri);
+
+        }
+
     }
 
     private void Init() {
@@ -108,9 +206,7 @@ public class PostActivity extends AppCompatActivity {
         image_added.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CropImage.activity()
-                        .setAspectRatio(1,1)
-                        .start(PostActivity.this);
+                showImagePickDialog();
             }
         });
 
@@ -118,8 +214,8 @@ public class PostActivity extends AppCompatActivity {
         final RelativeLayout ImageLayout = findViewById(R.id.post_imageLayout);
         final LinearLayout TextLayout = findViewById(R.id.post_textLayout);
 
-        ImageLayout.setVisibility(View.VISIBLE);
-        TextLayout.setVisibility(View.GONE);
+//        ImageLayout.setVisibility(View.VISIBLE);
+//        TextLayout.setVisibility(View.GONE);
 
         ImageButton Button_post_text = findViewById(R.id.btn_post_text);
         Button_post_text.setOnClickListener(new View.OnClickListener() {
@@ -324,18 +420,86 @@ public class PostActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
 
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+        if (resultCode == RESULT_OK){
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+                //image picked from Gallery, get uri of image
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
             mImageUri = result.getUri();
 
             ImageView image_added = findViewById(R.id.image_added);
             image_added.setImageURI(mImageUri);
-        } else {
-            Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(PostActivity.this, PostActivity.class));
-            finish();
+
+            }
+            else if (requestCode == IMAGE_PICK_CAMERA_CODE){
+                //image is picked from camera, get uri of image
+
+                ImageView image_added = findViewById(R.id.image_added);
+                image_added.setImageURI(image_rui);
+            }
+            else {
+                Toast.makeText(this, "Image sending unsuccessful", Toast.LENGTH_SHORT).show();
+            }
         }
+
+//        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+//
+//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+//            mImageUri = result.getUri();
+//
+//            ImageView image_added = findViewById(R.id.image_added);
+//            image_added.setImageURI(mImageUri);
+//        }
+//        else {
+//            Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
+//            startActivity(new Intent(PostActivity.this, PostActivity.class));
+//            finish();
+//        }
+    }
+
+    private void showImagePickDialog() {
+
+        String[] options = {"Camera","Gallery"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose image from");
+
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (which == 0) {
+                    //Carmera Clicked
+                    pickFromCamera();
+                }
+                if (which == 1){
+                    //Gallery Clicked
+                    pickFromGallery();
+                }
+            }
+        });
+        builder.create().show();
+    }
+
+    private void pickFromGallery(){
+        //Intent to pick image from gallery
+//        startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*")
+//                , IMAGE_PICK_GALLERY_CODE);
+
+        CropImage.activity()
+                .setAspectRatio(1,1)
+                .start(PostActivity.this);
+    }
+
+    private void pickFromCamera(){
+        //Intent to pick image from camera
+        ContentValues cv = new ContentValues();
+        cv.put(MediaStore.Images.Media.TITLE, "Temp Pick");
+        cv.put(MediaStore.Images.Media.DESCRIPTION,"Temp Descr");
+        image_rui = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
+
+        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, image_rui)
+                , IMAGE_PICK_CAMERA_CODE);
     }
 
 }

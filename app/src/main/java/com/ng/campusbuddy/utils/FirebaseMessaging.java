@@ -26,7 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.social.message.ChatActivity;
+import com.ng.campusbuddy.social.messaging.chat.ChatActivity;
 import com.ng.campusbuddy.social.post.PostDetailActivity;
 
 import java.util.Random;

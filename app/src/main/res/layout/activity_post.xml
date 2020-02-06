@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".social.post.PostActivity">
+    tools:context=".social.post.PostActivity"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/bar"
@@ -37,12 +38,12 @@
                     android:layout_height="20dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:background="@color/space_transparent"
+                    android:background="@android:color/transparent"
                     android:src="@drawable/ic_arrow_back"
                     android:tint="?attr/title_textcolor" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_alignBottom="@id/nav_button"
@@ -84,7 +85,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/space_transparent">
+            android:background="@android:color/transparent">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/image_profile"
@@ -130,7 +131,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     android:cropToPadding="true"
-                    android:scaleType="fitXY"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/cardbackground"
                     app:srcCompat="@drawable/placeholder" />
 
                 <EditText
@@ -138,7 +140,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/image_added"
-                    android:background="@color/space_transparent"
+                    android:background="@android:color/transparent"
                     android:ems="10"
                     android:hint="Type something here..."
                     android:maxLines="5"
@@ -170,7 +172,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/space_transparent"
+                    android:background="@android:color/transparent"
                     android:src="@drawable/ic_note"
                     android:tint="?attr/textcolor"/>
 

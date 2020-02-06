@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.model.Match;
+import com.ng.campusbuddy.social.match.Match;
 
 import java.util.List;
 
@@ -26,13 +26,13 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
         Match card_item = getItem(position);
 
         if (convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.match_up_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_match_up, parent, false);
         }
 
         TextView name = (TextView) convertView.findViewById(R.id.username);
         ImageView image = (ImageView) convertView.findViewById(R.id.image);
 
-        name.setText(card_item.getName());
+        name.setText(card_item.getUsername());
         switch(card_item.getProfileImageUrl()){
             case "default":
                 Glide.with(convertView.getContext()).load(R.mipmap.ic_launcher).into(image);

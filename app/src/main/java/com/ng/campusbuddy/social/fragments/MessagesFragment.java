@@ -15,10 +15,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,19 +30,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.profile.FollowersActivity;
-import com.ng.campusbuddy.social.message.ChatListAdapter;
-import com.ng.campusbuddy.social.message.Chatlist;
+import com.ng.campusbuddy.social.messaging.chat.NewChatActivity;
+import com.ng.campusbuddy.social.messaging.chat.ChatListAdapter;
+import com.ng.campusbuddy.social.messaging.chat.Chatlist;
 import com.ng.campusbuddy.social.User;
-import com.ng.campusbuddy.social.message.GroupListAdapter;
-import com.ng.campusbuddy.social.message.Grouplist;
+import com.ng.campusbuddy.social.messaging.group.Group;
+import com.ng.campusbuddy.social.messaging.group.GroupListAdapter;
+import com.ng.campusbuddy.social.messaging.group.Grouplist;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 
 public class MessagesFragment extends Fragment {
@@ -55,6 +51,7 @@ public class MessagesFragment extends Fragment {
     private List<Chatlist> usersList;
     private ChatListAdapter userAdapter;
 
+    private List<Group> mGroup;
     private List<User> mUsers;
 
     FirebaseUser fuser;
@@ -118,30 +115,62 @@ public class MessagesFragment extends Fragment {
         });
     }
 
-    private void AddInit(){
-        FloatingActionButton NewChat = view.findViewById(R.id.add_chat_fab);
-        NewChat.setOnClickListener(new View.OnClickListener() {
+
+    private void AddInit() {
+        final boolean[] isFABOpen = new boolean[1];
+
+
+        FloatingActionButton message_fab = view.findViewById(R.id.message_fab);
+        final FloatingActionButton chat_fab = view.findViewById(R.id.add_chat_fab);
+        final FloatingActionButton group_fab = view.findViewById(R.id.add_group_fab);
+        final FloatingActionButton counsel_fab = view.findViewById(R.id.counsel_fab);
+
+        message_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (!isFABOpen[0]){
+                    showFABMenu();
+                }
+                else {
+                    closeFABMenu();
+                }
+            }
+
+            private void showFABMenu() {
+                isFABOpen[0] = true;
+
+                chat_fab.animate().translationY(-getResources().getDimension(R.dimen.margin_115));
+                group_fab.animate().translationY(-getResources().getDimension(R.dimen.margin_145));
+                counsel_fab.animate().translationY(-getResources().getDimension(R.dimen.margin_175));
+
+            }
+
+            private void closeFABMenu() {
+                isFABOpen[0] = false;
+
+                chat_fab.animate().translationY(0);
+                group_fab.animate().translationY(0);
+                counsel_fab.animate().translationY(0);
+            }
+        });
+
+        chat_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseUser ID = FirebaseAuth.getInstance().getCurrentUser();
 
-                Intent intent = new Intent(getContext(), FollowersActivity.class);
+                Intent intent = new Intent(getContext(), NewChatActivity.class);
                 intent.putExtra("id", ID.getUid());
-                intent.putExtra("title", "following");
                 startActivity(intent);
 
                 Toast.makeText(getContext(), "Start new chat", Toast.LENGTH_SHORT).show();
-
             }
         });
 
-        FloatingActionButton NewGroup = view.findViewById(R.id.add_group_fab);
-        NewGroup.setOnClickListener(new View.OnClickListener() {
+        group_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Create new group", Toast.LENGTH_SHORT).show();
-
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Create New Group");
 
@@ -160,8 +189,6 @@ public class MessagesFragment extends Fragment {
                             Toast.makeText(getContext(), "You can't create a group without a name", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            Toast.makeText(getContext(), "Group Created", Toast.LENGTH_SHORT).show();
-
                             CreateNewGroup(groupName_str);
                         }
 
@@ -181,36 +208,66 @@ public class MessagesFragment extends Fragment {
 
                 //create and show dialog
                 builder.create().show();
+            }
+        });
 
-
-
+        counsel_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Chat with a counselor", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void CreateNewGroup(final String groupName_str) {
 
-        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("Grouplist")
-                .child(fuser.getUid());
+        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("Groups");
 
-        String group_id = reference.push().getKey();
+        final String group_id = groupRef.push().getKey();
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("groupid", group_id);
-        hashMap.put("groupimage", "");
-        hashMap.put("title", groupName_str);
-        hashMap.put("users", "");
-        hashMap.put("creator", fuser.getUid());
+        hashMap.put("group_image", "");
+        hashMap.put("group_title", groupName_str);
+        hashMap.put("group_users", "");
+        hashMap.put("group_creator", fuser.getUid());
 
         groupRef.child(group_id).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()){
 
-                            Toast.makeText(getContext(), groupName_str+ " has been created", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), groupName_str+ " has been created", Toast.LENGTH_SHORT).show();
+
+                    //add creator to group user list
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups")
+                            .child(group_id).child("group_users").child(fuser.getUid());
+                    ref.child("group_userid").setValue(fuser.getUid());
+
+                    //add to message fragment
+                    final DatabaseReference Ref1 = FirebaseDatabase.getInstance().getReference("Grouplist")
+                            .child(fuser.getUid())
+                            .child(group_id);
+
+                    Ref1.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()){
+                                Ref1.child("groupid").setValue(group_id);
+                            }
                         }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
             }
         });
+
+
+
     }
 
 //    private void updateToken(String token){
@@ -250,17 +307,12 @@ public class MessagesFragment extends Fragment {
         GroupChats_recycler = view.findViewById(R.id.recycler_view_group_chat);
         GroupChats_recycler.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
-        mLayoutManager.setReverseLayout(true);
         GroupChats_recycler.setLayoutManager(mLayoutManager);
         usersGroupList = new ArrayList<>();
-        groupListAdapter = new GroupListAdapter(getContext(), usersGroupList);
-        GroupChats_recycler.setAdapter(groupListAdapter);
 
 
-        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("Grouplist")
-                .child(fuser.getUid());
-
-        groupRef.addValueEventListener(new ValueEventListener() {
+        reference = FirebaseDatabase.getInstance().getReference("Grouplist").child(fuser.getUid());
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 usersGroupList.clear();
@@ -269,8 +321,7 @@ public class MessagesFragment extends Fragment {
                     usersGroupList.add(grouplist);
                 }
 
-                groupListAdapter.notifyDataSetChanged();
-
+                GroupList();
             }
 
             @Override
@@ -279,10 +330,32 @@ public class MessagesFragment extends Fragment {
             }
         });
 
+    }
 
+    private void GroupList() {
+         mGroup = new ArrayList<>();
+        reference = FirebaseDatabase.getInstance().getReference("Groups");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mGroup.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Group group = snapshot.getValue(Group.class);
+                    for (Grouplist grouplist : usersGroupList){
+                        if (group.getGroupid().equals(grouplist.getGroupid())){
+                            mGroup.add(group);
+                        }
+                    }
+                }
+                groupListAdapter = new GroupListAdapter(getContext(), mGroup);
+                GroupChats_recycler.setAdapter(groupListAdapter);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-
+            }
+        });
 
     }
 
@@ -312,28 +385,5 @@ public class MessagesFragment extends Fragment {
         });
     }
 
-    private void GroupList() {
-
-//        usersGroupList = new ArrayList<>();
-//        reference = FirebaseDatabase.getInstance().getReference("Grouplist");
-//        reference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                usersGroupList.clear();
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-//                    Grouplist grouplist = snapshot.getValue(Grouplist.class);
-//
-//                    usersGroupList.add(grouplist);
-//                }
-//                groupListAdapter = new GroupListAdapter(getContext(), usersGroupList );
-//                GroupChats_recycler.setAdapter(groupListAdapter);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-    }
 
 }

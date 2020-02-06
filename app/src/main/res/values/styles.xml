@@ -5,7 +5,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#ff0000</item>
-        <item name="colorPrimaryDark">#A20404</item>
+        <item name="colorPrimaryDark">#C50000</item>
         <item name="colorAccent">#FC3737</item>
         <item name="appbarcolor">#ffffff</item>
         <item name="backgroundcolor">#E9E9E9</item>
@@ -14,9 +14,10 @@
         <item name="textcolor">#808080</item>
         <item name="tintcolor">#ffffff</item>
         <item name="buttoncolor">#FF0000</item>
+        <item name="darkcolor">#C50000</item>
 
-<!--        <item name="android:popupAnimationStyle">@style/WindowAnimationTransition</item>-->
-<!--        <item name="android:windowLightStatusBar" tools:targetApi="23">@color/black</item>-->
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+<!--        <item name="android:statusBarColor" tools:targetApi="21">@android:color/transparent</item>-->
     </style>
 
     <!--Dark/Night Theme-->
@@ -32,9 +33,11 @@
         <item name="textcolor">#ffffff</item>
         <item name="tintcolor">#ffffff</item>
         <item name="buttoncolor">#FF0000</item>
+        <item name="darkcolor">#000000</item>
 
-<!--        <item name="android:popupAnimationStyle">@style/WindowAnimationTransition</item>-->
-        <!--        <item name="android:windowLightStatusBar" tools:targetApi="23">@color/black</item>-->
+
+<!--        <item name="android:statusBarColor" tools:targetApi="21">@android:color/transparent</item>-->
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
     </style>
 
     <style name="WindowAnimationTransition">

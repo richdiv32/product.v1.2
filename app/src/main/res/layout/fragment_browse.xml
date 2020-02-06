@@ -5,7 +5,7 @@
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".education.BrowseFragment">
+    tools:context=".education.fragment.BrowseFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -31,20 +31,13 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical">
 
-                    <ImageView
-                        android:id="@+id/nav_button"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginTop="5dp"
-                        android:src="@drawable/ic_nav_draw"
-                        android:tint="@color/colorPrimary" />
+
 
                     <TextView
+                        android:id="@+id/nav"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
-                        android:layout_toRightOf="@id/nav_button"
                         android:gravity="center"
                         android:text="Discover Courses"
                         android:textColor="@color/colorPrimary"
@@ -56,7 +49,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="10dp"
-                        android:background="@color/space_transparent"
+                        android:background="@android:color/transparent"
                         android:src="@drawable/ic_search"
                         android:tint="@color/colorPrimary" />
                 </RelativeLayout>
@@ -70,47 +63,116 @@
         android:background="?attr/backgroundcolor"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical" >
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
-            <ViewFlipper
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:id="@+id/AD_filpper"
-                android:flipInterval="3000"
-                android:autoStart="true"
-                android:inAnimation="@android:anim/slide_in_left"
-                android:outAnimation="@android:anim/slide_out_right"
-                android:scrollIndicators="bottom"
-                tools:targetApi="m">
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:elevation="5dp"
+                app:cardBackgroundColor="?attr/cardbackground"
+                app:cardCornerRadius="5dp">
 
-                <ImageView
-                    android:id="@+id/ad_1_iv"
+                <com.smarteist.autoimageslider.SliderView
+                    android:id="@+id/ADsSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    app:sliderAnimationDuration="600"
+                    app:sliderAutoCycleDirection="right"
+                    app:sliderAutoCycleEnabled="true"
+                    app:sliderCircularHandlerEnabled="true"
+                    app:sliderIndicatorAnimationDuration="600"
+                    app:sliderIndicatorGravity="center_horizontal|bottom"
+                    app:sliderIndicatorMargin="15dp"
+                    app:sliderIndicatorOrientation="horizontal"
+                    app:sliderIndicatorPadding="3dp"
+                    app:sliderIndicatorRadius="2dp"
+                    app:sliderIndicatorSelectedColor="#5A5A5A"
+                    app:sliderIndicatorUnselectedColor="@color/colorPrimary"
+                    app:sliderScrollTimeInSec="1"
+                    app:sliderStartAutoCycle="true" />
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="Find course by"
+                    android:textStyle="bold"
+                    android:textColor="?attr/title_textcolor"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/find_courses_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder" />
+                    android:layout_marginBottom="10dp" />
 
-                <ImageView
-                    android:id="@+id/ad_2_iv"
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="Popular Courses"
+                    android:textStyle="bold"
+                    android:textColor="?attr/title_textcolor"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/popular_courses_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder" />
+                    android:layout_marginBottom="10dp" />
 
-                <ImageView
-                    android:id="@+id/ad_3_iv"
+                <TextView
+                    android:id="@+id/textView9"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="Recent Updates"
+                    android:textStyle="bold"
+                    android:textColor="?attr/title_textcolor"/>
 
-            </ViewFlipper>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="10dp"
+                    app:cardCornerRadius="10dp">
+
+                    <ImageView
+                        android:id="@+id/recent_courses_iv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/placeholder" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="Recommended"
+                    android:textStyle="bold"
+                    android:textColor="?attr/title_textcolor"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recommended_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
 
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 

@@ -1,6 +1,7 @@
 package com.ng.campusbuddy.auth;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -17,11 +18,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,6 +55,9 @@ public class LoginActivity extends AppCompatActivity {
         InitLogin();
         InitSignUp();
         InitForgotPassword();
+//        googleauth();
+
+
 
         TextView verification = findViewById(R.id.resen_verifiaction_link);
         verification.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
 
 
     }
@@ -205,14 +219,90 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void googleauth(){
-        ImageButton GoogleAuth = findViewById(R.id.google_btn);
 
-        GoogleAuth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-    }
+//    static final int RC_SIGN_IN = 1;
+//    GoogleSignInClient mGoogleSignInClient;
+//
+//    private void googleauth(){
+//
+//
+//        ImageButton GoogleAuth = findViewById(R.id.google_btn);
+//
+//        GoogleAuth.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                //Configure google sign in
+//                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                        .requestIdToken(getString(R.string.default_web_client_id))
+//                        .requestEmail()
+//                        .build();
+//
+//                mGoogleSignInClient = new GoogleApiClient.Builder(getApplicationContext())
+//
+//                //Build a GoogleSignInClient with the options specified by gso
+//                mGoogleSignInClient = GoogleSignIn.getClient(getApplicationContext(), gso);
+//
+//                switch (v.getId()){
+//                    case  R.id.google_btn:
+//                        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+//                        startActivityForResult(signInIntent, RC_SIGN_IN);
+//                        break;
+//                }
+//
+//
+//            }
+//        });
+//    }
+//
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//
+//        //Check for existing Google Sign In account , if the user is already signed in
+//        //the GoogleSignInAccoutn will be non-null.
+//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+//
+//    }
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        //Result returned from launching the Intent from GoogleSignInClient
+//        if (requestCode == RC_SIGN_IN){
+//            //The Task returned from this call is always completed, no nee to attach a listner
+//            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+//            try {
+//                //Google sign in was successful, authenticate with firebase
+//                GoogleSignInAccount account = task.getResult(ApiException.class);
+//                firebaseAuthWithGoogle(account);
+//
+//            }
+//            catch (ApiException e){
+//
+//            }
+//
+//        }
+//    }
+//
+//    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct){
+//
+//        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+//        auth.signInWithCredential(credential)
+//                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()){
+//                            //Sign in success
+//                            FirebaseUser user = auth.getCurrentUser();
+//
+//                        }
+//                        else {
+//                            //if sign in fails
+////                            Snackbar.make(findViewById(R.id.), "Authentication Failed", Snackbar.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//    }
 }

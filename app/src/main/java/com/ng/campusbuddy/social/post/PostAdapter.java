@@ -54,6 +54,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
     private Context mContext;
     private List<Post> mPosts;
 
+    boolean isImageFitToScreen;
+
     private FirebaseUser firebaseUser;
 
     public PostAdapter(Context context, List<Post> posts){
@@ -64,7 +66,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
     @NonNull
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_post, parent, false);
         return new ImageViewHolder(view);
     }
 
@@ -192,6 +194,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             }
         });
 
+        holder.description .setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, PostDetailActivity.class);
+                intent.putExtra("postid", post.getPostid());
+                intent.putExtra("publisherid", post.getPublisher());
+                mContext.startActivity(intent);
+                Animatoo.animateShrink(mContext);
+            }
+        });
+
         holder.comments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -216,6 +229,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 mContext.startActivity(intent);
                 Animatoo.animateShrink(mContext);
 
+//                if (isImageFitToScreen){
+//                    isImageFitToScreen = false;
+//                    holder.post_image.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//                    holder.post_image.setAdjustViewBounds(true);
+//                }
+//                else {
+//                    isImageFitToScreen=true;
+//                    holder.post_image.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+//                    holder.post_image.setScaleType(ImageView.ScaleType.FIT_XY);
+//
+//                }
             }
         });
 
@@ -274,6 +298,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             }
         });
     }
+
 
     private void shareImage_Text(String Description, Bitmap bitmap){
         String shareBody = Description;

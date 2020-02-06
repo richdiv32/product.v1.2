@@ -43,4 +43,15 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
 
+    <string name="rooms_prompt">Choose a room</string>
+    <string-array name="rooms_arrays">
+        <item>Relationship</item>
+        <item>Tech</item>
+        <item>Movies</item>
+        <item>Gist</item>
+        <item>Love</item>
+        <item>Business</item>
+    </string-array>
+
+
 </resources>

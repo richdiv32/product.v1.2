@@ -38,10 +38,10 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         if (i == 0) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.add_story_item, viewGroup, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_add_story, viewGroup, false);
             return new ViewHolder(view);
         } else {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.story_item, viewGroup, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_story, viewGroup, false);
             return new ViewHolder(view);
         }
     }

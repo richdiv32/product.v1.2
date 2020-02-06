@@ -1,16 +1,27 @@
 package com.ng.campusbuddy.social.fragments;
 
+import android.Manifest;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.ViewFlipper;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,15 +36,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.model.AD;
 import com.ng.campusbuddy.social.post.AllPostAdapter;
 import com.ng.campusbuddy.social.post.Post;
 import com.ng.campusbuddy.social.post.PostActivity;
 import com.ng.campusbuddy.social.post.PostAdapter;
 import com.ng.campusbuddy.social.post.story.Story;
 import com.ng.campusbuddy.social.post.story.StoryAdapter;
+import com.ng.campusbuddy.tools.AdInfoActivity;
+import com.smarteist.autoimageslider.IndicatorAnimations;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
+import com.smarteist.autoimageslider.SliderViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 public class FeedsFragment extends Fragment {
     View view;
@@ -53,6 +73,21 @@ public class FeedsFragment extends Fragment {
     private List<String> followingList;
 
 //    ProgressBar progress_circular;
+
+    //permissions constants
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int STORAGE_REQUEST_CODE = 200;
+
+    //image pick constants
+    private static final int IMAGE_PICK_CAMERA_CODE = 300;
+    private static final int IMAGE_PICK_GALLERY_CODE = 400;
+
+    //permissions array
+    String[] cameraPermissions;
+    String[] storagePermissions;
+
+    //for image
+    Uri image_rui = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,7 +127,7 @@ public class FeedsFragment extends Fragment {
         checkFollowing();
         loadAllPosts();
 
-        ADslider();
+        ADimageslider();
         Init();
         PostInit();
 
@@ -154,13 +189,123 @@ public class FeedsFragment extends Fragment {
 
     }
 
+    private void ADimageslider() {
+        final ArrayList<AD> sliderList = new ArrayList<>();
+        final SliderView sliderView = view.findViewById(R.id.ADsSlider);
+        final SliderAdapterADs adapter = new SliderAdapterADs(getActivity(), sliderList);
+        sliderView.setSliderAdapter(adapter);
+
+        DatabaseReference Adref= FirebaseDatabase.getInstance().getReference().child("ADs").child("Browse");
+
+        Adref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                sliderList.clear();
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                    AD ad = ds.getValue(AD.class);
+                    sliderList.add(ad);
+                }
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        sliderView.setIndicatorAnimation(IndicatorAnimations.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+        sliderView.setSliderTransformAnimation(SliderAnimations.CUBEINROTATIONTRANSFORMATION);
+        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
+        sliderView.setIndicatorSelectedColor(Color.RED);
+        sliderView.setIndicatorUnselectedColor(Color.GRAY);
+        sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
+        sliderView.startAutoCycle();
+    }
+
     private void PostInit() {
+        final boolean[] isFABOpen = new boolean[1];
+
         FloatingActionButton post_fab = view.findViewById(R.id.post_fab);
+        final FloatingActionButton post_camera_fab = view.findViewById(R.id.post_camera_fab);
+        final FloatingActionButton post_note_fab = view.findViewById(R.id.post_note_fab);
+        final FloatingActionButton post_gallery_fab = view.findViewById(R.id.post_gallery_fab);
 
         post_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), PostActivity.class));
+
+                if (!isFABOpen[0]){
+                    showFABMenu();
+                }
+                else {
+                    closeFABMenu();
+                }
+            }
+
+            private void showFABMenu() {
+                isFABOpen[0] = true;
+
+                post_note_fab.animate().translationY(-getResources().getDimension(R.dimen.margin_115));
+                post_gallery_fab.animate().translationY(-getResources().getDimension(R.dimen.margin_145));
+                post_camera_fab.animate().translationY(-getResources().getDimension(R.dimen.margin_175));
+
+            }
+
+            private void closeFABMenu() {
+                isFABOpen[0] = false;
+
+                post_note_fab.animate().translationY(0);
+                post_gallery_fab.animate().translationY(0);
+                post_camera_fab.animate().translationY(0);
+            }
+        });
+
+        post_camera_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Camera", Toast.LENGTH_SHORT).show();
+
+                //Carmera Clicked
+                if (!checkCameraPermission()){
+                    requestCameraPermission();
+                }
+                else {
+                    pickFromCamera();
+                }
+            }
+        });
+
+        post_gallery_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Post Image", Toast.LENGTH_SHORT).show();
+
+                //Gallery Clicked
+                if (!checkStoragePermission()){
+                    requestStoragePermission();
+                }
+                else {
+                    pickFromGallery();
+                }
+
+//                startActivity(new Intent(getActivity(), PostActivity.class));
+//                Animatoo.animateShrink(getContext());
+            }
+        });
+
+        post_note_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Post Text", Toast.LENGTH_SHORT).show();
+
+                SharedPreferences.Editor editor = getContext().getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                editor.putString("Notes", "note");
+                editor.apply();
+
+                Intent intent = new Intent(getContext(), PostActivity.class);
+                startActivity(intent);
                 Animatoo.animateShrink(getContext());
             }
         });
@@ -276,67 +421,152 @@ public class FeedsFragment extends Fragment {
         });
     }
 
-    private void ADslider() {
 
-        ViewFlipper AdFlipper = view.findViewById(R.id.AD_filpper);
-        final ImageView AD1_iv = view.findViewById(R.id.ad_1_iv);
-        final ImageView AD2_iv = view.findViewById(R.id.ad_2_iv);
-        final ImageView AD3_iv = view.findViewById(R.id.ad_3_iv);
-        final ImageView AD4_iv = view.findViewById(R.id.ad_4_iv);
-        final ImageView AD5_iv = view.findViewById(R.id.ad_5_iv);
-        final ImageView AD6_iv = view.findViewById(R.id.ad_6_iv);
-        final ImageView AD7_iv = view.findViewById(R.id.ad_7_iv);
-        final ImageView AD8_iv = view.findViewById(R.id.ad_8_iv);
-        final ImageView AD9_iv = view.findViewById(R.id.ad_9_iv);
-        final ImageView AD10_iv = view.findViewById(R.id.ad_10_iv);
-        final ImageView AD11_iv = view.findViewById(R.id.ad_11_iv);
-        final ImageView AD12_iv = view.findViewById(R.id.ad_12_iv);
+    private void pickFromCamera(){
+        //Intent to pick image from camera
+        ContentValues cv = new ContentValues();
+        cv.put(MediaStore.Images.Media.TITLE, "Temp Pick");
+        cv.put(MediaStore.Images.Media.DESCRIPTION,"Temp Descr");
+        image_rui = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
 
-        AdFlipper.setFlipInterval(3000);
-        AdFlipper.setAutoStart(true);
-        AdFlipper.startFlipping();
-        AdFlipper.setInAnimation(getActivity(), android.R.anim.slide_in_left);
-        AdFlipper.setOutAnimation(getActivity(), android.R.anim.slide_out_right);
+        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, image_rui)
+                , IMAGE_PICK_CAMERA_CODE);
+        Animatoo.animateShrink(getContext());
+    }
+
+    private void pickFromGallery(){
+        //Intent to pick image from gallery
+        startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*")
+                , IMAGE_PICK_GALLERY_CODE);
+    }
+
+    private boolean checkCameraPermission(){
+
+        boolean result = ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
+        boolean result1 = ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
+        return result && result1;
+    }
+
+    private void requestCameraPermission(){
+        ActivityCompat.requestPermissions(getActivity(), cameraPermissions, CAMERA_REQUEST_CODE);
+    }
+
+    private boolean checkStoragePermission(){
+
+        boolean result = ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
+        return result;
+    }
+
+    private void requestStoragePermission(){
+        ActivityCompat.requestPermissions(getActivity(), storagePermissions, STORAGE_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if (resultCode == RESULT_OK){
+            if (requestCode == IMAGE_PICK_CAMERA_CODE){
+                //image is picked from camera, get uri of image
+                sendImagetoPost(image_rui);
+            }
+            else if (requestCode == IMAGE_PICK_GALLERY_CODE){
+                //image picked from Gallery, get uri of image
+                image_rui = data.getData();
+
+                //send uri to firebase storage
+                sendImagetoPost(image_rui);
+
+                //set uri to local output
+
+            }
+            else {
+                Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
 
 
-        DatabaseReference Nav_reference = FirebaseDatabase.getInstance().getReference().child("ADs");
-        Nav_reference.child("Home").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    String Ad1 = dataSnapshot.child("AD_1").getValue().toString();
-                    String Ad2 = dataSnapshot.child("AD_2").getValue().toString();
-                    String Ad3 = dataSnapshot.child("AD_3").getValue().toString();
-                    String Ad4 = dataSnapshot.child("AD_1").getValue().toString();
-                    String Ad5 = dataSnapshot.child("AD_3").getValue().toString();
-                    String Ad6 = dataSnapshot.child("AD_2").getValue().toString();
-                    String Ad7 = dataSnapshot.child("AD_1").getValue().toString();
-                    String Ad8 = dataSnapshot.child("AD_2").getValue().toString();
-                    String Ad9 = dataSnapshot.child("AD_3").getValue().toString();
-                    String Ad10 = dataSnapshot.child("AD_2").getValue().toString();
-                    String Ad11 = dataSnapshot.child("AD_1").getValue().toString();
-                    String Ad12 = dataSnapshot.child("AD_3").getValue().toString();
+    }
 
-                    Glide.with(getActivity()).load(Ad1).into(AD1_iv);
-                    Glide.with(getActivity()).load(Ad2).into(AD2_iv);
-                    Glide.with(getActivity()).load(Ad3).into(AD3_iv);
-                    Glide.with(getActivity()).load(Ad4).into(AD4_iv);
-                    Glide.with(getActivity()).load(Ad5).into(AD5_iv);
-                    Glide.with(getActivity()).load(Ad6).into(AD6_iv);
-                    Glide.with(getActivity()).load(Ad7).into(AD7_iv);
-                    Glide.with(getActivity()).load(Ad8).into(AD8_iv);
-                    Glide.with(getActivity()).load(Ad9).into(AD9_iv);
-                    Glide.with(getActivity()).load(Ad10).into(AD10_iv);
-                    Glide.with(getActivity()).load(Ad11).into(AD11_iv);
-                    Glide.with(getActivity()).load(Ad12).into(AD12_iv);
+    private void sendImagetoPost(Uri image_rui) {
+        //this will grab the image url and send it to the post activity through intent
+        Intent intent = new Intent(getContext(), PostActivity.class);
+        intent.putExtra("imagePath", image_rui.toString());
+        startActivity(intent);
 
+    }
+
+
+
+    private class SliderAdapterADs  extends SliderViewAdapter<SliderAdapterADs.SliderAdapterVH> {
+
+        private Context context;
+        private ArrayList<AD> sliderlist;
+
+        public SliderAdapterADs(Context context, ArrayList<AD> sliderlist) {
+            this.context = context;
+            this.sliderlist = sliderlist;
+        }
+
+        @Override
+        public SliderAdapterADs.SliderAdapterVH onCreateViewHolder(ViewGroup parent) {
+            View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image_slider_layout, null);
+            return new SliderAdapterADs.SliderAdapterVH(inflate);
+        }
+
+
+        @Override
+        public void onBindViewHolder(SliderAdapterADs.SliderAdapterVH viewHolder, final int position) {
+
+            final AD ad = sliderlist.get(position);
+
+
+            viewHolder.textViewDescription.setText(ad.getTitle());
+
+
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, AdInfoActivity.class);
+                    intent.putExtra("Ad_id", ad.getId());
+                    //TODO: change this intent value to Feeds
+                    intent.putExtra("context", "Browse");
+                    context.startActivity(intent);
                 }
-            }
+            });
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
 
+            Glide.with(context)
+                    .load(ad.getImage())
+                    .placeholder(R.drawable.placeholder)
+                    .into(viewHolder.imageViewBackground);
+
+        }
+
+
+
+        @Override
+        public int getCount() {
+            return sliderlist.size();
+        }
+
+        class SliderAdapterVH extends SliderViewAdapter.ViewHolder {
+
+            public View itemView;
+            public ImageView imageViewBackground;
+            public TextView textViewDescription;
+
+            public SliderAdapterVH(View itemView) {
+                super(itemView);
+                imageViewBackground = itemView.findViewById(R.id.iv_auto_image_slider);
+                textViewDescription = itemView.findViewById(R.id.tv_auto_image_slider);
+                this.itemView = itemView;
             }
-        });
+        }
+
+
     }
 }

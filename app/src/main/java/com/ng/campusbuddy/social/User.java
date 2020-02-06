@@ -16,14 +16,15 @@ public class User {
     private String email;
     private String online_status;
     private String relationship_status;
-    private String search;
+    private String typingTo;
+    private boolean isSelected = false;
 
-    public User(String id, String username, String fullname, String imageurl,
-                String bio, String gender, String birthday, String telephone, String faculty,
-                String department, String institution, String email, String online_status,
-                String relationship_status, String profile_status, String search) {
-        this.id = id;
+    public User(String profile_status, String id, String username, String fullname,
+                String imageurl, String bio, String gender, String birthday, String telephone,
+                String faculty, String department, String institution, String email,
+                String online_status, String relationship_status, String typingTo) {
         this.profile_status = profile_status;
+        this.id = id;
         this.username = username;
         this.fullname = fullname;
         this.imageurl = imageurl;
@@ -37,8 +38,7 @@ public class User {
         this.email = email;
         this.online_status = online_status;
         this.relationship_status = relationship_status;
-        this.search = search;
-
+        this.typingTo = typingTo;
     }
 
     public User() {
@@ -150,11 +150,19 @@ public class User {
         this.relationship_status = relationship_status;
     }
 
-    public String getSearch() {
-        return search;
-    }
-    public void setSearch(String search) {
-        this.search = search;
+    public String getTypingTo() {
+        return typingTo;
     }
 
+    public void setTypingTo(String typingTo) {
+        this.typingTo = typingTo;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isSelected(){
+        return  isSelected;
+    }
 }

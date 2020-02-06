@@ -1,34 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="100dp"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="100dp"
+    android:layout_height="180dp"
+    android:layout_margin="10dp"
     android:orientation="horizontal"
-    android:padding="20sp">
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@mipmap/ic_launcher"
-        android:id="@+id/MatchImage"/>
-    <LinearLayout
-        android:paddingLeft="20sp"
+    app:cardBackgroundColor="?attr/cardbackground"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="10dp">
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center">
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/MatchImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/auth_bg" />
+
         <TextView
-            android:paddingBottom="20sp"
+            android:id="@+id/MatchName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/semi_transparent"
+            android:gravity="center"
+            android:paddingBottom="10sp"
             android:text="Match's Name"
-            android:id="@+id/MatchName"/>
+            android:textColor="?attr/title_textcolor"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
         <TextView
+            android:id="@+id/Matchid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Match's ID"
             android:layout_gravity="center"
-            android:id="@+id/Matchid"
-            android:visibility="gone"/>
-    </LinearLayout>
+            android:text="Match's ID"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
 
-</LinearLayout>
+</androidx.cardview.widget.CardView>

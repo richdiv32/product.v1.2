@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="50dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,9 +31,10 @@
                 android:background="@drawable/attachment_icon"
                 android:tint="@color/grey" />
 
-            <EditText
+
+            <com.kevalpatel2106.emoticongifkeyboard.widget.EmoticonEditText
                 android:id="@+id/text_send"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
@@ -45,13 +46,14 @@
                 android:textColor="@color/black"
                 android:textColorHint="?attr/textcolor" />
 
-            <ImageButton
+
+            <com.kevalpatel2106.emoticongifkeyboard.widget.EmoticonButton
                 android:id="@+id/emoji_btn"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_fullname"
-                android:tint="@color/white" />
+                android:background="@drawable/ic_fullname"
+                android:backgroundTint="@color/white" />
+
 
         </LinearLayout>
 

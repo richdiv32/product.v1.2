@@ -64,7 +64,7 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
     @NonNull
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_post, parent, false);
         return new ImageViewHolder(view);
     }
 
@@ -73,11 +73,6 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final Post post = mPosts.get(position);
-
-
-//        Glide.with(mContext).load(post.getPostimage())
-//                .apply(new RequestOptions().placeholder(R.drawable.placeholder))
-//                .into(holder.post_image);
 
         if (post.getDescription().equals("")){
             holder.description.setVisibility(View.GONE);

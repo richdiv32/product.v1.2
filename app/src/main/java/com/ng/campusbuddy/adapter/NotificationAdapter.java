@@ -42,7 +42,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @NonNull
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.notificaion_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_notificaion, parent, false);
         return new ImageViewHolder(view);
     }
 
@@ -77,15 +77,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     mContext.startActivity(intent);
                     Animatoo.animateZoom(mContext);
 
-//                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-//                    editor.putString("postid", notification.getPostid());
-//                    editor.putString("publisherid", notification.getPublisher());
-//                    editor.apply();
-//
-//                    Intent intent = new Intent(mContext, PostDetailActivity.class);
-//                    intent.putExtra("postid", notification.getPostid());
-//                    intent.putExtra("publisherid", notification.getPublisher());
-//                    mContext.startActivity(intent);
 
                 }
                 else {
