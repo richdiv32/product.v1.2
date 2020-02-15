@@ -1,10 +1,10 @@
 package com.ng.campusbuddy.start;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -13,25 +13,24 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.material.tabs.TabLayout;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.adapter.IntroViewPagerAdapter;
+import com.ng.campusbuddy.adapter.SliderAdapter;
 import com.ng.campusbuddy.model.ScreenItem;
+import com.smarteist.autoimageslider.IndicatorAnimations;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class IntroActivity extends AppCompatActivity {
 
-    private ViewPager screenPager;
-    IntroViewPagerAdapter introViewPagerAdapter ;
-    TabLayout tabIndicator;
+
     Button btnNext;
     int position = 0 ;
     Button btnGetStarted;
     Animation btnAnim ;
     TextView tvSkip;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +50,9 @@ public class IntroActivity extends AppCompatActivity {
             finish();
 
         }
-
         setContentView(R.layout.activity_intro);
 
 
-        // ini views
-        btnNext = findViewById(R.id.btn_next);
-        btnGetStarted = findViewById(R.id.btn_get_started);
-        tabIndicator = findViewById(R.id.tab_indicator);
-        btnAnim = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.button_animation);
-        tvSkip = findViewById(R.id.tv_skip);
 
         // fill list screen
         final List<ScreenItem> mList = new ArrayList<>();
@@ -69,24 +61,32 @@ public class IntroActivity extends AppCompatActivity {
         mList.add(new ScreenItem("CONNECT","Stay in touch with friends and colleagues on campus. Build your social life by posting and engaging in our social platform by acquiring more followers",R.drawable.slide_social));
         mList.add(new ScreenItem("GROW","Establish yourself and become to better version of yourself",R.drawable.slide_work));
 
-        // setup viewpager
-        screenPager =findViewById(R.id.screen_viewpager);
-        introViewPagerAdapter = new IntroViewPagerAdapter(this,mList);
-        screenPager.setAdapter(introViewPagerAdapter);
+        final SliderView sliderView = findViewById(R.id.Intor_Slider);
+        final SliderAdapter adapter = new SliderAdapter(this, mList);
+        sliderView.setSliderAdapter(adapter);
 
-        // setup tablayout with viewpager
-        tabIndicator.setupWithViewPager(screenPager);
+        sliderView.setIndicatorAnimation(IndicatorAnimations.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+        sliderView.setSliderTransformAnimation(SliderAnimations.CUBEINROTATIONTRANSFORMATION);
+        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
+        sliderView.setIndicatorSelectedColor(Color.RED);
+        sliderView.setIndicatorUnselectedColor(Color.GRAY);
+        sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
+        sliderView.startAutoCycle();
+
+        btnAnim = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.button_animation);
+
 
         // next button click Listner
+        btnNext = findViewById(R.id.btn_next);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                position = screenPager.getCurrentItem();
+                position = sliderView.getCurrentPagePosition();
                 if (position < mList.size()) {
 
                     position++;
-                    screenPager.setCurrentItem(position);
+                    sliderView.setCurrentPagePosition(position);
 
                 }
 
@@ -99,33 +99,9 @@ public class IntroActivity extends AppCompatActivity {
             }
         });
 
-        // tablayout add change listener
-        tabIndicator.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                if (tab.getPosition() == mList.size()-1) {
-
-                    loaddLastScreen();
-
-                }
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-
 
         // Get Started button click listener
+        btnGetStarted = findViewById(R.id.btn_get_started);
         btnGetStarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,14 +119,15 @@ public class IntroActivity extends AppCompatActivity {
         });
 
         // skip button click listener
+        tvSkip = findViewById(R.id.tv_skip);
         tvSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                screenPager.setCurrentItem(mList.size());
+                loaddLastScreen();
             }
         });
-
     }
+
 
     private boolean restorePrefData() {
 
@@ -172,14 +149,12 @@ public class IntroActivity extends AppCompatActivity {
     // show the GETSTARTED Button and hide the indicator and the next button
     private void loaddLastScreen() {
 
+//        btnNext.setVisibility(View.INVISIBLE);
         btnNext.setVisibility(View.INVISIBLE);
         btnGetStarted.setVisibility(View.VISIBLE);
         tvSkip.setVisibility(View.INVISIBLE);
-        tabIndicator.setVisibility(View.INVISIBLE);
         // setup animation
         btnGetStarted.setAnimation(btnAnim);
 
     }
-
 }
-

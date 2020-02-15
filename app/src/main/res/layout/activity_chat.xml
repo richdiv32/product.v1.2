@@ -17,7 +17,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:background="?attr/appbarcolor">
+            android:background="@drawable/gradient_bg">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@android:color/transparent"
-                    android:tint="?attr/title_textcolor"
+                    android:tint="@color/white"
                     app:srcCompat="@drawable/ic_arrow_back"
                     tools:ignore="VectorDrawableCompat" />
 
@@ -48,14 +48,15 @@
                         android:layout_below="@id/username"
                         android:layout_alignLeft="@id/username"
                         android:layout_toRightOf="@id/profile_image"
-                        android:textColor="?attr/textcolor" />
+                        android:textColor="@color/white" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profile_image"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/profile_bg" />
+                        android:background="@drawable/profile_bg"
+                        app:civ_border_color="@color/white"/>
 
                     <TextView
                         android:id="@+id/username"
@@ -64,7 +65,7 @@
                         android:layout_marginLeft="5dp"
                         android:layout_toRightOf="@id/profile_image"
                         android:text="Username"
-                        android:textColor="?attr/title_textcolor"
+                        android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </RelativeLayout>

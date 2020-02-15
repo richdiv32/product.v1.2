@@ -18,19 +18,23 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.home.HomeActivity;
+import com.ng.campusbuddy.utils.Token;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -192,10 +196,26 @@ public class SetUpProfileActivity extends AppCompatActivity {
 
                         reference.child(userid).setValue(map);
 
+
+                        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+                        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+                        DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference()
+                                .child("Tokens");
+                        Token mtoken = new Token(deviceToken);
+                        tokenRef.child(fuser.getUid()).setValue(mtoken )
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()){
+
+                                            Home();
+                                        }
+                                    }
+                                });
+
                         pd.dismiss();
 
-                        startActivity(new Intent(SetUpProfileActivity.this, HomeActivity.class));
-                        finish();
 
                     } else {
                         Toast.makeText(SetUpProfileActivity.this, "Failed", Toast.LENGTH_SHORT).show();
@@ -208,6 +228,15 @@ public class SetUpProfileActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    //i love what i am doing because i can do it over and over again, i just cant let go of it , this is the best job ever in the world
+
+    private void Home() {
+        startActivity(new Intent(this, HomeActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        Animatoo.animateZoom(this);
+        finish();
     }
 
     @Override

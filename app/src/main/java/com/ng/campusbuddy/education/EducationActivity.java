@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -11,11 +12,13 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +28,7 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,6 +49,7 @@ import com.ng.campusbuddy.tools.SettingsActivity;
 import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -69,8 +74,6 @@ public class EducationActivity extends AppCompatActivity {
         else{
             setTheme(R.style.AppTheme);
         }
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             Window w = getWindow();
             //removes status bar with background
@@ -133,6 +136,7 @@ public class EducationActivity extends AppCompatActivity {
         final TextView Followers = headerview.findViewById(R.id.followers);
         final TextView Following = headerview.findViewById(R.id.following);
         final CircleImageView Profile_image = headerview.findViewById(R.id.image_profile);
+        final ImageView Profile_image_bg = headerview.findViewById(R.id.image_profile_bg);
 
 
 
@@ -149,6 +153,9 @@ public class EducationActivity extends AppCompatActivity {
                     Glide.with(getApplicationContext())
                             .load(profile_image)
                             .into(Profile_image);
+                    Glide.with(getApplicationContext())
+                            .load(profile_image)
+                            .into(Profile_image_bg);
                     Username.setText(username);
                     Profile_status.setText(profile_status);
                 }
@@ -223,6 +230,16 @@ public class EducationActivity extends AppCompatActivity {
                         startActivity(new Intent(mcontext, SettingsActivity.class));
                         Animatoo .animateSlideLeft(mcontext);
                         break;
+                    case R.id.nav_about_us:
+                        String url = "https://campusbuddy.xyz/Organisation";
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(Intent.createChooser(intent, "Browse with"));
+                        break;
+                    case R.id.nav_faq:
+                        String url2 = "https://campusbuddy.xyz/Team";
+                        Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(url2));
+                        startActivity(Intent.createChooser(intent2, "Browse with"));
+                        break;
                     case R.id.nav_log_out:
                         FirebaseAuth mAuth = FirebaseAuth.getInstance();Animatoo.animateSlideLeft(mcontext);
                         mAuth.signOut();
@@ -230,31 +247,24 @@ public class EducationActivity extends AppCompatActivity {
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         Animatoo.animateShrink(mcontext);
                         break;
+                    case R.id.nav_invite:
+                        String shareBody = "Check out Campus Buddy App, its the best college student platform. " +
+                                "Inquire, Learn, Connect and Grow your campus experience just like me." +
+                                "Get it for free at https://campusbuddy.xyz/Download " +
+                                "or on Play Store.";
+                        Intent sIntent = new Intent(Intent.ACTION_SEND);
+                        sIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                        sIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
+                        sIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sIntent, "Invite a friend via..."));
+                        break;
+
+
                 }
 
                 return false;
             }
         });
-
-//        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
-//
-//            @Override
-//            public void onDrawerClosed(View drawerView) {
-//                super.onDrawerClosed(drawerView);
-//            }
-//
-//            @Override
-//            public void onDrawerOpened(View drawerView) {
-//                super.onDrawerOpened(drawerView);
-//            }
-//        };
-
-//         showing dot next to notifications label
-//        navigationView.getMenu().getItem(3).setActionView(R.layout.menu_dot);
-
-//        drawerLayout.setDrawerListener(actionBarDrawerToggle);
-//        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-//        actionBarDrawerToggle.syncState();
     }
 
     static final int TIME_INTERVAL = 2000;
@@ -271,4 +281,38 @@ public class EducationActivity extends AppCompatActivity {
         }
         mBackPressed = System.currentTimeMillis();
     }
+
+    DatabaseReference ref;
+    ValueEventListener seenListener;
+    private void online_status(String online_status){
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("online_status", online_status);
+
+        ref.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        online_status("online");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        online_status("online");
+    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//
+//        String timestamp = String.valueOf(System.currentTimeMillis());
+//
+//        ref.removeEventListener(seenListener);
+//        online_status(timestamp);
+//    }
 }

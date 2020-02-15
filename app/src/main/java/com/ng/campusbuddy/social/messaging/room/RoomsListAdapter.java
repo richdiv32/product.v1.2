@@ -1,11 +1,9 @@
 package com.ng.campusbuddy.social.messaging.room;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -21,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -79,6 +78,11 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
                     .load(room.getImage_chatroom())
                     .placeholder(R.drawable.placeholder)
                     .into(holder.image);
+
+            Picasso.get()
+                    .load(room.getImage_chatroom())
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.bg);
         }
 
 
@@ -101,7 +105,7 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
     public  class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView title;
-        public ImageView image;
+        public ImageView image, bg;
         private TextView count;
 
         public ViewHolder(View itemView) {
@@ -109,6 +113,7 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
 
             title = itemView.findViewById(R.id.title);
             image = itemView.findViewById(R.id.chat_room_imgae);
+            bg = itemView.findViewById(R.id.chat_room_imgae_bg);
             count = itemView.findViewById(R.id.count);
         }
     }
@@ -260,6 +265,11 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
                         .load(room.getImage_chatroom())
                         .placeholder(R.drawable.placeholder)
                         .into(holder.image);
+
+                Picasso.get()
+                        .load(room.getImage_chatroom())
+                        .placeholder(R.drawable.placeholder)
+                        .into(holder.bg);
             }
 
 
@@ -287,13 +297,14 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
         public  class ViewHolder extends RecyclerView.ViewHolder{
 
             public TextView title;
-            public ImageView image;
+            public ImageView image, bg;
             private TextView count;
 
             public ViewHolder(View itemView) {
                 super(itemView);
 
                 title = itemView.findViewById(R.id.title);
+                bg = itemView.findViewById(R.id.chat_room_imgae_bg);
                 image = itemView.findViewById(R.id.chat_room_imgae);
                 count = itemView.findViewById(R.id.count);
             }

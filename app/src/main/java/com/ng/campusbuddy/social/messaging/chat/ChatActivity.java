@@ -31,7 +31,11 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
@@ -50,6 +54,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 import com.kevalpatel2106.emoticompack.samsung.SamsungEmoticonProvider;
 import com.kevalpatel2106.emoticongifkeyboard.EmoticonGIFKeyboardFragment;
 import com.kevalpatel2106.emoticongifkeyboard.emoticons.Emoticon;
@@ -63,7 +68,13 @@ import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.social.messaging.MessageAdapter;
+import com.ng.campusbuddy.utils.Data;
+import com.ng.campusbuddy.utils.Sender;
 import com.ng.campusbuddy.utils.SharedPref;
+import com.ng.campusbuddy.utils.Token;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -72,6 +83,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -97,6 +109,7 @@ public class ChatActivity extends AppCompatActivity {
     ValueEventListener seenListener;
 
     String userid;
+
 
     //volley request queue for notification
     private RequestQueue requestQueue;
@@ -425,6 +438,7 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     private void sendImageMessage(Uri image_rui) {
@@ -568,6 +582,50 @@ public class ChatActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
 
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(
+                            ""+fuser.getUid(),
+                            R.drawable.ic_notifications,
+                            ""+ username+": "+message,
+                            "New Message",
+                            ""+ userid,
+                            "ChatNotification");
+
+                    Sender sender = new Sender(data, token.getToken());
+
+                    //fcm json object
+                    try {
+                        JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
+                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+
+
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        })
+                        {
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                //put params
+                                Map<String , String > headers = new HashMap<>();
+                                headers.put("Content-Type","application/json");
+                                headers.put("Authorization", "key= AAAAwTB5AhQ:APA91bEu8Ma29SIWNCWcdcuI93O6cgybCefaEa-m97bHCHkATKekLfV1OHcSA8YnqD74tp9Bvua_31AAZ9vrSwii-dDmCt00IA2UPn1IrGzW9Yi0Yo0GmlrCRbfVUiizVCFxK9qQqaSS");
+
+                                return headers;
+                            }
+                        };
+
+                        requestQueue.add(jsonObjectRequest);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 

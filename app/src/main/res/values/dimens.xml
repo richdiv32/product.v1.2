@@ -15,7 +15,10 @@
     <!--post card content_padding left = card_elevation + card_padding-->
 
 
-    <dimen name="margin_115" >60dp</dimen>
-    <dimen name="margin_145" >105dp</dimen>
+    <dimen name="margin_115">60dp</dimen>
+    <dimen name="margin_145">105dp</dimen>
     <dimen name="margin_175">155dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

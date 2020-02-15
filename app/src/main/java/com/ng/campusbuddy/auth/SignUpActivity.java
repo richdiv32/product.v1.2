@@ -1,6 +1,7 @@
 package com.ng.campusbuddy.auth;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -10,18 +11,30 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.home.HomeActivity;
+import com.ng.campusbuddy.utils.Token;
 
 import java.util.HashMap;
 
@@ -41,7 +54,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         InitLogIn();
         InitSignUp();
-
+        googleauth();
     }
 
     private void InitLogIn() {
@@ -114,7 +127,7 @@ public class SignUpActivity extends AppCompatActivity {
                         else {
                             pd.dismiss();
                             String message = task.getException().getMessage();
-                            Toast.makeText(SignUpActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignUpActivity.this, "Error: " + message, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -145,5 +158,87 @@ public class SignUpActivity extends AppCompatActivity {
             });
         }
 
+    }
+
+    private void Home() {
+        startActivity(new Intent(this, HomeActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        Animatoo.animateZoom(this);
+        finish();
+    }
+
+    static final int RC_SIGN_IN = 100;
+    GoogleSignInClient mGoogleSignInClient;
+
+    private void googleauth(){
+
+        //Configure google sign in
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        //Build a GoogleSignInClient with the options specified by gso
+        mGoogleSignInClient = GoogleSignIn.getClient(getApplicationContext(), gso);
+
+        ImageButton GoogleAuth = findViewById(R.id.google_btn);
+
+        GoogleAuth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, RC_SIGN_IN);
+
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //Result returned from launching the Intent from GoogleSignInClient
+        if (requestCode == RC_SIGN_IN){
+            //The Task returned from this call is always completed, no nee to attach a listner
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                //Google sign in was successful, authenticate with firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+
+            }
+            catch (ApiException e){
+
+            }
+
+        }
+    }
+
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct){
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            //Sign in success
+                            Home();
+
+                        }
+                        else {
+                            //if sign in fails
+//                            Snackbar.make(findViewById(R.id.), "Authentication Failed", Snackbar.LENGTH_SHORT).show();
+                            Toast.makeText(SignUpActivity.this, "Login Failed.... ", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(SignUpActivity.this, ""+ e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

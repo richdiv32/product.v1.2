@@ -32,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity {
     SharedPreferences sp;
     SharedPreferences.Editor editor;
 
-    static final String POST_NOTIFICATION = "POST";
+    static final String TOPIC_POST_NOTIFICATION = "POST";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedPref = new SharedPref(this);
@@ -64,7 +64,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void PostNotification() {
         sp = getSharedPreferences("Notification_SP", MODE_PRIVATE);
-        boolean isPostEnabled = sp.getBoolean(""+ POST_NOTIFICATION, false);
+        boolean isPostEnabled = sp.getBoolean(""+ TOPIC_POST_NOTIFICATION, false);
 
         postSwitch = findViewById(R.id.notification_switch);
 
@@ -82,45 +82,55 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //edit swity state
                 editor = sp.edit();
-                editor.putBoolean("" + POST_NOTIFICATION, isChecked);
+                editor.putBoolean("" + TOPIC_POST_NOTIFICATION, isChecked);
                 editor.apply();
 
                 if (isChecked){
 
-                    //subscribe to POST to enable it's notifications
-                    FirebaseMessaging.getInstance().subscribeToTopic(""+POST_NOTIFICATION)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+                    subscribePostNotificaiton();
 
-                                    String msg = "You will receive post notifications";
-                                    if (!task.isSuccessful()){
-                                        msg = "Subcription failed";
-
-                                    }
-                                    Toast.makeText(SettingsActivity.this, msg, Toast.LENGTH_SHORT).show();
-                                }
-                            });
                 }
                 else {
 
-                    //unsubscribe to POST to enable it's notifications
-                    FirebaseMessaging.getInstance().unsubscribeFromTopic(""+POST_NOTIFICATION)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+                    unSubcribePostNotification();
 
-                                    String msg = "You will not receive post notifications";
-                                    if (!task.isSuccessful()){
-                                        msg = "UnSubcription failed";
-
-                                    }
-                                    Toast.makeText(SettingsActivity.this, msg, Toast.LENGTH_SHORT).show();
-                                }
-                            });
                 }
             }
         });
+    }
+
+    private void unSubcribePostNotification() {
+        //unsubscribe to POST to enable it's notifications
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(""+TOPIC_POST_NOTIFICATION)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        String msg = "You will not receive post notifications";
+                        if (!task.isSuccessful()){
+                            msg = "UnSubscription failed";
+
+                        }
+                        Toast.makeText(SettingsActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void subscribePostNotificaiton() {
+        //subscribe to POST to enable it's notifications
+        FirebaseMessaging.getInstance().subscribeToTopic(""+TOPIC_POST_NOTIFICATION)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        String msg = "You will receive post notifications";
+                        if (!task.isSuccessful()){
+                            msg = "Subscription failed";
+
+                        }
+                        Toast.makeText(SettingsActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void AdMod() {

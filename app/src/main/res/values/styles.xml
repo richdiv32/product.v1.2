@@ -5,9 +5,9 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#ff0000</item>
-        <item name="colorPrimaryDark">#C50000</item>
+        <item name="colorPrimaryDark">#ff0000</item>
         <item name="colorAccent">#FC3737</item>
-        <item name="appbarcolor">#ffffff</item>
+        <item name="appbarcolor">#ff0000</item>
         <item name="backgroundcolor">#E9E9E9</item>
         <item name="cardbackground">#ffffff</item>
         <item name="title_textcolor">#000000</item>
@@ -17,14 +17,14 @@
         <item name="darkcolor">#C50000</item>
 
         <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
-<!--        <item name="android:statusBarColor" tools:targetApi="21">@android:color/transparent</item>-->
+        <!--        <item name="android:statusBarColor" tools:targetApi="21">@android:color/transparent</item>-->
     </style>
 
     <!--Dark/Night Theme-->
     <style name="AppDarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#212121</item>
-        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorPrimaryDark">#212121</item>
         <item name="colorAccent">#FC3737</item>
         <item name="appbarcolor">#212121</item>
         <item name="backgroundcolor">#303030</item>
@@ -36,7 +36,7 @@
         <item name="darkcolor">#000000</item>
 
 
-<!--        <item name="android:statusBarColor" tools:targetApi="21">@android:color/transparent</item>-->
+        <!--        <item name="android:statusBarColor" tools:targetApi="21">@android:color/transparent</item>-->
         <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
     </style>
 
@@ -56,7 +56,7 @@
     </style>
 
     <style name="MenuStyle" parent="Theme.AppCompat.Light">
-        <item name="android:background">@android:color/white</item>
+        <item name="background">@android:color/white</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -67,5 +67,6 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 
 </resources>

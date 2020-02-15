@@ -8,10 +8,11 @@ android:layout_height="match_parent">
 
 
     <RelativeLayout
+        app:layout_behavior="eu.long1.spacetablayout.SpaceTabLayoutBehavior"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/bottom"
-        android:background="#fff"
+        android:background="?attr/cardbackground"
         android:elevation="10dp"
         android:layout_alignParentBottom="true"
         android:gravity="center_vertical"
@@ -38,17 +39,8 @@ android:layout_height="match_parent">
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:background="@android:color/transparent"
-            android:layout_toLeftOf="@id/post"/>
-
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="POST"-->
-<!--            android:id="@+id/post"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:textColor="@color/colorPrimary"-->
-<!--            android:layout_marginRight="5dp"-->
-<!--            android:layout_alignParentRight="true" />-->
+            android:layout_toLeftOf="@id/post"
+            android:textColor="?attr/title_textcolor"/>
 
         <Button
             android:id="@+id/post"

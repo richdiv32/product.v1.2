@@ -75,7 +75,7 @@ public class AdInfoActivity extends AppCompatActivity {
         final TextView ADdescription = findViewById(R.id.description);
 
         final DatabaseReference AD = FirebaseDatabase.getInstance().getReference().child("ADs")
-                .child(context_name).child(ad_id);
+                .child(context_name).child("Slides").child(ad_id);
 
         AD.addValueEventListener(new ValueEventListener() {
             @Override

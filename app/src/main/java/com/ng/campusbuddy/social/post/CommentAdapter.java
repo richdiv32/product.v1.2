@@ -1,17 +1,18 @@
 package com.ng.campusbuddy.social.post;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,10 +23,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.social.SocialActivity;
+import com.ng.campusbuddy.social.User;
 
 import java.util.List;
 
@@ -108,6 +110,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ImageVie
                                                 }
                                             }
                                         });
+                                        deleteNotification(position);
                                         dialog.dismiss();
                                     }
                                 });
@@ -117,6 +120,30 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ImageVie
             }
         });
 
+    }
+
+    private void deleteNotification(int position) {
+        String comment = mComment.get(position).getComment();
+        final FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications");
+        Query query = reference.orderByChild("text").equalTo(comment);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+                    if (ds.child("userid").getValue().equals(fuser.getUid())) {
+                        //To remove the message completly from chat
+                        ds.getRef().removeValue();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

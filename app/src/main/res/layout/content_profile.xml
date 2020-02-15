@@ -20,7 +20,7 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:text="Telephone:"
-            android:textColor="@color/black"
+            android:textColor="?attr/title_textcolor"
             android:textStyle="bold"
             app:drawableTint="@color/colorPrimary" />
 
@@ -47,7 +47,7 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:text="Relationship Status:"
-            android:textColor="@color/black"
+            android:textColor="?attr/title_textcolor"
             android:textStyle="bold"
             app:drawableTint="@color/colorPrimary" />
 
@@ -73,7 +73,7 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:text="Birthday:"
-            android:textColor="@color/black"
+            android:textColor="?attr/title_textcolor"
             android:textStyle="bold"
             app:drawableTint="@color/colorPrimary" />
 
@@ -100,7 +100,7 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:text="Institution:"
-            android:textColor="@color/black"
+            android:textColor="?attr/title_textcolor"
             android:textStyle="bold"
             app:drawableTint="@color/colorPrimary" />
 
@@ -126,7 +126,7 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:text="Faculty:"
-            android:textColor="@color/black"
+            android:textColor="?attr/title_textcolor"
             android:textStyle="bold"
             app:drawableTint="@color/colorPrimary" />
 
@@ -152,7 +152,7 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:text="Department:"
-            android:textColor="@color/black"
+            android:textColor="?attr/title_textcolor"
             android:textStyle="bold"
             app:drawableTint="@color/colorPrimary" />
 
@@ -178,7 +178,7 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:text="Gender:"
-            android:textColor="@color/black"
+            android:textColor="?attr/title_textcolor"
             android:textStyle="bold"
             app:drawableTint="@color/colorPrimary" />
 
@@ -203,8 +203,8 @@
             android:drawableLeft="@drawable/ic_fullname"
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
-            android:text="Bio:"
-            android:textColor="@color/black"
+            android:text="About Me:"
+            android:textColor="?attr/title_textcolor"
             android:textStyle="bold"
             app:drawableTint="@color/colorPrimary" />
 

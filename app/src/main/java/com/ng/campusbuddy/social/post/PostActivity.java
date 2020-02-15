@@ -33,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -69,6 +70,9 @@ public class PostActivity extends AppCompatActivity {
     EditText description;
 
     Intent intent;
+
+    CircleImageView Profile_image;
+    TextView Username;
 
     //permissions constants
     private static final int CAMERA_REQUEST_CODE = 100;
@@ -244,12 +248,12 @@ public class PostActivity extends AppCompatActivity {
     private void  prepareNotification(String pID, String title, String description, String notificationType, String notifiactionTopic){
 
         //prepare dat for notification
-        String NOTIFICATION_TOPIC = "/topics/" + notifiactionTopic; //topic must match with what the receiver subscribeb to
+        String NOTIFICATION_TOPIC = "/topics/" + notifiactionTopic; //topic must match with what the receiver subscribe to
         String NOTIFICATION_TITLE = title; //e.g CAMPUS BUDDY added a new post
         String NOTIFICATION_DESCRIPTION = description; //content of post
         String NOTIFICATION_TYPE = notificationType; //This indicate what type on notification this is <Now there are two notifications(Chat and Post)>
 
-        //prepart json what to send, and where to send
+        //prepare json what to send, and where to send
         JSONObject notificationJS = new JSONObject();
         JSONObject notificationBodyJS = new JSONObject();
 
@@ -268,6 +272,10 @@ public class PostActivity extends AppCompatActivity {
             Toast.makeText(this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
+        sendPostNotificaiton(notificationJS);
+    }
+
+    private void sendPostNotificaiton(JSONObject notificationJS) {
         //send volley object request
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", notificationJS,
                 new Response.Listener<JSONObject>() {
@@ -285,11 +293,11 @@ public class PostActivity extends AppCompatActivity {
         {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                //put required headers
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                headers.put("Authorization", "key = ");
-                //TODO: FCM required
+                //put params
+                Map<String , String > headers = new HashMap<>();
+                headers.put("Content-Type","application/json");
+                headers.put("Authorization", "key= AAAAwTB5AhQ:APA91bEu8Ma29SIWNCWcdcuI93O6cgybCefaEa-m97bHCHkATKekLfV1OHcSA8YnqD74tp9Bvua_31AAZ9vrSwii-dDmCt00IA2UPn1IrGzW9Yi0Yo0GmlrCRbfVUiizVCFxK9qQqaSS");
+
                 return headers;
             }
         };
@@ -301,8 +309,8 @@ public class PostActivity extends AppCompatActivity {
 
     private void LoadImage() {
 
-        final CircleImageView Profile_image = findViewById(R.id.image_profile);
-        final TextView Username = findViewById(R.id.username);
+        Profile_image = findViewById(R.id.image_profile);
+        Username = findViewById(R.id.username);
 
         Profile_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -377,7 +385,23 @@ public class PostActivity extends AppCompatActivity {
                         hashMap.put("description", description.getText().toString());
                         hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                        reference.child(postid).setValue(hashMap);
+                        reference.child(postid).setValue(hashMap)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        pd.dismiss();
+
+                                        prepareNotification(
+                                                "",
+                                                "" + Username + " added new post",
+                                                ""+ description,
+                                                "PostNotification",
+                                                "POST" );
+
+                                        startActivity(new Intent(PostActivity.this, SocialActivity.class));
+                                        finish();
+                                    }
+                                });
 
                         //send Notification
 
@@ -387,19 +411,6 @@ public class PostActivity extends AppCompatActivity {
 //                                ""+ description,
 //                                "PostNotification",
 //                                "POST" );
-
-                        prepareNotification(
-                                "",
-                                "" +"Your Friend"+ "added new post",
-                                ""+ description,
-                                "PostNotification",
-                                "POST" );
-
-                        pd.dismiss();
-
-                        startActivity(new Intent(PostActivity.this, SocialActivity.class));
-                        finish();
-
                     } else {
                         Toast.makeText(PostActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                     }

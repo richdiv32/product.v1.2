@@ -7,10 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -41,6 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
     String profileid;
 
     CircleImageView image_profile;
+    ImageView bg;
 
     TextView Fullname, Username, Profile_status
             , posts ,followers, following;
@@ -72,6 +77,11 @@ public class ProfileActivity extends AppCompatActivity {
         else{
             setTheme(R.style.AppTheme);
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            Window w = getWindow();
+            //removes status bar with background
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
@@ -79,6 +89,7 @@ public class ProfileActivity extends AppCompatActivity {
         profileid = firebaseUser.getUid();
 
         image_profile = findViewById(R.id.image_profile);
+        bg = findViewById(R.id.image_profile_bg);
         Fullname = findViewById(R.id.fullname);
         Username = findViewById(R.id.username);
         Profile_status = findViewById(R.id.profile_status);
@@ -252,6 +263,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                     else {
                         Picasso.get().load(profile_image).into(image_profile);
+                        Picasso.get().load(profile_image).into(bg);
                     }
 
 

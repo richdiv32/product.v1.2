@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.education.Browse;
+import com.ng.campusbuddy.education.LibraryActivity;
 import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.model.AD;
 import com.ng.campusbuddy.tools.AdInfoActivity;
@@ -50,8 +52,21 @@ public class BrowseFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_browse, container, false);
 
 
+        ImageButton search_btn = view.findViewById(R.id.btn_search);
+        search_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                getActivity()
+//                        .getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .replace(R.id.fragment_container, new LibraryFragment())
+//                        .commit();
 
+                startActivity(new Intent(getContext(), LibraryActivity.class));
+            }
+        });
 
+        BannerADs();
 
         ADimageslider();
         FindCourse();
@@ -60,13 +75,38 @@ public class BrowseFragment extends Fragment {
         return view;
     }
 
+    private void BannerADs() {
+        final ImageView RecentBanner = view.findViewById(R.id.recent_courses_iv);
+
+        DatabaseReference recentRef = FirebaseDatabase.getInstance().getReference().child("ADs")
+                .child("Browse").child("Banners");
+
+        recentRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                String recent = dataSnapshot.child("Recent_Update").getValue().toString();
+
+                Glide.with(getContext())
+                        .load(recent)
+                        .placeholder(R.drawable.placeholder)
+                        .into(RecentBanner);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void ADimageslider() {
         final ArrayList<AD> sliderList = new ArrayList<>();
         final SliderView sliderView = view.findViewById(R.id.ADsSlider);
         final SliderAdapterADs adapter = new SliderAdapterADs(getActivity(), sliderList);
         sliderView.setSliderAdapter(adapter);
 
-        DatabaseReference Adref= FirebaseDatabase.getInstance().getReference().child("ADs").child("Browse");
+        DatabaseReference Adref= FirebaseDatabase.getInstance().getReference().child("ADs").child("Browse").child("Slides");
 
         Adref.addValueEventListener(new ValueEventListener() {
             @Override

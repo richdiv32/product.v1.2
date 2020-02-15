@@ -1,16 +1,12 @@
 
 package com.ng.campusbuddy.home;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -24,6 +20,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
@@ -40,13 +45,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.ng.campusbuddy.adapter.SliderAdapter;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.auth.SetUpProfileActivity;
 import com.ng.campusbuddy.education.EducationActivity;
-import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.model.AD;
+import com.ng.campusbuddy.utils.Token;
 import com.ng.campusbuddy.profile.ProfileActivity;
 import com.ng.campusbuddy.social.SocialActivity;
+import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.start.WelcomeActivity;
 import com.ng.campusbuddy.tools.AdInfoActivity;
 import com.ng.campusbuddy.tools.NotificationsActivity;
@@ -59,7 +66,9 @@ import com.smarteist.autoimageslider.SliderViewAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -97,28 +106,6 @@ public class HomeActivity extends AppCompatActivity {
                     }
                     else {
 
-                        //this method will check and udpate ever possible data in the User node
-                        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
-                        assert fuser != null;
-                        final DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users")
-                                .child(fuser.getUid());
-
-                        UserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (!dataSnapshot.child("typingTo").exists()){
-                                    UserRef.child("typingTo").setValue("noOne");
-
-                                    Toast.makeText(mcontext, "typingTo created", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
                     }
                 }
 
@@ -126,7 +113,25 @@ public class HomeActivity extends AppCompatActivity {
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
             });
+
+            SharedPreferences preferences = getSharedPreferences("PREFS", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("currentuser", firebaseUser.getUid());
+            editor.apply();
         }
+
+    }
+
+    DatabaseReference ref;
+    ValueEventListener seenListener;
+    private void online_status(String online_status){
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("online_status", online_status);
+
+        ref.updateChildren(hashMap);
     }
 
 
@@ -184,7 +189,8 @@ public class HomeActivity extends AppCompatActivity {
                             Toast.makeText(mcontext, "You can't create a room without a name", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            DatabaseReference roomRef = FirebaseDatabase.getInstance().getReference().child("ADs").child("Browse");
+                            DatabaseReference roomRef = FirebaseDatabase.getInstance().getReference().child("ADs").child("Home")
+                                    .child("Slides");
                             String room_id = roomRef.push().getKey();
 
                             HashMap<String, Object> hashMap = new HashMap<>();
@@ -221,7 +227,59 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        RecommendedUsers();
 
+        UpdateToken();
+
+    }
+
+    private void UpdateToken() {
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+        DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference()
+                .child("Tokens");
+        Token mtoken = new Token(deviceToken);
+        tokenRef.child(fuser.getUid()).setValue(mtoken);
+    }
+
+
+    private void RecommendedUsers() {
+        List<User> followingList = new ArrayList<>();
+
+
+        RecyclerView User_recycler = findViewById(R.id.rec_users);
+        final List<User> mUserList = new ArrayList<>();
+        User_recycler.hasFixedSize();
+        LinearLayoutManager mLayoutManger = new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL , false);
+        User_recycler.setLayoutManager(mLayoutManger);
+        final UserAdapter userAdapter = new UserAdapter(this, mUserList);
+        User_recycler.setAdapter(userAdapter);
+
+        DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        UserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mUserList.clear();
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                    User user = ds.getValue(User.class);
+//                    if (user.getId().equals(firebaseUser.getUid())){
+//
+//                    }
+
+                    mUserList.add(user);
+                    Collections.shuffle(mUserList);
+                }
+
+                userAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -238,7 +296,8 @@ public class HomeActivity extends AppCompatActivity {
         final SliderAdapterADs adapter = new SliderAdapterADs(this, sliderList);
         sliderView.setSliderAdapter(adapter);
 
-        DatabaseReference Adref= FirebaseDatabase.getInstance().getReference().child("ADs").child("Browse");
+        DatabaseReference Adref= FirebaseDatabase.getInstance().getReference().child("ADs").child("Browse")
+                .child("Slides");
 
         Adref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -286,10 +345,10 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-                    String profile_image = dataSnapshot.child("imageurl").getValue().toString();
+                    User user = dataSnapshot.getValue(User.class);
 
                     Glide.with(getApplicationContext())
-                            .load(profile_image)
+                            .load(user.getImageurl())
                             .into(Profile_image);
 
                 }
@@ -325,6 +384,7 @@ public class HomeActivity extends AppCompatActivity {
         final TextView Username = headerview.findViewById(R.id.nav_username);
         final TextView Profile_status = headerview.findViewById(R.id.nav_status);
         final CircleImageView Profile_image = headerview.findViewById(R.id.image_profile);
+        final ImageView Profile_image_bg = headerview.findViewById(R.id.image_profile_bg);
         final TextView Followers = headerview.findViewById(R.id.followers);
         final TextView Following = headerview.findViewById(R.id.following);
 
@@ -334,14 +394,14 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-                    String profile_image = dataSnapshot.child("imageurl").getValue().toString();
-                    String username = dataSnapshot.child("username").getValue().toString();
-                    String profile_status = dataSnapshot.child("profile_status").getValue().toString();
+                    User user = dataSnapshot.getValue(User.class);
 
-
-                    Picasso.get().load(profile_image).into(Profile_image);
-                    Username.setText(username);
-                    Profile_status.setText(profile_status);
+                    Picasso.get().load(user.getImageurl()).into(Profile_image);
+                    Glide.with(getApplicationContext())
+                            .load(user.getImageurl())
+                            .into(Profile_image_bg);
+                    Username.setText(user.getUsername());
+                    Profile_status.setText(user.getProfile_status());
                 }
                 else{
 
@@ -398,33 +458,61 @@ public class HomeActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()){
                     case R.id.nav_home:
                         Toast.makeText(mcontext, "Home", Toast.LENGTH_SHORT).show();
+                        drawerLayout.closeDrawer(GravityCompat.START, true);
                         break;
                     case R.id.nav_education:
+                        drawerLayout.closeDrawer(GravityCompat.START, true);
                         Intent education = new Intent(mcontext, EducationActivity.class);
                         startActivity(education);
                         Animatoo.animateSlideLeft(mcontext);
                         finish();
                         break;
                     case R.id.nav_social:
+                        drawerLayout.closeDrawer(GravityCompat.START, true);
                         Intent social = new Intent(mcontext, SocialActivity.class);
                         startActivity(social);
                         Animatoo.animateSlideLeft(mcontext);
                         finish();
                         break;
                     case R.id.nav_notifications:
+                        drawerLayout.closeDrawer(GravityCompat.START, true);
                         startActivity(new Intent(mcontext, NotificationsActivity.class));
                         Animatoo.animateSlideLeft(mcontext);
                         break;
                     case R.id.nav_settings:
+                        drawerLayout.closeDrawer(GravityCompat.START, true);
                         startActivity(new Intent(mcontext, SettingsActivity.class));
                         Animatoo .animateSlideLeft(mcontext);
                         break;
+                    case R.id.nav_about_us:
+                        String url = "https://campusbuddy.xyz/Organisation";
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(Intent.createChooser(intent, "Browse with"));
+                        break;
+                    case R.id.nav_faq:
+                        String url2 = "https://campusbuddy.xyz/Team";
+                        Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(url2));
+                        startActivity(Intent.createChooser(intent2, "Browse with"));
+                        break;
                     case R.id.nav_log_out:
+                        drawerLayout.closeDrawer(GravityCompat.START, true);
                         FirebaseAuth mAuth = FirebaseAuth.getInstance();
                         mAuth.signOut();
                         startActivity(new Intent(mcontext, WelcomeActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         Animatoo.animateShrink(mcontext);
+                        break;
+                    case R.id.nav_invite:
+                        drawerLayout.closeDrawer(GravityCompat.START, true);
+                        String shareBody = "Check out Campus Buddy App, its the best college student platform. " +
+                                "Inquire, Learn, Connect and Grow your campus experience just like me." +
+                                "Get it for free at https://campusbuddy.xyz/Download " +
+                                "or on Play Store.";
+                        Intent sIntent = new Intent(Intent.ACTION_SEND);
+                        sIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                        sIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
+                        sIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sIntent, "Invite a friend via..."));
                         break;
                 }
 
@@ -484,7 +572,7 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intent = new Intent(context, AdInfoActivity.class);
                     intent.putExtra("Ad_id", ad.getId());
                     //TODO: change this intent value to HOME
-                    intent.putExtra("context", "Browse");
+                    intent.putExtra("context", "Home");
                     context.startActivity(intent);
                 }
             });
@@ -518,6 +606,97 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
+
+    }
+
+    public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolder> {
+
+        private Context mContext;
+        private List<User> mUsers;
+
+
+        private FirebaseUser firebaseUser;
+
+        public UserAdapter(Context context, List<User> users){
+            mContext = context;
+            mUsers = users;
+        }
+
+
+        @NonNull
+        @Override
+        public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_story, parent, false);
+            return new ImageViewHolder(view);
+        }
+
+
+        @Override
+        public void onBindViewHolder(@NonNull final ImageViewHolder holder, final int position) {
+
+            firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            final User user = mUsers.get(position);
+
+            isFollowing(user.getId(), holder.layout, holder.getAdapterPosition());
+
+            holder.username.setText(user.getUsername());
+            Glide.with(mContext).load(user.getImageurl()).into(holder.image_profile);
+
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return mUsers.size();
+        }
+
+        public class ImageViewHolder extends RecyclerView.ViewHolder {
+
+            public TextView username;
+            public ImageView image_profile;
+            public CardView layout;
+
+            public ImageViewHolder(View itemView) {
+                super(itemView);
+
+                username = itemView.findViewById(R.id.story_username);
+                image_profile = itemView.findViewById(R.id.story_photo);
+                layout = itemView.findViewById(R.id.story_layout);
+            }
+        }
+
+        private void isFollowing(final String userid, final CardView layout, final int position){
+
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                    .child("Follow").child(firebaseUser.getUid()).child("following");
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    if (dataSnapshot.child(userid).exists() || firebaseUser.getUid().equals(userid)){
+////                        removeItem(position);
+////                        layout.setVisibility(View.GONE);
+////
+//                    }
+//                    else{
+//                        layout.setVisibility(View.VISIBLE);
+//                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        private void removeItem(int position) {
+            mUsers.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, mUsers.size());
+        }
 
     }
 

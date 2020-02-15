@@ -10,7 +10,7 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/appbarcolor">
+        android:background="@drawable/gradient_bg">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -34,15 +34,16 @@
                         android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_arrow_back"
-                        android:tint="?attr/title_textcolor" />
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        android:tint="@color/white"
+                        tools:ignore="VectorDrawableCompat" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:text="Edit Profile"
-                        android:textColor="?attr/title_textcolor"
+                        android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="normal" />
 
@@ -55,7 +56,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginRight="10dp"
                         android:text="Cancel"
-                        android:textColor="?attr/textcolor"
+                        android:textColor="@color/white"
                         android:textSize="16sp" />
 
                 </RelativeLayout>

@@ -8,7 +8,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName '1.2'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // Enabling multidex support.
@@ -89,7 +89,21 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 
+    //pdf
+//    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+//    implementation 'org.apache.commons:commons-io:1.3.2'
 
+//    implementation 'com.tom_roush:pdfbox-android:1.8.10.1'
+
+
+//    implementation project(path: ':materialhelptutorial')
+//    implementation project(':fabbutton')
+
+    //fab downloder
+//    implementation 'mbanje.kurt:fabbutton:1.2.4@aar'
+
+    //loading progress
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

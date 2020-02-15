@@ -5,28 +5,19 @@ public class Data {
     private Integer icon;
     private String body;
     private String title;
-    private String sented;
+    private String sent;
     private String notificationType;
 
-
-    public Data(String user, Integer icon, String body, String title, String sented, String notificationType) {
+    public Data(String user, Integer icon, String body, String title, String sent, String notificationType) {
         this.user = user;
         this.icon = icon;
         this.body = body;
         this.title = title;
-        this.sented = sented;
+        this.sent = sent;
         this.notificationType = notificationType;
     }
 
     public Data() {
-    }
-
-    public Integer getIcon() {
-        return icon;
-    }
-
-    public void setIcon(Integer icon) {
-        this.icon = icon;
     }
 
     public String getNotificationType() {
@@ -45,6 +36,13 @@ public class Data {
         this.user = user;
     }
 
+    public Integer getIcon() {
+        return icon;
+    }
+
+    public void setIcon(Integer icon) {
+        this.icon = icon;
+    }
 
     public String getBody() {
         return body;
@@ -62,11 +60,11 @@ public class Data {
         this.title = title;
     }
 
-    public String getSented() {
-        return sented;
+    public String getSent() {
+        return sent;
     }
 
-    public void setSented(String sented) {
-        this.sented = sented;
+    public void setSent(String sent) {
+        this.sent = sent;
     }
 }

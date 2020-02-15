@@ -1,5 +1,6 @@
 package com.ng.campusbuddy.profile;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,13 +9,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,16 +33,26 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.social.messaging.chat.ChatActivity;
 import com.ng.campusbuddy.social.post.Post;
 import com.ng.campusbuddy.social.User;
+import com.ng.campusbuddy.utils.Data;
+import com.ng.campusbuddy.utils.Sender;
 import com.ng.campusbuddy.utils.SharedPref;
+import com.ng.campusbuddy.utils.Token;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -42,13 +63,14 @@ public class UserProfileActivity extends AppCompatActivity {
     String profileid;
 
     CircleImageView image_profile;
+    ImageView bg;
 
     TextView fullname, username, profile_status
             , posts ,followers, following;
 
     Button edit_profile;
 
-    ImageButton my_photos, saved_photos, Info;
+    ImageButton my_photos, saved_photos, Info, message;
 
     TextView Bio, Birthday, Gender, Relationship_status
             , Institution, Faculty, Department,Telephone;
@@ -64,6 +86,10 @@ public class UserProfileActivity extends AppCompatActivity {
     private List<Post> postList_saves;
     private List<String> mySaves;
 
+    //volley request queue for notification
+    private RequestQueue requestQueue;
+    private boolean notify = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPref sharedPref = new SharedPref(this);
@@ -72,6 +98,11 @@ public class UserProfileActivity extends AppCompatActivity {
         }
         else{
             setTheme(R.style.AppTheme);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            Window w = getWindow();
+            //removes status bar with background
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_user);
@@ -82,6 +113,7 @@ public class UserProfileActivity extends AppCompatActivity {
         profileid = prefs.getString("profileid", "none");
 
         image_profile = findViewById(R.id.image_profile);
+        bg = findViewById(R.id.image_profile_bg);
         fullname = findViewById(R.id.fullname);
         username = findViewById(R.id.username);
         profile_status = findViewById(R.id.profile_status);
@@ -93,6 +125,7 @@ public class UserProfileActivity extends AppCompatActivity {
         my_photos = findViewById(R.id.my_photos);
         saved_photos = findViewById(R.id.saved_photos);
         Info = findViewById(R.id.info);
+        message = findViewById(R.id.message);
 
         Bio = findViewById(R.id.bio);
         Birthday = findViewById(R.id.birthday);
@@ -126,6 +159,9 @@ public class UserProfileActivity extends AppCompatActivity {
         recyclerView_saves.setVisibility(View.INVISIBLE);
         profile_info_layout.setVisibility(View.GONE);
 
+        //volley request
+        requestQueue = Volley.newRequestQueue(getApplicationContext());
+
         Init();
 
         userInfo();
@@ -136,6 +172,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         if (profileid.equals(firebaseUser.getUid())){
             edit_profile.setText("Edit");
+            message.setVisibility(View.GONE);
         } else {
             checkFollow();
             saved_photos.setVisibility(View.GONE);
@@ -156,7 +193,12 @@ public class UserProfileActivity extends AppCompatActivity {
                             .child("following").child(profileid).setValue(true);
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(profileid)
                             .child("followers").child(firebaseUser.getUid()).setValue(true);
+
+
+
+                    //send notification
                     addNotification();
+
                 } else if (btn.equals("following")){
 
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid())
@@ -172,6 +214,16 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void Init() {
+        message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserProfileActivity.this, ChatActivity.class);
+                intent.putExtra("userid", profileid);
+                startActivity(intent);
+            }
+        });
+
+
         Info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,15 +267,6 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
-//        saved_photos.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                profile_info_layout.setVisibility(View.GONE);
-//                recyclerView.setVisibility(View.GONE);
-//                recyclerView_saves.setVisibility(View.VISIBLE);
-//            }
-//        });
-
 
         followers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -254,10 +297,13 @@ public class UserProfileActivity extends AppCompatActivity {
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "started following you");
         hashMap.put("postid", "");
-        hashMap.put("ispost", false);
+        hashMap.put("type", "follow");
 
         reference.push().setValue(hashMap);
+
+
     }
+
 
     private void userInfo(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(profileid);
@@ -269,7 +315,8 @@ public class UserProfileActivity extends AppCompatActivity {
                 }
                 User user = dataSnapshot.getValue(User.class);
 
-                Glide.with(mContext).load(user.getImageurl()).into(image_profile);
+                Glide.with(getApplicationContext()).load(user.getImageurl()).into(image_profile);
+                Glide.with(getApplicationContext()).load(user.getImageurl()).into(bg);
                 username.setText(user.getUsername());
                 fullname.setText(user.getFullname());
                 profile_status.setText(user.getBio());

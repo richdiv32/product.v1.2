@@ -13,12 +13,16 @@ import android.widget.TextView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.ng.campusbuddy.utils.Notification;
+import com.ng.campusbuddy.model.Notification;
+import com.ng.campusbuddy.social.match.Match;
+import com.ng.campusbuddy.social.match.MatchesActivity;
 import com.ng.campusbuddy.social.post.Post;
 import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.R;
@@ -56,17 +60,58 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         getUserInfo(holder.image_profile, holder.username, notification.getUserid());
 
-        if (notification.isIspost()) {
+
+        if (notification.getType().equals("follow") || notification.getType().equals("contest")){
+            holder.post_image.setVisibility(View.GONE);
+        }
+        else if (notification.getType().equals("match")){
+            holder.post_image.setVisibility(View.VISIBLE);
+            getMatchImage(holder.post_image, notification.getUserid());
+        }
+        else if (notification.getType().equals("post")){
             holder.post_image.setVisibility(View.VISIBLE);
             getPostImage(holder.post_image, notification.getPostid());
-        } else {
-            holder.post_image.setVisibility(View.GONE);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (notification.isIspost()) {
+//                if (notification.isIspost()) {
+//                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+//                    editor.putString("postid", notification.getPostid());
+//                    editor.apply();
+//
+//                    Intent intent = new Intent(mContext, PostDetailActivity.class);
+//                    intent.putExtra("postid", notification.getPostid());
+//                    intent.putExtra("publisherid", notification.getPublisher());
+//                    mContext.startActivity(intent);
+//                    Animatoo.animateZoom(mContext);
+//
+//
+//                }
+//                else {
+//                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+//                    editor.putString("profileid", notification.getUserid());
+//                    editor.apply();
+//
+//                    mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
+//                    Animatoo.animateSplit(mContext);
+//                }
+                if (notification.getType().equals("follow") || notification.getType().equals("contest")){
+                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                    editor.putString("profileid", notification.getUserid());
+                    editor.apply();
+
+                    mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
+                    Animatoo.animateSplit(mContext);
+                }
+                else if (notification.getType().equals("match")){
+                    mContext.startActivity(new Intent(mContext, MatchesActivity.class));
+                    Animatoo.animateZoom(mContext);
+
+                }
+                else if (notification.getType().equals("post")){
+
                     SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
                     editor.putString("postid", notification.getPostid());
                     editor.apply();
@@ -76,24 +121,17 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     intent.putExtra("publisherid", notification.getPublisher());
                     mContext.startActivity(intent);
                     Animatoo.animateZoom(mContext);
-
-
                 }
-                else {
-                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-                    editor.putString("profileid", notification.getUserid());
-                    editor.apply();
 
-                    mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
-                    Animatoo.animateSplit(mContext);
-                }
             }
         });
 
 
 
     }
-//
+
+
+    //
     @Override
     public int getItemCount() {
         return mNotification.size();
@@ -149,5 +187,25 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
             }
         });
+    }
+
+    private void getMatchImage(final ImageView post_image, final String userId) {
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference matchDb = FirebaseDatabase.getInstance().getReference().child("Users").
+                child(fuser.getUid());
+        matchDb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String profile_image = dataSnapshot.child("imageurl").getValue().toString();
+                Glide.with(mContext).load(profile_image).into(post_image);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }

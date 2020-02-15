@@ -5,11 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,8 +50,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
         this.isActivity = isActivity;
     }
 
-
-
     @NonNull
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -62,15 +57,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
         return new ImageViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull final ImageViewHolder holder, final int position) {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         final User user = mUsers.get(position);
-
-        holder.itemView.setBackgroundColor(user.isSelected() ? Color.CYAN : Color.TRANSPARENT);
 
         holder.btn_message.setVisibility(View.VISIBLE);
 
@@ -91,73 +83,57 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isActivity){
+                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                    editor.putString("profileid", user.getId());
+                    editor.apply();
 
-                String[] options = {"Profile","Block"};
+                    mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
+                    Animatoo.animateSplit(mContext);
 
-                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(mContext);
-                builder.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        if (which == 0) {
-                            if (isActivity){
-                                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-                                editor.putString("profileid", user.getId());
-                                editor.apply();
-
-                                mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
-                                Animatoo.animateSplit(mContext);
-
-                            }
-
-                        }
-                        if (which == 1){
-                            // show delete message confirm dialog
-                            AlertDialog.Builder blockBuilder = new AlertDialog.Builder(mContext);
-                            blockBuilder.setTitle("Block");
-                            blockBuilder.setMessage("Are you sure to block this user?");
-                            //delete button
-                            blockBuilder.setPositiveButton("Block", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-//                        deleteChat(position);
-                                    Toast.makeText(mContext, "User Blocked", Toast.LENGTH_SHORT).show();
-
-                                    holder.btn_follow.setVisibility(View.GONE);
-                                    holder.btn_message.setVisibility(View.GONE);
-                                    holder.block_img.setVisibility(View.VISIBLE);
-
-                                }
-                            });
-                            //cancel delete button
-                            blockBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //dismiss dialog
-                                    dialog.dismiss();
-                                }
-                            });
-
-                            //create and show dialog
-                            blockBuilder.create().show();
-                        }
-                    }
-                });
-                builder.create().show();
+                }
+                else {
+                    Intent intent = new Intent(mContext, SocialActivity.class);
+                    intent.putExtra("publisherid", user.getId());
+                    mContext.startActivity(intent);
+                    Animatoo.animateSplit(mContext);
+                }
             }
         });
-
-
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
 
-                user.setSelected(!user.isSelected());
-                holder.itemView.setBackgroundColor(user.isSelected()? Color.CYAN : Color.TRANSPARENT);
+                // show delete message confirm dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Block");
+                builder.setMessage("Are you sure to block this user?");
+                //delete button
+                builder.setPositiveButton("Block", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+//                        deleteChat(position);
+                        Toast.makeText(mContext, "User Blocked", Toast.LENGTH_SHORT).show();
 
+                        holder.btn_follow.setVisibility(View.GONE);
+                        holder.btn_message.setVisibility(View.GONE);
+                        holder.block_img.setVisibility(View.VISIBLE);
+
+                    }
+                });
+                //cancel delete button
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //dismiss dialog
+                        dialog.dismiss();
+                    }
+                });
+
+                //create and show dialog
+                builder.create().show();
 
                 return false;
             }

@@ -9,10 +9,16 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
+        android:id="@+id/image_profile_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@drawable/gradient_bg" />
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/placeholder" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/semi_transparent"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_vertical"
+            android:gravity="bottom"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -52,6 +59,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
+                    android:shadowColor="@color/grey"
+                    android:shadowRadius="5"
                     android:text="Username"
                     android:textColor="@color/white"
                     android:textSize="18sp"
@@ -62,6 +71,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Profile status"
+                    android:shadowColor="@color/grey"
+                    android:shadowRadius="5"
                     android:textColor="@color/white"
                     android:textStyle="italic" />
             </LinearLayout>
@@ -85,6 +96,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
+                    android:shadowColor="@color/grey"
+                    android:shadowRadius="5"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
 
@@ -92,6 +105,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="following"
+                    android:shadowColor="@color/grey"
+                    android:shadowRadius="5"
                     android:textColor="@color/white" />
             </LinearLayout>
 
@@ -107,6 +122,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
+                    android:shadowColor="@color/grey"
+                    android:shadowRadius="5"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
 
@@ -114,6 +131,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="followers"
+                    android:shadowColor="@color/grey"
+                    android:shadowRadius="5"
                     android:textColor="@color/white" />
             </LinearLayout>
         </LinearLayout>

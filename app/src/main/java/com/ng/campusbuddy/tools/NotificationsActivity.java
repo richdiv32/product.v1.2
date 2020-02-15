@@ -1,20 +1,13 @@
 package com.ng.campusbuddy.tools;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -28,7 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.adapter.NotificationAdapter;
-import com.ng.campusbuddy.utils.Notification;
+import com.ng.campusbuddy.model.Notification;
 import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;

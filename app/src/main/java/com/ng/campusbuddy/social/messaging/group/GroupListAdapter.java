@@ -1,10 +1,8 @@
 package com.ng.campusbuddy.social.messaging.group;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
@@ -28,8 +27,6 @@ import com.ng.campusbuddy.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.ViewHolder> {
 

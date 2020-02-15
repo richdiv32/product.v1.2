@@ -11,15 +11,13 @@
         android:id="@+id/appbar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:background="?attr/appbarcolor">
+        android:background="@drawable/gradient_bg">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:toolbarId="@+id/toolbar"
-            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
-            app:layout_scrollInterpolator="@android:anim/decelerate_interpolator"
-            app:contentScrim="?attr/colorPrimary">
+            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -40,7 +38,7 @@
                         android:layout_marginLeft="20dp"
                         android:gravity="center"
                         android:text="Discover Courses"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/white"
                         android:textSize="20dp" />
 
                     <ImageButton
@@ -50,8 +48,8 @@
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="10dp"
                         android:background="@android:color/transparent"
-                        android:src="@drawable/ic_search"
-                        android:tint="@color/colorPrimary" />
+                        app:srcCompat="@drawable/ic_search"
+                        android:tint="@color/white" />
                 </RelativeLayout>
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -72,7 +70,6 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
                 android:elevation="5dp"
                 app:cardBackgroundColor="?attr/cardbackground"
                 app:cardCornerRadius="5dp">
@@ -152,8 +149,8 @@
                         android:id="@+id/recent_courses_iv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/placeholder" />
+                        android:scaleType="centerCrop"
+                        app:srcCompat="@drawable/placeholder" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView

@@ -2,6 +2,7 @@ package com.ng.campusbuddy.social;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -9,10 +10,12 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +24,7 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,6 +45,7 @@ import com.ng.campusbuddy.tools.SettingsActivity;
 import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -110,7 +115,7 @@ public class SocialActivity extends AppCompatActivity {
 
     private void SetupNavigationDrawer() {
 
-        DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
+        final DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
         NavigationView navigationView = findViewById(R.id.nav_drawer);
         View headerview=navigationView.getHeaderView(0);
         RelativeLayout navigationHeader = headerview.findViewById(R.id.nav_header_container);
@@ -119,6 +124,7 @@ public class SocialActivity extends AppCompatActivity {
         final TextView Username = headerview.findViewById(R.id.nav_username);
         final TextView Profile_status = headerview.findViewById(R.id.nav_status);
         final CircleImageView Profile_image = headerview.findViewById(R.id.image_profile);
+        final ImageView Profile_image_bg = headerview.findViewById(R.id.image_profile_bg);
         final TextView Followers = headerview.findViewById(R.id.followers);
         final TextView Following = headerview.findViewById(R.id.following);
 
@@ -135,6 +141,9 @@ public class SocialActivity extends AppCompatActivity {
                     Glide.with(getApplicationContext())
                             .load(profile_image)
                             .into(Profile_image);
+                    Glide.with(getApplicationContext())
+                            .load(profile_image)
+                            .into(Profile_image_bg);
                     Username.setText(username);
                     Profile_status.setText(profile_status);
                 }
@@ -187,6 +196,7 @@ public class SocialActivity extends AppCompatActivity {
 
                 switch (menuItem.getItemId()){
                     case R.id.nav_home:
+//                        drawerLayout.closeDrawer(GravityCompat.START, true);
                         startActivity(new Intent(mcontext, HomeActivity.class));
                         Animatoo.animateSlideLeft(mcontext);
                         finish();
@@ -208,12 +218,33 @@ public class SocialActivity extends AppCompatActivity {
                         startActivity(new Intent(mcontext, SettingsActivity.class));
                         Animatoo .animateSlideLeft(mcontext);
                         break;
+                    case R.id.nav_about_us:
+                        String url = "https://campusbuddy.xyz/Organisation";
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(Intent.createChooser(intent, "Browse with"));
+                        break;
+                    case R.id.nav_faq:
+                        String url2 = "https://campusbuddy.xyz/Team";
+                        Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(url2));
+                        startActivity(Intent.createChooser(intent2, "Browse with"));
+                        break;
                     case R.id.nav_log_out:
                         FirebaseAuth mAuth = FirebaseAuth.getInstance();
                         mAuth.signOut();
                         startActivity(new Intent(mcontext, WelcomeActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         Animatoo.animateShrink(mcontext);
+                        break;
+                    case R.id.nav_invite:
+                        String shareBody = "Check out Campus Buddy App, its the best college student platform. " +
+                                "Inquire, Learn, Connect and Grow your campus experience just like me." +
+                                "Get it for free at https://campusbuddy.xyz/Download " +
+                                "or on Play Store.";
+                        Intent sIntent = new Intent(Intent.ACTION_SEND);
+                        sIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                        sIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
+                        sIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sIntent, "Invite a friend via..."));
                         break;
                 }
 
@@ -237,4 +268,37 @@ public class SocialActivity extends AppCompatActivity {
         mBackPressed = System.currentTimeMillis();
     }
 
+    DatabaseReference ref;
+    ValueEventListener seenListener;
+    private void online_status(String online_status){
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("online_status", online_status);
+
+        ref.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        online_status("online");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        online_status("online");
+    }
+
+    /*@Override
+    protected void onPause() {
+        super.onPause();
+
+        String timestamp = String.valueOf(System.currentTimeMillis());
+
+        ref.removeEventListener(seenListener);
+        online_status(timestamp);
+    }*/
 }

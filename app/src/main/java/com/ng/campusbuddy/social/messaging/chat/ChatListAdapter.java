@@ -1,6 +1,5 @@
 package com.ng.campusbuddy.social.messaging.chat;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,9 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,8 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.profile.UserProfileActivity;
+import com.ng.campusbuddy.social.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

@@ -13,12 +13,11 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/appbarcolor">
+        android:background="@drawable/gradient_bg">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
 
             app:toolbarId="@+id/toolbar">
@@ -34,7 +33,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="TextView" />
+                android:text="My Shelf"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -48,13 +49,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".education.fragment.ShelfFragment">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/library_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </RelativeLayout>
+            tools:context=".education.fragment.ShelfFragment"/>
 
     </androidx.core.widget.NestedScrollView>
 

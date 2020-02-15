@@ -21,14 +21,26 @@
             android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/chat_room_imgae_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/placeholder" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/semi_transparent" />
+
+            <ImageView
                 android:id="@+id/chat_room_imgae"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/placeholder"
-                />
+                android:layout_marginEnd="10dp" />
 
             <TextView
                 android:id="@+id/title"
@@ -38,7 +50,11 @@
                 android:layout_marginBottom="10dp"
                 android:layout_toRightOf="@id/chat_room_imgae"
                 android:text="Title"
-                android:textColor="?attr/title_textcolor" />
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="?attr/title_textcolor"
+                android:shadowRadius="5"
+                android:shadowColor="@color/grey"/>
 
             <TextView
                 android:id="@+id/count"

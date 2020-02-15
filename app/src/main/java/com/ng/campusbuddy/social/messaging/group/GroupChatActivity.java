@@ -1,19 +1,5 @@
 package com.ng.campusbuddy.social.messaging.group;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -42,12 +28,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -75,7 +73,6 @@ import com.kevalpatel2106.gifpack.giphy.GiphyGifProvider;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.User;
-import com.ng.campusbuddy.social.messaging.chat.Chatlist;
 import com.ng.campusbuddy.social.messaging.chat.Chat;
 import com.ng.campusbuddy.utils.SharedPref;
 import com.squareup.picasso.Picasso;
@@ -692,8 +689,8 @@ public class GroupChatActivity extends AppCompatActivity {
         Group_user_recycler.setHasFixedSize(true);
         Group_user_recycler.setLayoutManager(new LinearLayoutManager(this));
         final List<Group> usersList = new ArrayList<>();
-//        final GroupUsersAdapter  groupUsersAdapter = new GroupUsersAdapter(this, usersList);
-//        Group_user_recycler.setAdapter(groupUsersAdapter);
+        final GroupUsersAdapter  groupUsersAdapter = new GroupUsersAdapter(this, usersList);
+        Group_user_recycler.setAdapter(groupUsersAdapter);
 
 
         final TextView GroupUserCount = navigationView.findViewById(R.id.users_count);
@@ -713,7 +710,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 }
 
                 GroupUserCount.setText(dataSnapshot.getChildrenCount()+" users");
-//                groupUsersAdapter.notifyDataSetChanged();
+                groupUsersAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -724,7 +721,7 @@ public class GroupChatActivity extends AppCompatActivity {
     }
 
     private void EditGroup() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Edit Group Name");
 
         final EditText groupName = new EditText(getApplicationContext());
@@ -837,159 +834,193 @@ public class GroupChatActivity extends AppCompatActivity {
 
     }
 
+    DatabaseReference ref;
+    private void online_status(String online_status){
+        ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
 
-//    public class GroupUsersAdapter extends RecyclerView.Adapter<GroupUsersAdapter.ViewHolder> {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("online_status", online_status);
+
+        ref.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        online_status("online");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        online_status("online");
+    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
 //
-//        private Context mContext;
-//        private List<Group> mUsers;
+//        String timestamp = String.valueOf(System.currentTimeMillis());
 //
-//        public GroupUsersAdapter(Context mContext, List<Group> mUsers){
-//            this.mUsers = mUsers;
-//            this.mContext = mContext;
-//        }
-//
-//        @NonNull
-//        @Override
-//        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//            View view = LayoutInflater.from(mContext).inflate(R.layout.item_comment, parent, false);
-//            return new ViewHolder(view);
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-//
-//
-//            final Group group = mUsers.get(position);
-//
-//            getUserInfo(holder.profile_image, holder.username, group.getGroup_userid());
-//
-//            holder.profile_image.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-//                    editor.putString("profileid", group.getGroup_userid());
-//                    editor.apply();
-//
-//                    ((FragmentActivity)mContext).startActivity(new Intent(mContext, UserProfileActivity.class));
-//                    Animatoo.animateZoom(mContext);
-//                }
-//            });
-//
-//            holder.UserchatLayout.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//
-//                    // show remove message confirm dialog
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-//                    builder.setTitle("Remove User");
-//                    builder.setMessage("Are you sure to remove user from group?");
-//                    //remove button
-//                    builder.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//
-//                        RemoveUser(position);
-//
-//                        }
-//                    });
-//                    //cancel remove button
-//                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            //dismiss dialog
-//                            dialog.dismiss();
-//                        }
-//                    });
-//
-//                    //create and show dialog
-//                    builder.create().show();
-//
-//                    return false;
-//                }
-//            });
-//        }
-//
-//    private void RemoveUser(int position) {
-//        String userint = mUsers.get(position).getGroup_userid();
-//        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Groups")
-//                .child(groupid).child("group_users");
-//        Query query = dbRef.orderByChild("group_userid").equalTo(userint);
-//        query.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                for (DataSnapshot ds: dataSnapshot.getChildren()){
-//                    //To remove the message completly from chat
-//                    ds.getRef().removeValue();
-//
-//                    Toast.makeText(mContext, "User removed.....", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//
-//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Grouplist")
-//                .child(userint);
-//        Query Gquery = ref.orderByChild("groupid").equalTo(groupid);
-//        Gquery.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                for (DataSnapshot ds: dataSnapshot.getChildren()){
-//                    //To remove the message completly from chat
-//                    ds.getRef().removeValue();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
+//        ref.removeEventListener(seenListener);
+//        online_status(timestamp);
 //    }
-//
-//        @Override
-//        public int getItemCount() {
-//            return mUsers.size();
-//        }
-//
-//        public  class ViewHolder extends RecyclerView.ViewHolder{
-//
-//            public TextView username;
-//            public ImageView profile_image;
-//            public RelativeLayout UserchatLayout; //for click listner to show delete
-//
-//            public ViewHolder(View itemView) {
-//                super(itemView);
-//
-//                username = itemView.findViewById(R.id.username);
-//                profile_image = itemView.findViewById(R.id.image_profile);
-//                UserchatLayout = itemView.findViewById(R.id.comment_Layout);
-//            }
-//        }
-//
-//        private void getUserInfo(final ImageView Profile_image, final TextView username, String group_userid){
-//            DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
-//                    .child("Users").child(group_userid);
-//
-//            reference.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    User user = dataSnapshot.getValue(User.class);
-//                    Glide.with(mContext).load(user.getImageurl()).into(Profile_image);
-//                    username.setText(user.getUsername());
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            });
-//        }
-//
-//    }
+
+
+    private class GroupUsersAdapter extends RecyclerView.Adapter<GroupUsersAdapter.ViewHolder> {
+
+        private Context mContext;
+        private List<Group> mUsers;
+
+        public GroupUsersAdapter(Context mContext, List<Group> mUsers){
+            this.mUsers = mUsers;
+            this.mContext = mContext;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_comment, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+
+
+            final Group group = mUsers.get(position);
+
+            getUserInfo(holder.profile_image, holder.username, group.getGroup_userid());
+
+            holder.profile_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                    editor.putString("profileid", group.getGroup_userid());
+                    editor.apply();
+
+                    ((FragmentActivity)mContext).startActivity(new Intent(mContext, UserProfileActivity.class));
+                    Animatoo.animateZoom(mContext);
+                }
+            });
+
+            holder.UserchatLayout.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    // show remove message confirm dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("Remove User");
+                    builder.setMessage("Are you sure to remove user from group?");
+                    //remove button
+                    builder.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        RemoveUser(position);
+
+                        }
+                    });
+                    //cancel remove button
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //dismiss dialog
+                            dialog.dismiss();
+                        }
+                    });
+
+                    //create and show dialog
+                    builder.create().show();
+
+                    return false;
+                }
+            });
+        }
+
+    private void RemoveUser(int position) {
+        String userint = mUsers.get(position).getGroup_userid();
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Groups")
+                .child(groupid).child("group_users");
+        Query query = dbRef.orderByChild("group_userid").equalTo(userint);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+                    //To remove the message completly from chat
+                    ds.getRef().removeValue();
+
+                    Toast.makeText(mContext, "User removed.....", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Grouplist")
+                .child(userint);
+        Query Gquery = ref.orderByChild("groupid").equalTo(groupid);
+        Gquery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+                    //To remove the message completly from chat
+                    ds.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+        @Override
+        public int getItemCount() {
+            return mUsers.size();
+        }
+
+        public  class ViewHolder extends RecyclerView.ViewHolder{
+
+            public TextView username;
+            public ImageView profile_image;
+            public RelativeLayout UserchatLayout; //for click listner to show delete
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+
+                username = itemView.findViewById(R.id.username);
+                profile_image = itemView.findViewById(R.id.image_profile);
+                UserchatLayout = itemView.findViewById(R.id.comment_Layout);
+            }
+        }
+
+        private void getUserInfo(final ImageView Profile_image, final TextView username, String group_userid){
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                    .child("Users").child(group_userid);
+
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    Glide.with(getApplicationContext())
+                            .load(user.getImageurl())
+                            .into(Profile_image);
+                    username.setText(user.getUsername());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+    }
 
     public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
 
@@ -1051,7 +1082,6 @@ public class GroupChatActivity extends AppCompatActivity {
                 holder.username.setVisibility(View.VISIBLE);
             }
 
-            //TODO: remove lines after user image and username are fixed
             holder.username.setVisibility(View.GONE);
             holder.profile_image.setVisibility(View.GONE);
 

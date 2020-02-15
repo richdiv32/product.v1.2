@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -28,8 +29,9 @@
                     android:layout_height="20dp"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="10dp"
-                    android:src="@drawable/ic_nav_draw"
-                    android:tint="@color/grey" />
+                    app:srcCompat="@drawable/ic_nav_draw"
+                    android:tint="@color/grey"
+                    tools:ignore="VectorDrawableCompat" />
 
                 <ImageView
                     android:layout_width="180dp"
@@ -37,7 +39,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@id/nav_button"
                     android:contentDescription="TODO"
-                    android:src="@drawable/logo_text_red" />
+                    app:srcCompat="@drawable/logo_text_red" />
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.CollapsingToolbarLayout>

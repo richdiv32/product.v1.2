@@ -9,6 +9,9 @@ public class Sender {
         this.to = to;
     }
 
+    public Sender() {
+    }
+
     public Data getData() {
         return data;
     }

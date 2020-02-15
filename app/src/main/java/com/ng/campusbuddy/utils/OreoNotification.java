@@ -12,8 +12,8 @@ import android.os.Build;
 
 public class OreoNotification extends ContextWrapper {
 
-    private static final String CHANNEL_ID = "com.ng.campusbuddy";
-    private static final String CHANNEL_NAME = "Campus Buddy";
+    private static final String ID = "com.ng.campusbuddy";
+    private static final String NAME = "CampusBuddy";
 
     private NotificationManager notificationManager;
 
@@ -28,8 +28,7 @@ public class OreoNotification extends ContextWrapper {
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannel() {
 
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                CHANNEL_NAME,
+        NotificationChannel channel = new NotificationChannel(ID, NAME,
                 NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableLights(true);
         channel.enableVibration(true);
@@ -47,9 +46,10 @@ public class OreoNotification extends ContextWrapper {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public  Notification.Builder getOreoNotification(String title, String body,
-                                                     PendingIntent pendingIntent, Uri soundUri, String icon){
-        return new Notification.Builder(getApplicationContext(), CHANNEL_ID)
+    public  Notification.Builder getONotifications(String title, String body,
+                                                     PendingIntent pendingIntent, Uri soundUri,
+                                                   String icon){
+        return new Notification.Builder(getApplicationContext(), ID)
                 .setContentIntent(pendingIntent)
                 .setContentTitle(title)
                 .setContentText(body)

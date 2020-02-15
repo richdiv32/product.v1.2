@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.github.ybq.android.spinkit.SpinKitView;
+import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.github.ybq.android.spinkit.style.ChasingDots;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -52,11 +58,16 @@ import com.smarteist.autoimageslider.SliderViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
+import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 
 public class FeedsFragment extends Fragment {
     View view;
+
+    private static  final int ITEM_PER_AD = 5;
+    private static final String BANNER_AD_ID = "ca-app-pub-3940256099942544/6300978111";
+    private int count = 0;
+
 
     private RecyclerView UsersPostrecyclerView;
     private AllPostAdapter AllpostAdapter;
@@ -88,6 +99,8 @@ public class FeedsFragment extends Fragment {
 
     //for image
     Uri image_rui = null;
+
+    ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -195,7 +208,8 @@ public class FeedsFragment extends Fragment {
         final SliderAdapterADs adapter = new SliderAdapterADs(getActivity(), sliderList);
         sliderView.setSliderAdapter(adapter);
 
-        DatabaseReference Adref= FirebaseDatabase.getInstance().getReference().child("ADs").child("Browse");
+        DatabaseReference Adref= FirebaseDatabase.getInstance().getReference().child("ADs").child("Social")
+                .child("Slides");
 
         Adref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -337,6 +351,8 @@ public class FeedsFragment extends Fragment {
     }
 
     private void readPosts(){
+
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
 
         reference.addValueEventListener(new ValueEventListener() {
@@ -348,7 +364,11 @@ public class FeedsFragment extends Fragment {
                     for (String id : followingList){
                         if (post.getPublisher().equals(id)){
                             postList.add(post);
+
+//                            count++;
                         }
+
+
                     }
                 }
 
@@ -362,6 +382,16 @@ public class FeedsFragment extends Fragment {
             }
         });
     }
+
+//    private void getBannerAds(){
+//        for (int i = 0 ; i < postList.size(); i += ITEM_PER_AD){
+//
+//            final AdView adView = new AdView(getActivity());
+//            adView.setAdSize(AdSize.BANNER);
+//            adView.setAdUnitId(BANNER_AD_ID);
+//            postList.add(adView);
+//        }
+//    }
 
     private void readStory(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story");
@@ -532,8 +562,7 @@ public class FeedsFragment extends Fragment {
                 public void onClick(View v) {
                     Intent intent = new Intent(context, AdInfoActivity.class);
                     intent.putExtra("Ad_id", ad.getId());
-                    //TODO: change this intent value to Feeds
-                    intent.putExtra("context", "Browse");
+                    intent.putExtra("context", "Social");
                     context.startActivity(intent);
                 }
             });

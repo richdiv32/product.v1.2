@@ -16,84 +16,100 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".start.IntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/TransStatusBar"></activity>
 
-        <activity android:name=".social.messaging.group.GroupChatActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".social.match.MatchesActivity"
+        <activity android:name=".education.LibraryActivity" />
+        <activity
+            android:name=".education.reader.BookDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".education.reader.PDFActivity" />
+        <activity
+            android:name=".social.messaging.group.GroupChatActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".social.match.MatchesActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".tools.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".social.post.story.StoryActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".social.post.story.AddStoryActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".tools.AdInfoActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".social.post.story.StoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".social.post.story.AddStoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".tools.AdInfoActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".auth.SetUpProfileActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".profile.UserProfileActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".profile.EditProfileActivity"
             android:parentActivityName=".profile.ProfileActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".profile.FollowersActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".social.messaging.chat.NewChatActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".social.messaging.group.AddUsersGroupActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".social.messaging.room.RoomActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".social.post.PostDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".social.messaging.chat.ChatActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".tools.NotificationsActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".profile.FollowersActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".social.messaging.chat.NewChatActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".social.messaging.group.AddUsersGroupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".social.messaging.room.RoomActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".social.post.PostDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".social.messaging.chat.ChatActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".tools.NotificationsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".social.post.PostActivity"
+            android:parentActivityName=".social.SocialActivity"
+            android:screenOrientation="portrait">
 
-        <activity android:name=".social.post.PostActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".social.SocialActivity">
-<!--            for image-->
+            <!-- for image -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
 
-<!--            for text-->
+            <!-- for text -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".education.EducationActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".social.SocialActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".profile.ProfileActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".home.HomeActivity"
-            android:screenOrientation="portrait"/>
-
-        <!-- Authentication -->
+            android:screenOrientation="portrait" /> <!-- Authentication -->
         <activity
             android:name=".auth.ForgotPasswordActivity"
             android:screenOrientation="portrait"
@@ -101,24 +117,16 @@
         <activity
             android:name=".auth.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/TransStatusBar"/>
+            android:theme="@style/TransStatusBar" />
         <activity
             android:name=".auth.SignUpActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/TransStatusBar" />
-
-
-<!--        START-->
-        <activity
-            android:name=".start.IntroActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/TransStatusBar"/>
+            android:theme="@style/TransStatusBar" /> <!-- START -->
 
         <activity
             android:name=".start.WelcomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/TransStatusBar"/>
-
+            android:theme="@style/TransStatusBar" />
         <activity
             android:name=".start.SplashActivity"
             android:screenOrientation="portrait">
@@ -127,9 +135,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Image Cropper -->
+        </activity> <!-- Image Cropper -->
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />

@@ -11,14 +11,14 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/appbarcolor">
+        android:background="@drawable/gradient_bg">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="New Chat"
-            android:textColor="?attr/title_textcolor"
+            android:textColor="@color/white"
             android:textSize="20sp"/>
 
     </androidx.appcompat.widget.Toolbar>

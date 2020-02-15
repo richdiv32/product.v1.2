@@ -30,6 +30,7 @@ import com.ng.campusbuddy.social.match.MatchesActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -108,6 +109,8 @@ public class MatchUpFragment extends Fragment {
                 usersDb.child(userId).child("connections").child("yes").child(currentUId).setValue(true);
                 isConnectionMatch(userId);
                 Toast.makeText(getActivity(), "YES", Toast.LENGTH_SHORT).show();
+
+
             }
 
             @Override
@@ -135,6 +138,19 @@ public class MatchUpFragment extends Fragment {
         return view;
     }
 
+    private void addNotification(String userId){
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userId);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("userid", firebaseUser.getUid());
+        hashMap.put("text", "is matched with you");
+        hashMap.put("postid", "");
+        hashMap.put("type", "match");
+
+        reference.push().setValue(hashMap);
+    }
+
     private void isConnectionMatch(final String userId) {
         DatabaseReference currentUserConnectionsDb = usersDb.child(currentUId).child("connections").child("yes").child(userId);
         currentUserConnectionsDb.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -147,6 +163,7 @@ public class MatchUpFragment extends Fragment {
 
                     usersDb.child(userId).child("connections").child("matches").child(currentUId).child("userId").setValue(currentUId);
                     usersDb.child(currentUId).child("connections").child("matches").child(userId).child("userId").setValue(userId);
+                    addNotification(userId);
                 }
             }
 
