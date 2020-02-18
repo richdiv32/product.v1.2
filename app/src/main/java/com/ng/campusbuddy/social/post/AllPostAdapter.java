@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,21 +75,33 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final Post post = mPosts.get(position);
 
-        if (post.getDescription().equals("")){
+        if (post.getDescription().equals("") && !post.getPostimage().equals("")){
             holder.description.setVisibility(View.GONE);
-        } else {
-            holder.description.setVisibility(View.VISIBLE);
-            holder.description.setText(post.getDescription());
-        }
 
-        if (post.getPostimage().equals("")){
-            holder.post_image.setVisibility(View.GONE);
-        } else {
-            holder.post_image.setVisibility(View.VISIBLE);
+            holder.post_container.setVisibility(View.VISIBLE);
+            holder.post_text_container.setVisibility(View.GONE);
 
             Glide.with(mContext).load(post.getPostimage())
                     .apply(new RequestOptions().placeholder(R.drawable.placeholder))
                     .into(holder.post_image);
+        }
+        else if (post.getPostimage().equals("") && !post.getDescription().equals("")){
+            holder.description.setVisibility(View.GONE);
+
+            holder.post_container.setVisibility(View.GONE);
+            holder.post_text_container.setVisibility(View.VISIBLE);
+
+            holder.post_text_container.setText(post.getDescription());
+        }
+        else {
+            holder.description.setVisibility(View.VISIBLE);
+            holder.description.setText(post.getDescription());
+            Glide.with(mContext).load(post.getPostimage())
+                    .apply(new RequestOptions().placeholder(R.drawable.placeholder))
+                    .into(holder.post_image);
+
+            holder.post_container.setVisibility(View.VISIBLE);
+            holder.post_text_container.setVisibility(View.GONE);
         }
 
         publisherInfo(holder.image_profile, holder.username, holder.publisher, post.getPublisher());
@@ -314,6 +327,8 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
 
         public ImageView image_profile, post_image, like, comment, save, more, share;
         public TextView username, likes, publisher, description, comments;
+        public TextView post_text_container;
+        public ConstraintLayout post_container;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -330,6 +345,9 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
             description = itemView.findViewById(R.id.description);
             comments = itemView.findViewById(R.id.comments);
             more = itemView.findViewById(R.id.more);
+
+            post_text_container = itemView.findViewById(R.id.post_text_container);
+            post_container = itemView.findViewById(R.id.post_container);
         }
     }
 
@@ -340,7 +358,7 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "liked your post");
         hashMap.put("postid", postid);
-        hashMap.put("ispost", true);
+        hashMap.put("type", "post");
 
         reference.push().setValue(hashMap);
     }

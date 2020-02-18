@@ -34,6 +34,7 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.home.HomeActivity;
+import com.ng.campusbuddy.social.SocialActivity;
 import com.ng.campusbuddy.utils.Token;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -233,7 +234,7 @@ public class SetUpProfileActivity extends AppCompatActivity {
     //i love what i am doing because i can do it over and over again, i just cant let go of it , this is the best job ever in the world
 
     private void Home() {
-        startActivity(new Intent(this, HomeActivity.class)
+        startActivity(new Intent(this, SocialActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         Animatoo.animateZoom(this);
         finish();

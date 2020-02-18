@@ -34,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.home.HomeActivity;
+import com.ng.campusbuddy.social.SocialActivity;
 import com.ng.campusbuddy.utils.Token;
 
 import java.util.HashMap;
@@ -161,7 +162,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void Home() {
-        startActivity(new Intent(this, HomeActivity.class)
+        startActivity(new Intent(this, SocialActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         Animatoo.animateZoom(this);
         finish();

@@ -203,7 +203,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void Home() {
-        startActivity(new Intent(this, HomeActivity.class)
+        startActivity(new Intent(this, SocialActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         Animatoo.animateZoom(this);
         finish();

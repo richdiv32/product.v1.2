@@ -208,14 +208,14 @@ public class EducationActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
                 switch (menuItem.getItemId()){
-                    case R.id.nav_home:
-                        startActivity(new Intent(mcontext, HomeActivity.class));
-                        Animatoo.animateSlideLeft(mcontext);
-                        finish();
-                        break;
-                    case R.id.nav_education:
-                        Toast.makeText(mcontext, "Education", Toast.LENGTH_SHORT).show();
-                        break;
+//                    case R.id.nav_home:
+//                        startActivity(new Intent(mcontext, HomeActivity.class));
+//                        Animatoo.animateSlideLeft(mcontext);
+//                        finish();
+//                        break;
+//                    case R.id.nav_education:
+//                        Toast.makeText(mcontext, "Education", Toast.LENGTH_SHORT).show();
+//                        break;
                     case R.id.nav_social:
                         Intent social = new Intent(mcontext, SocialActivity.class);
                         startActivity(social);
@@ -231,7 +231,7 @@ public class EducationActivity extends AppCompatActivity {
                         Animatoo .animateSlideLeft(mcontext);
                         break;
                     case R.id.nav_about_us:
-                        String url = "https://campusbuddy.xyz/Organisation";
+                        String url = "https://campusbuddy.xyz/company";
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                         startActivity(Intent.createChooser(intent, "Browse with"));
                         break;

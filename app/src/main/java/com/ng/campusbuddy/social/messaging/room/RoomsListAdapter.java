@@ -67,6 +67,7 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
         final Room room = mRoom.get(position);
 
         holder.title.setText(room.getTitle_chatroom());
+        holder.count.setVisibility(View.GONE);
 
 
         if (room.getImage_chatroom().equals("")){

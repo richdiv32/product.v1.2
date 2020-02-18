@@ -162,7 +162,6 @@ public class PostActivity extends AppCompatActivity {
         }
 
         Init();
-//        LoadUserInfo();
         LoadImage();
     }
 
@@ -244,7 +243,6 @@ public class PostActivity extends AppCompatActivity {
 
     }
 
-
     private void  prepareNotification(String pID, String title, String description, String notificationType, String notifiactionTopic){
 
         //prepare dat for notification
@@ -305,7 +303,6 @@ public class PostActivity extends AppCompatActivity {
         //engage the volley request
         Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
-
 
     private void LoadImage() {
 
@@ -422,8 +419,39 @@ public class PostActivity extends AppCompatActivity {
                 }
             });
 
-        } else {
-            Toast.makeText(PostActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
+        }
+        else if (description.getText().toString() != null && mImageUri == null){
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+
+            String postid = reference.push().getKey();
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("postid", postid);
+            hashMap.put("postimage", "");
+            hashMap.put("description", description.getText().toString());
+            hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+            reference.child(postid).setValue(hashMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            pd.dismiss();
+
+                            prepareNotification(
+                                    "",
+                                    "" + Username + " added new post",
+                                    ""+ description,
+                                    "PostNotification",
+                                    "POST" );
+
+                            startActivity(new Intent(PostActivity.this, SocialActivity.class));
+                            finish();
+                        }
+                    });
+        }
+        else {
+            Toast.makeText(PostActivity.this, "Post an image or type a text", Toast.LENGTH_SHORT).show();
         }
     }
 

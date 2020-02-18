@@ -1,6 +1,7 @@
 package com.ng.campusbuddy.social.messaging.room;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -531,6 +532,7 @@ public class RoomActivity extends AppCompatActivity {
         RelativeLayout navigationHeader = headerview.findViewById(R.id.nav_header_container);
         ImageButton EditButton = headerview.findViewById(R.id.edit_button);
         ImageButton AddButton = headerview.findViewById(R.id.add_user);
+        ImageButton Exit = headerview.findViewById(R.id.leave_room);
 
         RelativeLayout Nav_button = findViewById(R.id.profile_layout);
         Nav_button.setOnClickListener(new View.OnClickListener() {
@@ -552,6 +554,21 @@ public class RoomActivity extends AppCompatActivity {
         EditButton.setVisibility(View.GONE);
         AddButton.setVisibility(View.GONE);
         Creator.setVisibility(View.GONE);
+        Exit.setVisibility(View.VISIBLE);
+
+        Exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final ProgressDialog pd = new ProgressDialog(RoomActivity.this);
+                pd.setTitle("Leaving Room ");
+                pd.setMessage("Please wait.....");
+                pd.show();
+                pd.setCanceledOnTouchOutside(true);
+
+                finish();
+                pd.dismiss();
+            }
+        });
 
         reference = FirebaseDatabase.getInstance().getReference().child("Rooms")
                 .child(roomlist_id);

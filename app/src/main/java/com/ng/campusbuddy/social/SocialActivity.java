@@ -9,6 +9,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -30,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ng.campusbuddy.auth.SetUpProfileActivity;
 import com.ng.campusbuddy.education.EducationActivity;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.home.HomeActivity;
@@ -56,6 +58,45 @@ public class SocialActivity extends AppCompatActivity {
 
 
     String profileid;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //check if user is null
+        if (firebaseUser != null) {
+            final String current_uid = firebaseUser.getUid();
+
+            DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
+            UserRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (!dataSnapshot.hasChild(current_uid)) {
+                        startActivity(new Intent(mcontext, SetUpProfileActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                        finish();
+                    }
+                    else {
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+
+            SharedPreferences preferences = getSharedPreferences("PREFS", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("currentuser", firebaseUser.getUid());
+            editor.apply();
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,18 +175,17 @@ public class SocialActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-                    String profile_image = dataSnapshot.child("imageurl").getValue().toString();
-                    String username = dataSnapshot.child("username").getValue().toString();
-                    String profile_status = dataSnapshot.child("profile_status").getValue().toString();
+                    User user = dataSnapshot.getValue(User.class);
 
                     Glide.with(getApplicationContext())
-                            .load(profile_image)
+                            .load(user.getImageurl())
                             .into(Profile_image);
+
                     Glide.with(getApplicationContext())
-                            .load(profile_image)
+                            .load(user.getImageurl())
                             .into(Profile_image_bg);
-                    Username.setText(username);
-                    Profile_status.setText(profile_status);
+                    Username.setText(user.getUsername());
+                    Profile_status.setText(user.getProfile_status());
                 }
             }
 
@@ -195,18 +235,18 @@ public class SocialActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
                 switch (menuItem.getItemId()){
-                    case R.id.nav_home:
-//                        drawerLayout.closeDrawer(GravityCompat.START, true);
-                        startActivity(new Intent(mcontext, HomeActivity.class));
-                        Animatoo.animateSlideLeft(mcontext);
-                        finish();
-                        break;
-                    case R.id.nav_education:
-                        Intent education = new Intent(mcontext, EducationActivity.class);
-                        startActivity(education);
-                        Animatoo.animateSlideLeft(mcontext);
-                        finish();
-                        break;
+//                    case R.id.nav_home:
+////                        drawerLayout.closeDrawer(GravityCompat.START, true);
+//                        startActivity(new Intent(mcontext, HomeActivity.class));
+//                        Animatoo.animateSlideLeft(mcontext);
+//                        finish();
+//                        break;
+//                    case R.id.nav_education:
+//                        Intent education = new Intent(mcontext, EducationActivity.class);
+//                        startActivity(education);
+//                        Animatoo.animateSlideLeft(mcontext);
+//                        finish();
+//                        break;
                     case R.id.nav_social:
                         Toast.makeText(mcontext, "Social", Toast.LENGTH_SHORT).show();
                         break;
@@ -219,14 +259,14 @@ public class SocialActivity extends AppCompatActivity {
                         Animatoo .animateSlideLeft(mcontext);
                         break;
                     case R.id.nav_about_us:
-                        String url = "https://campusbuddy.xyz/Organisation";
+                        String url = "https://campusbuddy.xyz/company";
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                         startActivity(Intent.createChooser(intent, "Browse with"));
                         break;
                     case R.id.nav_faq:
-                        String url2 = "https://campusbuddy.xyz/Team";
-                        Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(url2));
-                        startActivity(Intent.createChooser(intent2, "Browse with"));
+//                        String url2 = "https://campusbuddy.xyz/Team";
+//                        Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(url2));
+//                        startActivity(Intent.createChooser(intent2, "Browse with"));
                         break;
                     case R.id.nav_log_out:
                         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -268,37 +308,4 @@ public class SocialActivity extends AppCompatActivity {
         mBackPressed = System.currentTimeMillis();
     }
 
-    DatabaseReference ref;
-    ValueEventListener seenListener;
-    private void online_status(String online_status){
-        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
-        ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("online_status", online_status);
-
-        ref.updateChildren(hashMap);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        online_status("online");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        online_status("online");
-    }
-
-    /*@Override
-    protected void onPause() {
-        super.onPause();
-
-        String timestamp = String.valueOf(System.currentTimeMillis());
-
-        ref.removeEventListener(seenListener);
-        online_status(timestamp);
-    }*/
 }
