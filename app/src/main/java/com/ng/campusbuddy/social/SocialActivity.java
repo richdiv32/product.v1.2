@@ -115,6 +115,7 @@ public class SocialActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_social);
+//        ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
 
 
         profileid = FirebaseAuth.getInstance().getCurrentUser().getUid();

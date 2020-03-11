@@ -17,11 +17,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -79,25 +81,33 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         final Post post = mPosts.get(position);
 
 
-//        Glide.with(mContext).load(post.getPostimage())
-//                .apply(new RequestOptions().placeholder(R.drawable.placeholder))
-//                .into(holder.post_image);
-
-        if (post.getDescription().equals("")){
+        if (post.getDescription().equals("") && !post.getPostimage().equals("")){
             holder.description.setVisibility(View.GONE);
-        } else {
-            holder.description.setVisibility(View.VISIBLE);
-            holder.description.setText(post.getDescription());
-        }
 
-        if (post.getPostimage().equals("")){
-            holder.post_image.setVisibility(View.GONE);
-        } else {
-            holder.post_image.setVisibility(View.VISIBLE);
+            holder.post_container.setVisibility(View.VISIBLE);
+            holder.post_text_container.setVisibility(View.GONE);
 
             Glide.with(mContext).load(post.getPostimage())
                     .apply(new RequestOptions().placeholder(R.drawable.placeholder))
                     .into(holder.post_image);
+        }
+        else if (post.getPostimage().equals("") && !post.getDescription().equals("")){
+            holder.description.setVisibility(View.GONE);
+
+            holder.post_container.setVisibility(View.GONE);
+            holder.post_text_container.setVisibility(View.VISIBLE);
+
+            holder.post_text_container.setText(post.getDescription());
+        }
+        else {
+            holder.description.setVisibility(View.VISIBLE);
+            holder.description.setText(post.getDescription());
+            Glide.with(mContext).load(post.getPostimage())
+                    .apply(new RequestOptions().placeholder(R.drawable.placeholder))
+                    .into(holder.post_image);
+
+            holder.post_container.setVisibility(View.VISIBLE);
+            holder.post_text_container.setVisibility(View.GONE);
         }
 
         publisherInfo(holder.image_profile, holder.username, holder.publisher, post.getPublisher());
@@ -221,27 +231,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         holder.post_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
                 editor.putString("postid", post.getPostid());
                 editor.apply();
 
-                Intent intent = new Intent(mContext, PostDetailActivity.class);
+                Intent intent = new Intent(mContext, FullscreenActivity.class);
                 intent.putExtra("postid", post.getPostid());
                 intent.putExtra("publisherid", post.getPublisher());
                 mContext.startActivity(intent);
                 Animatoo.animateShrink(mContext);
 
-//                if (isImageFitToScreen){
-//                    isImageFitToScreen = false;
-//                    holder.post_image.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-//                    holder.post_image.setAdjustViewBounds(true);
-//                }
-//                else {
-//                    isImageFitToScreen=true;
-//                    holder.post_image.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-//                    holder.post_image.setScaleType(ImageView.ScaleType.FIT_XY);
-//
-//                }
             }
         });
 
@@ -359,6 +359,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
         public ImageView image_profile, post_image, like, comment, save, more, share;
         public TextView username, likes, publisher, description, comments;
+        public TextView post_text_container;
+        public RelativeLayout post_container;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -375,6 +377,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             description = itemView.findViewById(R.id.description);
             comments = itemView.findViewById(R.id.comments);
             more = itemView.findViewById(R.id.more);
+
+            post_text_container = itemView.findViewById(R.id.post_text_container);
+            post_container = itemView.findViewById(R.id.post_container);
         }
     }
 

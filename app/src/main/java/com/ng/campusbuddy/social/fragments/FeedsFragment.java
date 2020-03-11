@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
@@ -109,9 +110,11 @@ public class FeedsFragment extends Fragment {
 
         UsersPostrecyclerView = view.findViewById(R.id.users_post_recycler);
         UsersPostrecyclerView.setHasFixedSize(true);
-        LinearLayoutManager uLayoutManager = new LinearLayoutManager(getContext());
+//        LinearLayoutManager uLayoutManager = new LinearLayoutManager(getContext());
+//        uLayoutManager.setStackFromEnd(true);
+        StaggeredGridLayoutManager uLayoutManager = new StaggeredGridLayoutManager(2,
+                StaggeredGridLayoutManager.VERTICAL);
         uLayoutManager.setReverseLayout(true);
-        uLayoutManager.setStackFromEnd(true);
         UsersPostrecyclerView.setLayoutManager(uLayoutManager);
         UserpostList = new ArrayList<>();
         AllpostAdapter = new AllPostAdapter(getContext(), UserpostList);
