@@ -58,7 +58,7 @@
             android:layout_toRightOf="@id/profile_image"
             android:adjustViewBounds="true"
             android:padding="5dp"
-            android:scaleType="fitCenter"
+            android:scaleType="centerCrop"
             android:visibility="gone"
             app:srcCompat="@drawable/placeholder" />
 

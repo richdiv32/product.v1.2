@@ -2,6 +2,7 @@ package com.ng.campusbuddy.social.messaging;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.kevalpatel2106.emoticongifkeyboard.widget.EmoticonTextView;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.social.messaging.chat.Chat;
+import com.ng.campusbuddy.social.post.FullscreenActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -65,7 +67,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, final int position) {
 
-        Chat chat = mChat.get(position);
+        final Chat chat = mChat.get(position);
 
         String timeStamp = mChat.get(position).getTimestamp();
         String type = mChat.get(position).getType();
@@ -144,6 +146,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 builder.create().show();
 
                 return false;
+            }
+        });
+
+        holder.show_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intent = new Intent(mContext, FullscreenActivity.class);
+//                intent.putExtra("postid", chat.getMessage());
+
+                Toast.makeText(mContext, "Clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
