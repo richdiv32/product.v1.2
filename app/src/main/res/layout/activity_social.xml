@@ -9,18 +9,14 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/spaceTabLayout">
+        android:layout_height="match_parent">
 
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="55dp">
-
-            <include layout="@layout/app_bar"
-                android:id="@+id/nav_button"/>
-
+            android:id="@+id/fragment_container"
+            android:layout_above="@id/bubbleNavigation">
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/viewPager"
@@ -28,20 +24,72 @@
                 android:layout_height="match_parent" />
 
         </FrameLayout>
+
+        <com.gauravk.bubblenavigation.BubbleNavigationLinearView
+            android:id="@+id/bubbleNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="8dp"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:layout_alignParentBottom="true">
+
+            <com.gauravk.bubblenavigation.BubbleToggleView
+                android:id="@+id/feeds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bt_colorActive="@color/colorPrimary"
+                app:bt_colorInactive="@color/grey"
+                app:bt_icon="@drawable/ic_feeds"
+                app:bt_title="Feeds"
+                android:layout_weight="1" />
+
+            <com.gauravk.bubblenavigation.BubbleToggleView
+                android:id="@+id/messages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bt_colorActive="@color/gradient_start_color"
+                app:bt_colorInactive="@color/grey"
+                app:bt_icon="@drawable/ic_chat"
+                app:bt_title="Messages"
+                android:layout_weight="1"/>
+
+            <com.gauravk.bubblenavigation.BubbleToggleView
+                android:id="@+id/match"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bt_colorActive="#9C27B0"
+                app:bt_colorInactive="@color/grey"
+                app:bt_icon="@drawable/ic_match_up"
+                app:bt_title="Match"
+                android:layout_weight="1"/>
+
+            <com.gauravk.bubblenavigation.BubbleToggleView
+                android:id="@+id/room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bt_colorActive="#FF9800"
+                app:bt_colorInactive="@color/grey"
+                app:bt_icon="@drawable/ic_chat_room"
+                app:bt_title="Room"
+                android:layout_weight="1"/>
+
+            <com.gauravk.bubblenavigation.BubbleToggleView
+                android:id="@+id/search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bt_colorActive="#4CAF50"
+                app:bt_colorInactive="@color/grey"
+                app:bt_icon="@drawable/ic_search"
+                app:bt_title="Search"
+                android:layout_weight="1"/>
+
+        </com.gauravk.bubblenavigation.BubbleNavigationLinearView>
+
+
+
     </RelativeLayout>
-
-    <eu.long1.spacetablayout.SpaceTabLayout
-        android:backgroundTintMode="screen"
-        app:layout_behavior="eu.long1.spacetablayout.SpaceTabLayoutBehavior"
-        android:id="@+id/spaceTabLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:number_of_tabs="five"
-        app:starting_position="one"
-        app:tab_color="@color/grey"
-        app:button_color="@color/colorPrimary"
-        />
-
 
 
     <include layout="@layout/nav_veiw"/>

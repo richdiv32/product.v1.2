@@ -43,6 +43,10 @@
                 android:id="@+id/nav_log_out"
                 android:icon="@drawable/ic_log_out"
                 android:title="Logout" />
+            <item
+                android:id="@+id/nav_blog"
+                android:icon="@drawable/ic_globe"
+                android:title="Blog" />
         </menu>
     </item>
 

@@ -168,7 +168,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:visibility="visible">
+                android:visibility="visible"
+                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable">
 
             </androidx.recyclerview.widget.RecyclerView>
 
@@ -177,7 +181,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="visible"
-                android:scrollbars="vertical"/>
+                android:scrollbars="vertical"
+                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/users_post_recycler"
@@ -185,7 +193,11 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="5dp"
                 android:visibility="gone"
-                android:scrollbars="vertical"/>
+                android:scrollbars="vertical"
+                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"/>
 
         </LinearLayout>
 

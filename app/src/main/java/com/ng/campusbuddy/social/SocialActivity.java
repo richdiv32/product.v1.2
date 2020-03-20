@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
+import com.gauravk.bubblenavigation.listener.BubbleNavigationChangeListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -56,6 +58,7 @@ import eu.long1.spacetablayout.SpaceTabLayout;
 public class SocialActivity extends AppCompatActivity {
     Context mcontext = SocialActivity.this;
 
+    Fragment selectedfragment = null;
 
     String profileid;
 
@@ -123,24 +126,55 @@ public class SocialActivity extends AppCompatActivity {
         SetupNavigationDrawer();
 
         /*Bottom Navigation*/
-        //add the fragments you want to display in a List
-        List<Fragment> fragmentList = new ArrayList<>();
-        fragmentList.add(new FeedsFragment());
-        fragmentList.add(new MessagesFragment());
-        fragmentList.add(new MatchUpFragment());
-        fragmentList.add(new ChatRoomFragment());
-        fragmentList.add(new FindFriendFragment());
+//        //add the fragments you want to display in a List
+//        List<Fragment> fragmentList = new ArrayList<>();
+//        fragmentList.add(new FeedsFragment());
+//        fragmentList.add(new MessagesFragment());
+//        fragmentList.add(new MatchUpFragment());
+//        fragmentList.add(new ChatRoomFragment());
+//        fragmentList.add(new FindFriendFragment());
+//
+//        ViewPager viewPager = findViewById(R.id.viewPager);
+//        SpaceTabLayout tabLayout = findViewById(R.id.spaceTabLayout);
+//
+//        tabLayout.initialize(viewPager, getSupportFragmentManager(),
+//                fragmentList, savedInstanceState);
+//        tabLayout.setTabOneIcon(R.drawable.ic_feeds);
+//        tabLayout.setTabTwoIcon(R.drawable.ic_chat);
+//        tabLayout.setTabThreeIcon(R.drawable.ic_match_up);
+//        tabLayout.setTabFourIcon(R.drawable.ic_chat_room);
+//        tabLayout.setTabFiveIcon(R.drawable.ic_search);
 
-        ViewPager viewPager = findViewById(R.id.viewPager);
-        SpaceTabLayout tabLayout = findViewById(R.id.spaceTabLayout);
+        BubbleNavigationLinearView bubbleNavigationLinearView = findViewById(R.id.bubbleNavigation);
 
-        tabLayout.initialize(viewPager, getSupportFragmentManager(),
-                fragmentList, savedInstanceState);
-        tabLayout.setTabOneIcon(R.drawable.ic_feeds);
-        tabLayout.setTabTwoIcon(R.drawable.ic_chat);
-        tabLayout.setTabThreeIcon(R.drawable.ic_match_up);
-        tabLayout.setTabFourIcon(R.drawable.ic_chat_room);
-        tabLayout.setTabFiveIcon(R.drawable.ic_search);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                new FeedsFragment()).commit();
+
+        bubbleNavigationLinearView.setNavigationChangeListener(new BubbleNavigationChangeListener() {
+            @Override
+            public void onNavigationChanged(View view, int position) {
+                switch (position){
+                    case 0:
+                        selectedfragment= new FeedsFragment();
+                        break;
+                    case 1:
+                        selectedfragment= new MessagesFragment();
+                        break;
+                    case 2:
+                        selectedfragment= new MatchUpFragment();
+                        break;
+                    case 3:
+                        selectedfragment= new ChatRoomFragment();
+                        break;
+                    case 4:
+                        selectedfragment= new FindFriendFragment();
+                        break;
+
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        selectedfragment).commit();
+            }
+        });
         /*---------------------------------------------*/
 
 
