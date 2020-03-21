@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 
 
 public class MessagesFragment extends Fragment {
@@ -80,11 +82,19 @@ public class MessagesFragment extends Fragment {
         AddInit();
         LoadChatlist();
         LoadGrouplist();
+        TapTarget();
 
         Chats_recycler.setVisibility(View.VISIBLE);
         GroupChats_recycler.setVisibility(View.GONE);
 
         return view;
+    }
+
+    private void TapTarget() {
+        TapTargetView.showFor(getActivity(),                 // `this` is an Activity
+                TapTarget.forView(view.findViewById(R.id.message_fab), "New Chat", "starting sending messages to friends, create and add friends to your group or speak to a Counselor if you are having difficulties on campus")
+                        .tintTarget(false)
+                        .outerCircleColor(R.color.colorPrimary));
     }
 
 

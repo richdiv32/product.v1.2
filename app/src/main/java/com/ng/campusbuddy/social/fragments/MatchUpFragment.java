@@ -1,19 +1,38 @@
 package com.ng.campusbuddy.social.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.bumptech.glide.Glide;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -25,13 +44,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.adapter.MatchArrayAdapter;
+import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.social.match.Match;
 import com.ng.campusbuddy.social.match.MatchesActivity;
+import com.ng.campusbuddy.social.messaging.chat.ChatActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MatchUpFragment extends Fragment {
@@ -134,8 +157,16 @@ public class MatchUpFragment extends Fragment {
             }
         });
 
+        TapTarget();
 
         return view;
+    }
+
+    private void TapTarget() {
+        TapTargetView.showFor(getActivity(),                 // `this` is an Activity
+                TapTarget.forView(view.findViewById(R.id.love_btn), "Matches", "See your matches and start the conversation with your pair")
+                        .tintTarget(false)
+                        .outerCircleColor(R.color.colorPrimary));
     }
 
     private void addNotification(String userId){
@@ -157,7 +188,8 @@ public class MatchUpFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-                    Toast.makeText(getActivity(), "Matched", Toast.LENGTH_LONG).show();
+                    showPopup(userId);
+
 
 //                    String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
 
@@ -239,6 +271,88 @@ public class MatchUpFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    private void showPopup(final String userId) {
+        final  View popup_view = LayoutInflater.from(getContext()).inflate(R.layout.item_matched, null);
+        final PopupWindow popupWindow = new PopupWindow(popup_view, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+//        popupWindow.dismiss();
+        popupWindow.showAtLocation(popup_view, Gravity.CENTER, 0, 0);
+
+
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+
+        final CircleImageView myImage = popup_view.findViewById(R.id.image_profile);
+        final CircleImageView userImage = popup_view.findViewById(R.id.image_profile2);
+        Button Continue = popup_view.findViewById(R.id.continue_btn);
+        Button Chat = popup_view.findViewById(R.id.chat_btn);
+        final TextView Paired = popup_view.findViewById(R.id.paired_text);
+
+        DatabaseReference myInfo = FirebaseDatabase.getInstance().getReference();
+        myInfo.child("Users").child(fuser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    User user = dataSnapshot.getValue(User.class);
+
+                    Glide.with(getContext())
+                            .load(user.getImageurl())
+                            .into(myImage);
+
+//                    Username.setText(user.getUsername());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference UserInfo = FirebaseDatabase.getInstance().getReference();
+        UserInfo.child("Users").child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    User user = dataSnapshot.getValue(User.class);
+
+                    Glide.with(getActivity())
+                            .load(user.getImageurl())
+                            .into(userImage);
+
+                    Paired.setText("You and " + user.getUsername() + " like each other");
+
+//                    Username.setText(user.getUsername());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        Chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent message = new Intent(getContext(), ChatActivity.class);
+                message.putExtra("userid", userId);
+                getContext().startActivity(message);
+                Animatoo.animateSlideUp(getContext());
+            }
+        });
+
+        Continue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+
+            }
+        });
+
     }
 
 

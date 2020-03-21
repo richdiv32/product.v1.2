@@ -319,7 +319,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 Glide.with(getApplicationContext()).load(user.getImageurl()).into(bg);
                 username.setText(user.getUsername());
                 fullname.setText(user.getFullname());
-                profile_status.setText(user.getBio());
+                profile_status.setText(user.getProfile_status());
 
             }
 

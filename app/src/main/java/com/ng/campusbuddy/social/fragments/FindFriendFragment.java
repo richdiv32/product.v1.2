@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -86,8 +88,16 @@ public class FindFriendFragment extends Fragment {
         });
 
         Face_of_week();
+        TapTarget();
 
         return view;
+    }
+
+    private void TapTarget() {
+//        TapTargetView.showFor(getActivity(),                 // `this` is an Activity
+//                TapTarget.forView(view.findViewById(R.id.face), "Personality of the week", "See the most influential student on the platform, It could be you...")
+//                        .tintTarget(false)
+//                        .outerCircleColor(R.color.colorPrimary));
     }
 
     private void Face_of_week() {
@@ -107,7 +117,7 @@ public class FindFriendFragment extends Fragment {
                 }
                 final Contest contest = dataSnapshot.getValue(Contest.class);
 
-                Glide.with(getContext())
+                Glide.with(getActivity())
                         .load(contest.getImageURL())
                         .placeholder(R.drawable.placeholder)
                         .into(image);

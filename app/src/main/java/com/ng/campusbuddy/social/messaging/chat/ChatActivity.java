@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.agrawalsuneet.dotsloader.loaders.AllianceLoader;
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -444,9 +445,12 @@ public class ChatActivity extends AppCompatActivity {
     private void sendImageMessage(Uri image_rui) {
         notify = true;
         //progressDialog
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Sending image.....");
-        progressDialog.setMessage("few seconds left");
+//        final ProgressDialog progressDialog = new ProgressDialog(this);
+//        progressDialog.setTitle("Sending image.....");
+//        progressDialog.setMessage("few seconds left");
+
+        final AllianceLoader Pd = findViewById(R.id.loader);
+        Pd.setVisibility(View.VISIBLE);
 
 
         final String timeStamp = "" + System.currentTimeMillis();
@@ -470,7 +474,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         //image uploaded
-                        progressDialog.dismiss();
+                        Pd.setVisibility(View.GONE);
 
                         //get url of uploaded image
                         Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
@@ -569,7 +573,7 @@ public class ChatActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         //failed
                         Toast.makeText(ChatActivity.this, "Error Occured", Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
+                        Pd.setVisibility(View.GONE);
                     }
                 });
     }

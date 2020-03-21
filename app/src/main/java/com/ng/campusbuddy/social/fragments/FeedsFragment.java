@@ -30,6 +30,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -141,8 +143,16 @@ public class FeedsFragment extends Fragment {
         ADimageslider();
         Init();
         PostInit();
+        TapTarget();
 
         return view;
+    }
+
+    private void TapTarget() {
+        TapTargetView.showFor(getActivity(),                 // `this` is an Activity
+                TapTarget.forView(view.findViewById(R.id.post_fab), "Post Your Moments", "share your favourite moments with friends all over the country")
+                        .tintTarget(false)
+                        .outerCircleColor(R.color.colorPrimary));
     }
 
     private void Init() {

@@ -17,12 +17,12 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".social.messaging.PhotoActivity"></activity>
         <activity
             android:name=".social.post.FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
-            android:theme="@style/FullscreenTheme"></activity>
-<!--        <activity android:name=".social.post.story.PostFullActivity" />-->
+            android:theme="@style/FullscreenTheme" /> <!-- <activity android:name=".social.post.story.PostFullActivity" /> -->
         <activity
             android:name=".start.IntroActivity"
             android:screenOrientation="portrait"

@@ -162,5 +162,25 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
+            android:id="@+id/loader"
+            android:visibility="gone"
+            android:layout_width="78dp"
+            android:layout_height="50dp"
+            app:alliance_animDuration="500"
+            app:alliance_distanceMultiplier="4"
+            app:alliance_dotsRadius="10dp"
+            app:alliance_drawOnlyStroke="true"
+            app:alliance_firstDotsColor="#FF0000"
+            app:alliance_secondDotsColor="#FF0000"
+            app:alliance_strokeWidth="5dp"
+            app:alliance_thirdDotsColor="#FF0000"/>
+    </RelativeLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

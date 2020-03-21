@@ -10,6 +10,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agrawalsuneet.dotsloader.loaders.AllianceLoader;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -55,6 +57,8 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,7 +110,6 @@ public class PostActivity extends AppCompatActivity {
 
         //detect if note fab was clicked
         String notes = intent.getStringExtra("Notes");
-//        String postText = intent.getStringExtra("Notes");
         if (notes == null){
 
             final RelativeLayout ImageLayout = findViewById(R.id.post_imageLayout);
@@ -349,14 +352,30 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void uploadImage_10(){
-        final ProgressDialog pd = new ProgressDialog(this);
-        pd.setMessage("Posting");
-        pd.show();
+//        final ProgressDialog pd = new ProgressDialog(this);
+//        pd.setMessage("Posting");
+//        pd.show();
+
+        final AllianceLoader Pd = findViewById(R.id.loader);
+        Pd.setVisibility(View.VISIBLE);
+
         if (mImageUri != null){
+            Bitmap bmp = null;
+            try {
+                bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+            byte[] data = baos.toByteArray();
+
             final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
                     + "." + getFileExtension(mImageUri));
 
-            uploadTask = fileReference.putFile(mImageUri);
+
+//            uploadTask = fileReference.putFile(mImageUri);
+            uploadTask = fileReference.putBytes(data);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -386,7 +405,8 @@ public class PostActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        pd.dismiss();
+//                                        pd.dismiss();
+                                        Pd.setVisibility(View.GONE);
 
                                         prepareNotification(
                                                 "",
@@ -436,7 +456,8 @@ public class PostActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            pd.dismiss();
+//                            pd.dismiss();
+//                            Pd.setVisibility(View.VISIBLE);
 
                             prepareNotification(
                                     "",
