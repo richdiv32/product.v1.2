@@ -46,6 +46,7 @@ import com.ng.campusbuddy.social.fragments.MessagesFragment;
 import com.ng.campusbuddy.start.WelcomeActivity;
 import com.ng.campusbuddy.tools.NotificationsActivity;
 import com.ng.campusbuddy.tools.SettingsActivity;
+import com.ng.campusbuddy.tools.WebViewActivity;
 import com.ng.campusbuddy.utils.SharedPref;
 
 import java.util.ArrayList;
@@ -295,8 +296,9 @@ public class SocialActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_about_us:
                         String url = "https://campusbuddy.xyz/company";
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(Intent.createChooser(intent, "Browse with"));
+                        Intent intent = new Intent(SocialActivity.this, WebViewActivity.class);
+                        intent.putExtra("Url", url);
+                        startActivity(intent);
                         break;
                     case R.id.nav_faq:
 //                        String url2 = "https://campusbuddy.xyz/Team";
@@ -320,6 +322,12 @@ public class SocialActivity extends AppCompatActivity {
                         sIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
                         sIntent.setType("text/plain");
                         startActivity(Intent.createChooser(sIntent, "Invite a friend via..."));
+                        break;
+                    case R.id.nav_blog:
+                        String url2 = "https://www.campusbuddy.com.ng";
+                        Intent intent2 = new Intent(SocialActivity.this, WebViewActivity.class);
+                        intent2.putExtra("Url", url2);
+                        startActivity(intent2);
                         break;
                 }
 

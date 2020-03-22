@@ -17,7 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".social.messaging.PhotoActivity"></activity>
+        <activity android:name=".tools.WebViewActivity"></activity>
+        <activity android:name=".tools.WebActivity" />
+        <activity android:name=".social.messaging.PhotoActivity" />
         <activity
             android:name=".social.post.FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

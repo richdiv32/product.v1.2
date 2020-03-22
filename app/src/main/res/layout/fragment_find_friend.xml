@@ -148,6 +148,27 @@
                             android:textSize="12sp"/>
                     </LinearLayout>
 
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+
+                        <com.agrawalsuneet.dotsloader.loaders.TashieLoader
+                            android:id="@+id/loader"
+                            android:layout_width="60dp"
+                            android:layout_height="30dp"
+                            app:tashieloader_animDelay="200"
+                            app:tashieloader_animDur="1000"
+                            app:tashieloader_dotsColor="@color/colorPrimary"
+                            app:tashieloader_dotsDist="5dp"
+                            app:tashieloader_dotsRadius="10dp"
+                            app:tashieloader_interpolator="@android:anim/accelerate_interpolator"
+                            app:tashieloader_noOfDots="6"
+                            android:visibility="visible"/>
+
+
+                    </RelativeLayout>
+
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 

@@ -130,9 +130,10 @@ public class PostActivity extends AppCompatActivity {
         String image_path = intent.getStringExtra("imagePath");
         if (image_path != null){
             Uri fileUri = Uri.parse(image_path);
+            mImageUri = fileUri;
             //set to imageview
             ImageView image_added = findViewById(R.id.image_added);
-            image_added.setImageURI(fileUri);
+            image_added.setImageURI(mImageUri);
 
             final RelativeLayout ImageLayout = findViewById(R.id.post_imageLayout);
             final LinearLayout TextLayout = findViewById(R.id.post_textLayout);
@@ -367,7 +368,7 @@ public class PostActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] data = baos.toByteArray();
 
             final StorageReference fileReference = storageRef.child(System.currentTimeMillis()

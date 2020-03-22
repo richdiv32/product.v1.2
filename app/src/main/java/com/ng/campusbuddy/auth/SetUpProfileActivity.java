@@ -18,6 +18,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.agrawalsuneet.dotsloader.loaders.AllianceLoader;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -52,7 +53,6 @@ public class SetUpProfileActivity extends AppCompatActivity {
     private StorageTask uploadTask;
     StorageReference storageRef;
 
-    ProgressDialog pd;
 
     HashMap<String, Object> map = new HashMap<>();
 
@@ -116,9 +116,8 @@ public class SetUpProfileActivity extends AppCompatActivity {
     }
 
     private void upload(){
-        final ProgressDialog pd = new ProgressDialog(this);
-        pd.setMessage("Saving");
-        pd.show();
+        final AllianceLoader Pd = findViewById(R.id.loader);
+        Pd.setVisibility(View.VISIBLE);
 
         int selectId = mRadioGroup.getCheckedRadioButtonId();
         final RadioButton radioButton = findViewById(selectId);
@@ -141,16 +140,16 @@ public class SetUpProfileActivity extends AppCompatActivity {
                 || TextUtils.isEmpty(str_faculty) || TextUtils.isEmpty(str_department) || TextUtils.isEmpty(str_bio)
                 || TextUtils.isEmpty(str_bio)){
             Toast.makeText(SetUpProfileActivity.this, "All fields are required!", Toast.LENGTH_SHORT).show();
-            pd.dismiss();
+            Pd.setVisibility(View.GONE);
         }
         else if(radioButton.getText() == null){
             Toast.makeText(SetUpProfileActivity.this, "Select your gender", Toast.LENGTH_SHORT).show();
-            pd.dismiss();
+            Pd.setVisibility(View.GONE);
             return;
         }
         else if (mImageUri == null){
             Toast.makeText(SetUpProfileActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
-            pd.dismiss();
+            Pd.setVisibility(View.GONE);
         }
         else {
 
@@ -215,7 +214,7 @@ public class SetUpProfileActivity extends AppCompatActivity {
                                     }
                                 });
 
-                        pd.dismiss();
+                        Pd.setVisibility(View.GONE);
 
 
                     } else {

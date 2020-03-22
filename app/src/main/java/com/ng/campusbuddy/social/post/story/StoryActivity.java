@@ -1,8 +1,10 @@
 package com.ng.campusbuddy.social.post.story;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,7 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agrawalsuneet.dotsloader.loaders.AllianceLoader;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,6 +56,8 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     List<String> storyids;
     String userid;
 
+    AllianceLoader Pd;
+
     private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -75,6 +84,8 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         image = findViewById(R.id.image);
         story_photo = findViewById(R.id.story_photo);
         story_username = findViewById(R.id.story_username);
+        Pd = findViewById(R.id.loader);
+
 
         //
         r_seen = findViewById(R.id.r_seen);
@@ -151,7 +162,23 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
 
     @Override
     public void onNext() {
-        Glide.with(getApplicationContext()).load(images.get(++counter)).into(image);
+        Glide.with(getApplicationContext())
+                .load(images.get(++counter))
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                        Pd.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        Pd.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(image);
         //
         addView(storyids.get(counter));
         seenNumber(storyids.get(counter));
@@ -161,7 +188,23 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     @Override
     public void onPrev() {
         if ((counter - 1) < 0) return;
-        Glide.with(getApplicationContext()).load(images.get(--counter)).into(image);
+        Glide.with(getApplicationContext())
+                .load(images.get(--counter))
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                        Pd.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        Pd.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(image);
         //
         seenNumber(storyids.get(counter));
         //
@@ -214,7 +257,23 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                 storiesProgressView.setStoriesListener(StoryActivity.this);
                 storiesProgressView.startStories(counter);
 
-                Glide.with(getApplicationContext()).load(images.get(counter)).into(image);
+                Glide.with(getApplicationContext())
+                        .load(images.get(counter))
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                                Pd.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                Pd.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
+                        .into(image);
                 //
                 addView(storyids.get(counter));
                 seenNumber(storyids.get(counter));
@@ -235,7 +294,23 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(getApplicationContext()).load(user.getImageurl()).into(story_photo);
+                Glide.with(getApplicationContext())
+                        .load(user.getImageurl())
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                                Pd.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                Pd.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
+                        .into(story_photo);
                 story_username.setText(user.getUsername());
             }
 

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,11 +20,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.agrawalsuneet.dotsloader.loaders.AllianceLoader;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -75,15 +83,49 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
         }
         else {
 
-            Picasso.get()
+//            Picasso.get()
+//                    .load(room.getImage_chatroom())
+//                    .placeholder(R.drawable.placeholder)
+//                    .into(holder.image);
+
+            Glide.with(mContext)
                     .load(room.getImage_chatroom())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                            holder.Pd.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            holder.Pd.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .placeholder(R.drawable.placeholder)
                     .into(holder.image);
 
-            Picasso.get()
+            Glide.with(mContext)
                     .load(room.getImage_chatroom())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                            holder.Pd.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            holder.Pd.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .placeholder(R.drawable.placeholder)
                     .into(holder.bg);
+
         }
 
 
@@ -108,6 +150,7 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
         public TextView title;
         public ImageView image, bg;
         private TextView count;
+        public AllianceLoader Pd;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -116,6 +159,7 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
             image = itemView.findViewById(R.id.chat_room_imgae);
             bg = itemView.findViewById(R.id.chat_room_imgae_bg);
             count = itemView.findViewById(R.id.count);
+            Pd = itemView.findViewById(R.id.loader);
         }
     }
 
@@ -262,13 +306,41 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
             }
             else {
 
-                Picasso.get()
+                Glide.with(mContext)
                         .load(room.getImage_chatroom())
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                                holder.Pd.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                holder.Pd.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
                         .placeholder(R.drawable.placeholder)
                         .into(holder.image);
 
-                Picasso.get()
+                Glide.with(mContext)
                         .load(room.getImage_chatroom())
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                                holder.Pd.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                holder.Pd.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
                         .placeholder(R.drawable.placeholder)
                         .into(holder.bg);
             }
@@ -300,6 +372,7 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
             public TextView title;
             public ImageView image, bg;
             private TextView count;
+            public AllianceLoader Pd;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -308,6 +381,7 @@ public class RoomsListAdapter extends RecyclerView.Adapter<RoomsListAdapter.View
                 bg = itemView.findViewById(R.id.chat_room_imgae_bg);
                 image = itemView.findViewById(R.id.chat_room_imgae);
                 count = itemView.findViewById(R.id.count);
+                Pd = itemView.findViewById(R.id.loader);
             }
         }
 

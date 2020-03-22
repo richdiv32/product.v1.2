@@ -1,7 +1,9 @@
 package com.ng.campusbuddy.start;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,12 +12,19 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.utils.SharedPref;
 
-public class SplashActivity extends AppCompatActivity {
+import java.util.List;
+
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class SplashActivity extends AppCompatActivity{
 
     TextView tv;
     ImageView iv;
@@ -50,10 +59,18 @@ public class SplashActivity extends AppCompatActivity {
         tv.startAnimation(myanim);
         iv.startAnimation(myanim);
 
+
+        Next();
+    }
+
+
+
+
+
+    private void Next() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-//                Intent splash = new Intent(SplashActivity.this, IntroductionActivity.class);
                 Intent splash = new Intent(SplashActivity.this, IntroActivity.class);
                 startActivity(splash);
                 Animatoo.animateZoom(SplashActivity.this);
@@ -61,4 +78,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         }, SPLASH_SCREEN_TIME_OUT);
     }
+
+
+
 }

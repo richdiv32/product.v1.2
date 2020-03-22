@@ -2,6 +2,7 @@ package com.ng.campusbuddy.social.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -56,6 +57,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 public class MatchUpFragment extends Fragment {
     View view;
@@ -82,6 +85,11 @@ public class MatchUpFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // when this activity is about to be launch we need to check if its openened before or not
+        if (restorePrefData()) {
+
+
+        }
         view = inflater.inflate(R.layout.fragment_match_up, container, false);
 
 
@@ -166,7 +174,14 @@ public class MatchUpFragment extends Fragment {
         TapTargetView.showFor(getActivity(),                 // `this` is an Activity
                 TapTarget.forView(view.findViewById(R.id.love_btn), "Matches", "See your matches and start the conversation with your pair")
                         .tintTarget(false)
-                        .outerCircleColor(R.color.colorPrimary));
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        view.dismiss(true);
+                    }
+                });
     }
 
     private void addNotification(String userId){
@@ -352,6 +367,14 @@ public class MatchUpFragment extends Fragment {
 
             }
         });
+
+    }
+
+    private boolean restorePrefData() {
+
+        SharedPreferences pref = getActivity().getSharedPreferences("myPrefs",MODE_PRIVATE);
+        Boolean isTapTargetClickedBefore = pref.getBoolean("isIntroOpnend",false);
+        return  isTapTargetClickedBefore;
 
     }
 

@@ -444,10 +444,6 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendImageMessage(Uri image_rui) {
         notify = true;
-        //progressDialog
-//        final ProgressDialog progressDialog = new ProgressDialog(this);
-//        progressDialog.setTitle("Sending image.....");
-//        progressDialog.setMessage("few seconds left");
 
         final AllianceLoader Pd = findViewById(R.id.loader);
         Pd.setVisibility(View.VISIBLE);
