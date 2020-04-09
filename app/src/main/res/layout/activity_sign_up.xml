@@ -74,13 +74,12 @@
             android:textColorHint="@color/white" />
 
 
-
         <Button
             android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/button_gradient"
             android:text="Register"
             android:textAllCaps="false"
@@ -135,5 +134,63 @@
 
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="visible">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/loader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            android:theme="@style/AppTheme"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/semi_transparent"
+            app:cardCornerRadius="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
+                    android:layout_width="78dp"
+                    android:layout_height="50dp"
+                    android:visibility="visible"
+                    app:alliance_animDuration="500"
+                    app:alliance_distanceMultiplier="4"
+                    app:alliance_dotsRadius="10dp"
+                    app:alliance_drawOnlyStroke="true"
+                    app:alliance_firstDotsColor="#FF0000"
+                    app:alliance_secondDotsColor="#FF0000"
+                    app:alliance_strokeWidth="5dp"
+                    app:alliance_thirdDotsColor="#FF0000" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Loading..."
+                    android:textColor="@color/black"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="please wait.."
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="italic" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+    </RelativeLayout>
 
 </RelativeLayout>

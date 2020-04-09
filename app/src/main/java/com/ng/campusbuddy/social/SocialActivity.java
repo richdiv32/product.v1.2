@@ -1,22 +1,35 @@
 package com.ng.campusbuddy.social;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +38,8 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.gauravk.bubblenavigation.listener.BubbleNavigationChangeListener;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,27 +61,30 @@ import com.ng.campusbuddy.social.fragments.MessagesFragment;
 import com.ng.campusbuddy.start.WelcomeActivity;
 import com.ng.campusbuddy.tools.NotificationsActivity;
 import com.ng.campusbuddy.tools.SettingsActivity;
+//import com.ng.campusbuddy.tools.WebViewActivity;
 import com.ng.campusbuddy.tools.WebViewActivity;
+import com.ng.campusbuddy.utils.ForceUpdateChecker;
 import com.ng.campusbuddy.utils.SharedPref;
 
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import eu.long1.spacetablayout.SpaceTabLayout;
 
-public class SocialActivity extends AppCompatActivity {
+public class SocialActivity extends AppCompatActivity implements
+        ForceUpdateChecker.OnUpdateNeededListener{
     Context mcontext = SocialActivity.this;
 
     Fragment selectedfragment = null;
 
     String profileid;
 
+
     @Override
     protected void onStart() {
         super.onStart();
-
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         //check if user is null
@@ -119,12 +137,14 @@ public class SocialActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_social);
-//        ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
+        ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
 
 
         profileid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         SetupNavigationDrawer();
+
+
 
         /*Bottom Navigation*/
 //        //add the fragments you want to display in a List
@@ -178,17 +198,22 @@ public class SocialActivity extends AppCompatActivity {
         });
         /*---------------------------------------------*/
 
+        TapTarget();
 
-//        updateToken(FirebaseInstanceId.getInstance().getToken());
     }
 
 
-//    public void updateToken(String token){
-//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
-//        Token mToken = new Token(token);
-//        ref.child(userid).setValue(mToken);
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        SharedPref sharedPref = new SharedPref(this);
+//        if (sharedPref.loadNightModeState() == true){
+//            setTheme(R.style.AppDarkTheme);
+//        }
+//        else{
+//            setTheme(R.style.AppTheme);
+//        }
 //    }
-
 
     private void SetupNavigationDrawer() {
 
@@ -204,6 +229,28 @@ public class SocialActivity extends AppCompatActivity {
         final ImageView Profile_image_bg = headerview.findViewById(R.id.image_profile_bg);
         final TextView Followers = headerview.findViewById(R.id.followers);
         final TextView Following = headerview.findViewById(R.id.following);
+
+        //badge
+        TextView counter = findViewById(R.id.counter);
+        int Notifications = 0;
+
+        if (Notifications == 0){
+            counter.setVisibility(View.GONE);
+        }
+        else if (Notifications > 99){
+            counter.setText("+99");
+        }
+        else {
+            counter.setText(String.valueOf(Notifications));
+        }
+
+        ImageButton Nav = findViewById(R.id.nav_button);
+        Nav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START, true);
+            }
+        });
 
         //        Loading profile image
         DatabaseReference Nav_reference = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -301,6 +348,7 @@ public class SocialActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case R.id.nav_faq:
+                        Toast.makeText(mcontext, "FAQ in progress..", Toast.LENGTH_SHORT).show();
 //                        String url2 = "https://campusbuddy.xyz/Team";
 //                        Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(url2));
 //                        startActivity(Intent.createChooser(intent2, "Browse with"));
@@ -328,6 +376,7 @@ public class SocialActivity extends AppCompatActivity {
                         Intent intent2 = new Intent(SocialActivity.this, WebViewActivity.class);
                         intent2.putExtra("Url", url2);
                         startActivity(intent2);
+                        Animatoo .animateSlideLeft(mcontext);
                         break;
                 }
 
@@ -350,5 +399,86 @@ public class SocialActivity extends AppCompatActivity {
         }
         mBackPressed = System.currentTimeMillis();
     }
+
+    @Override
+    public void onUpdateNeeded(final String updateUrl) {
+//        final  View popup_view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialog_update_app, null);
+//        final PopupWindow popupWindow = new PopupWindow(popup_view, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+//        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        popupWindow.setOutsideTouchable(true);
+//        popupWindow.setFocusable(true);
+//        popupWindow.showAtLocation(popup_view, Gravity.CENTER, 0, 0);
+//        popupWindow.isShowing();
+
+        //inflate layout for dialog
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_update_app, null);
+
+        Button Update_App =view.findViewById(R.id.update_btn);
+        Button Cancel =view.findViewById(R.id.nope_btn);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setCancelable(false);
+        builder.setView(view);
+
+
+        final AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
+        Update_App.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                redirectStore(updateUrl);
+                dialog.show();
+            }
+        });
+
+        Cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                finish();
+                //TODO: change before launching
+                dialog.dismiss();
+            }
+        });
+
+
+//        AlertDialog dialog = new AlertDialog.Builder(this)
+//                .setTitle("New version available")
+//                .setMessage("Please, update app to new version.")
+//                .setCancelable(false)
+//                .setPositiveButton("Update",
+//                        new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                redirectStore(updateUrl);
+//                            }
+//                        }).setNegativeButton("No, thanks",
+//                        new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                finish();
+//                            }
+//                        }).create();
+//        dialog.setCanceledOnTouchOutside(false);
+//        dialog.show();
+
+    }
+
+    private void redirectStore(String updateUrl) {
+
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
+    }
+
+    private void TapTarget() {
+//        TapTargetView.showFor(this,
+//                TapTarget.forView(findViewById(R.id.nav_button), "Menu", "click here to view various options")
+//                        .tintTarget(false)
+//                        .outerCircleColor(R.color.colorPrimary));
+    }
+
 
 }

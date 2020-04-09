@@ -1,7 +1,9 @@
 package com.ng.campusbuddy.social.fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -9,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.social.User;
+import com.ng.campusbuddy.social.messaging.chat.Chat;
 import com.ng.campusbuddy.social.messaging.chat.ChatListAdapter;
 import com.ng.campusbuddy.social.messaging.chat.Chatlist;
 import com.ng.campusbuddy.social.messaging.chat.NewChatActivity;
@@ -43,13 +48,16 @@ import java.util.HashMap;
 import java.util.List;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
+import com.ng.campusbuddy.utils.CustomRecyclerView;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class MessagesFragment extends Fragment {
 
-    ImageButton Chat_tab, GroupChat_tab;
+    RelativeLayout Chat_tab, GroupChat_tab;
 
-    RecyclerView Chats_recycler;
+    CustomRecyclerView Chats_recycler;
     private List<Chatlist> usersList;
     private ChatListAdapter userAdapter;
 
@@ -59,7 +67,7 @@ public class MessagesFragment extends Fragment {
     FirebaseUser fuser;
     DatabaseReference reference;
 
-    RecyclerView GroupChats_recycler;
+    CustomRecyclerView GroupChats_recycler;
     private List<Grouplist> usersGroupList;
     private GroupListAdapter groupListAdapter;
 
@@ -70,11 +78,15 @@ public class MessagesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_messages, container, false);
+        if (restorePrefData()){
+
+        }
+        else {
+            TapTarget();
+        }
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
-
-//        updateToken(FirebaseInstanceId.getInstance().getToken());
 
 
 
@@ -82,7 +94,7 @@ public class MessagesFragment extends Fragment {
         AddInit();
         LoadChatlist();
         LoadGrouplist();
-        TapTarget();
+        BadgeInit();
 
         Chats_recycler.setVisibility(View.VISIBLE);
         GroupChats_recycler.setVisibility(View.GONE);
@@ -90,11 +102,95 @@ public class MessagesFragment extends Fragment {
         return view;
     }
 
+    private void BadgeInit() {
+        final TextView Message_counter = view.findViewById(R.id.message_counter);
+        final TextView Group_message_counter = view.findViewById(R.id.counter2);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int unread = 0;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Chat chat = snapshot.getValue(Chat.class);
+                    if (chat.getReceiver().equals(fuser.getUid()) && !chat.isIsseen()){
+                        unread++;
+                    }
+                }
+
+                if (unread == 0){
+                    Message_counter.setVisibility(View.GONE);
+
+                } else {
+                    Message_counter.setVisibility(View.VISIBLE );
+                    Message_counter.setText(String.valueOf(unread));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+//        DatabaseReference group_reference = FirebaseDatabase.getInstance().getReference("Groups");
+//        group_reference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                int unread = 0;
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+//                    Chat chat = snapshot.getValue(Chat.class);
+//                    if (chat.getReceiver().equals(fuser.getUid()) && !chat.isIsseen()){
+//                        unread++;
+//                    }
+//                }
+//
+//                if (unread == 0){
+//                    Group_message_counter.setVisibility(View.GONE);
+//
+//                } else {
+//                    Group_message_counter.setText(String.valueOf(unread));
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+    }
+
     private void TapTarget() {
         TapTargetView.showFor(getActivity(),                 // `this` is an Activity
                 TapTarget.forView(view.findViewById(R.id.message_fab), "New Chat", "starting sending messages to friends, create and add friends to your group or speak to a Counselor if you are having difficulties on campus")
                         .tintTarget(false)
-                        .outerCircleColor(R.color.colorPrimary));
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);
+                        savePrefsData();
+
+                        view.dismiss(true);
+                    }
+                });
+    }
+
+    private boolean restorePrefData() {
+
+        SharedPreferences pref = getActivity().getSharedPreferences("myPrefs",MODE_PRIVATE);
+        Boolean isTapTargetClickedBefore = pref.getBoolean("isTapOpnend",false);
+        return  isTapTargetClickedBefore;
+
+    }
+    private void savePrefsData() {
+
+        SharedPreferences pref = getActivity().getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("isTapOpnend",true);
+        editor.apply();
+
     }
 
 
@@ -279,12 +375,6 @@ public class MessagesFragment extends Fragment {
 
 
     }
-
-//    private void updateToken(String token){
-//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
-//        Token token1 = new Token(token);
-//        reference.child(fuser.getUid()).setValue(token1);
-//    }
 
     private void LoadChatlist() {
         Chats_recycler = view.findViewById(R.id.recycler_view_chat);

@@ -5,182 +5,196 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/gradient_bg">
+  <com.google.android.material.appbar.AppBarLayout
+      android:id="@+id/bar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/gradient_bg">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
-            app:toolbarId="@+id/toolbar">
-
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-
-            </androidx.appcompat.widget.Toolbar>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/nav_button"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    app:srcCompat="@drawable/ic_nav_draw"
-                    android:tint="@color/grey"
-                    tools:ignore="VectorDrawableCompat" />
-
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_alignBottom="@id/nav_button"
-                    android:layout_marginTop="10dp"
-                    android:layout_toEndOf="@id/nav_button"
-                    android:layout_toRightOf="@id/nav_button"
-                    android:gravity="center"
-                    android:text="Find Friends"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/title"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/search_bar"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_weight="1"
-                        android:textColorHint="@color/white"
-                        android:background="@android:color/transparent"
-                        android:drawableRight="@drawable/ic_search"
-                        android:drawableTint="@color/white"
-                        android:hint="Search..."
-                        android:textColor="@color/white"
-                        android:drawableEnd="@drawable/ic_search" />
-
-                </LinearLayout>
-            </RelativeLayout>
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <com.google.android.material.appbar.CollapsingToolbarLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/backgroundcolor"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
+        app:toolbarId="@+id/toolbar">
+
+
+      <androidx.appcompat.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+
+      </androidx.appcompat.widget.Toolbar>
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Find Friends"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:orientation="horizontal">
+
+          <EditText
+              android:id="@+id/search_bar"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="20dp"
+              android:layout_marginTop="10dp"
+              android:layout_marginRight="20dp"
+              android:layout_marginBottom="10dp"
+              android:layout_weight="1"
+              android:textColorHint="@color/white"
+              android:background="@android:color/transparent"
+              android:drawableRight="@drawable/ic_search"
+              android:drawableTint="@color/white"
+              android:hint="Search..."
+              android:textColor="@color/white"
+              android:drawableEnd="@drawable/ic_search" />
+
+        </LinearLayout>
+      </RelativeLayout>
+
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <androidx.core.widget.NestedScrollView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="?attr/backgroundcolor"
+      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".social.fragments.FindFriendFragment">
+
+      <androidx.cardview.widget.CardView
+          android:id="@+id/face"
+          android:layout_width="match_parent"
+          android:layout_height="250dp"
+          app:cardCornerRadius="10dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".social.fragments.FindFriendFragment">
+            android:layout_height="match_parent">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/face"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                app:cardCornerRadius="10dp">
+          <ImageView
+              android:id="@+id/face_of_week_bg"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:scaleType="centerCrop"
+              app:srcCompat="@drawable/placeholder" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+          <View
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/gradient_trans_bg" />
 
-                    <ImageView
-                        android:id="@+id/face_of_week_bg"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        app:srcCompat="@drawable/placeholder" />
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_alignParentBottom="true"
+              android:layout_marginLeft="10dp"
+              android:gravity="bottom"
+              android:orientation="vertical">
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/gradient_trans_bg" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginLeft="10dp"
-                        android:gravity="bottom"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Personality of the week"
-                            android:textColor="?attr/title_textcolor"
-                            android:textStyle="bold"
-                            android:shadowColor="@color/grey"
-                            android:shadowRadius="5"/>
-
-                        <TextView
-                            android:id="@+id/username"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:textColor="@color/white" />
-
-                        <TextView
-                            android:id="@+id/department"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/white"
-                            android:textSize="12sp"/>
-                    </LinearLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center">
-
-                        <com.agrawalsuneet.dotsloader.loaders.TashieLoader
-                            android:id="@+id/loader"
-                            android:layout_width="60dp"
-                            android:layout_height="30dp"
-                            app:tashieloader_animDelay="200"
-                            app:tashieloader_animDur="1000"
-                            app:tashieloader_dotsColor="@color/colorPrimary"
-                            app:tashieloader_dotsDist="5dp"
-                            app:tashieloader_dotsRadius="10dp"
-                            app:tashieloader_interpolator="@android:anim/accelerate_interpolator"
-                            app:tashieloader_noOfDots="6"
-                            android:visibility="visible"/>
-
-
-                    </RelativeLayout>
-
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/face" />
+                android:text="Personality of the week"
+                android:textColor="?attr/title_textcolor"
+                android:textStyle="bold"
+                android:shadowColor="@color/grey"
+                android:shadowRadius="5"/>
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/department"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="12sp"/>
+          </LinearLayout>
+
+          <com.agrawalsuneet.dotsloader.loaders.TashieLoader
+              android:id="@+id/loader"
+              android:layout_centerInParent="true"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+            app:tashieloader_animDelay="200"
+            app:tashieloader_animDur="1000"
+            app:tashieloader_dotsColor="@color/colorPrimary"
+            app:tashieloader_dotsDist="5dp"
+            app:tashieloader_dotsRadius="10dp"
+            app:tashieloader_interpolator="@android:anim/accelerate_decelerate_interpolator"
+            app:tashieloader_noOfDots="6"/>
 
         </RelativeLayout>
+      </androidx.cardview.widget.CardView>
 
-    </androidx.core.widget.NestedScrollView>
+      <LinearLayout
+          android:visibility="gone"
+          android:id="@+id/find_friends_options"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/face"
+          android:layout_marginTop="10dp"
+          android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/nearby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:visibility="visible"
+            app:cardBackgroundColor="?attr/cardbackground"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="10dp">
+
+          <TextView
+              android:id="@+id/find_txt"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:layout_margin="10dp"
+              android:drawableLeft="@drawable/ic_location_on"
+              android:gravity="center_vertical"
+              android:text="Friends Nearby"
+              android:textColor="?attr/title_textcolor"
+              app:drawableTint="?attr/title_textcolor" />
+        </androidx.cardview.widget.CardView>
+
+      </LinearLayout>
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:layout_marginTop="5dp"
+          android:id="@+id/recycler_view"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_below="@id/find_friends_options" />
+
+    </RelativeLayout>
+
+  </androidx.core.widget.NestedScrollView>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -21,12 +21,19 @@
             android:fitsSystemWindows="true">
 
 
-
-            <ImageView
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/fullscreen_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/placeholder" />
+                android:src="@drawable/placeholder"
+                app:zoomage_restrictBounds="false"
+                app:zoomage_animateOnReset="true"
+                app:zoomage_autoResetMode="UNDER"
+                app:zoomage_autoCenter="true"
+                app:zoomage_zoomable="true"
+                app:zoomage_translatable="true"
+                app:zoomage_minScale="0.6"
+                app:zoomage_maxScale="8" />
 
             <LinearLayout
                 android:id="@+id/fullscreen_content_controls2"
@@ -178,6 +185,24 @@
             android:textColor="@color/white" />
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <com.agrawalsuneet.dotsloader.loaders.LightsLoader
+            android:id="@+id/loader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_centerInParent="true"
+            app:lights_circleColor="@color/colorPrimary"
+            app:lights_circleDistance="4dp"
+            app:lights_circleRadius="12dp"
+            app:lights_noOfCircles="5"/>
+
+    </RelativeLayout>
 
 
 

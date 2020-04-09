@@ -9,59 +9,39 @@
     app:cardCornerRadius="10dp"
     app:cardElevation="10dp">
 
-    <RelativeLayout
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/MatchImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/chat_bg" />
 
-        <ImageView
-            android:id="@+id/MatchImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/auth_bg" />
+    <TextView
+        android:id="@+id/MatchName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/semi_transparent"
+        android:gravity="center"
+        android:paddingBottom="10sp"
+        android:text="Match's Name"
+        android:textColor="?attr/title_textcolor"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center">
+    <TextView
+        android:id="@+id/Matchid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Match's ID"
+        android:visibility="gone" />
 
-            <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
-                android:id="@+id/loader"
-                android:visibility="visible"
-                android:layout_width="78dp"
-                android:layout_height="50dp"
-                app:alliance_animDuration="500"
-                app:alliance_distanceMultiplier="4"
-                app:alliance_dotsRadius="10dp"
-                app:alliance_drawOnlyStroke="true"
-                app:alliance_firstDotsColor="#FF0000"
-                app:alliance_secondDotsColor="#FF0000"
-                app:alliance_strokeWidth="5dp"
-                app:alliance_thirdDotsColor="#FF0000"/>
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/MatchName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/semi_transparent"
-            android:gravity="center"
-            android:paddingBottom="10sp"
-            android:text="Match's Name"
-            android:textColor="?attr/title_textcolor"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/Matchid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Match's ID"
-            android:visibility="gone" />
-
-    </RelativeLayout>
+  </RelativeLayout>
 
 
 </androidx.cardview.widget.CardView>

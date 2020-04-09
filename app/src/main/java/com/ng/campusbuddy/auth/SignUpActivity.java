@@ -3,6 +3,7 @@ package com.ng.campusbuddy.auth;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -29,8 +30,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.home.HomeActivity;
@@ -44,7 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth;
     DatabaseReference reference;
-    ProgressDialog pd;
+    CardView pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,8 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         mAuth = FirebaseAuth.getInstance();
+
+        pd = findViewById(R.id.loader);
 
         InitLogIn();
         InitSignUp();
@@ -86,11 +92,13 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                pd = new ProgressDialog(SignUpActivity.this);
-                pd.setTitle("Creating New Account");
-                pd.setMessage("Please wait, this will only take seconds");
-                pd.show();
-                pd.setCanceledOnTouchOutside(true);
+                pd.setVisibility(View.VISIBLE);
+
+//                pd = new ProgressDialog(SignUpActivity.this);
+//                pd.setTitle("Creating New Account");
+//                pd.setMessage("Please wait, this will only take seconds");
+//                pd.show();
+//                pd.setCanceledOnTouchOutside(true);
 
                 String str_email = Email.getText().toString();
                 String str_password = Password.getText().toString();
@@ -98,12 +106,17 @@ public class SignUpActivity extends AppCompatActivity {
 
 
                 if (TextUtils.isEmpty(str_email) || TextUtils.isEmpty(str_password) || TextUtils.isEmpty(str_confirm_password)){
+                    pd.setVisibility(View.GONE);
                     Toast.makeText(SignUpActivity.this, "All fields are required!", Toast.LENGTH_SHORT).show();
+
                 }
                 else if(str_password.length() < 6){
+                    pd.setVisibility(View.GONE);
                     Toast.makeText(SignUpActivity.this, "Password must have 6 characters!", Toast.LENGTH_SHORT).show();
+
                 }
                 else if(!str_password.equals(str_confirm_password)){
+                    pd.setVisibility(View.GONE);
                     Toast.makeText(SignUpActivity.this, "Your password does not match with your confirm password", Toast.LENGTH_SHORT).show();
                 }
                 else {
@@ -116,6 +129,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void register(final String Email, String Password,
                           String Confirm_password) {
+        pd.setVisibility(View.VISIBLE);
 
         mAuth.createUserWithEmailAndPassword(Email, Password)
                 .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
@@ -126,7 +140,7 @@ public class SignUpActivity extends AppCompatActivity {
                             SendVerificationEmail();
                         }
                         else {
-                            pd.dismiss();
+                            pd.setVisibility(View.GONE);
                             String message = task.getException().getMessage();
                             Toast.makeText(SignUpActivity.this, "Error: " + message, Toast.LENGTH_LONG).show();
                         }
@@ -144,7 +158,7 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()){
 
-                        Toast.makeText(SignUpActivity.this, "Weldon, We sent a verifcation mail to you. Please check your email...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpActivity.this, "Weldon, We sent a verifcation mail to you. Please check your email...", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
                         Animatoo.animateSwipeRight(SignUpActivity.this);
                         finish();
@@ -152,7 +166,7 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                     else {
                         String message = task.getException().getMessage();
-                        Toast.makeText(SignUpActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpActivity.this, "Error: " + message, Toast.LENGTH_LONG).show();
                         mAuth.signOut();
                     }
                 }
@@ -162,10 +176,51 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void Home() {
-        startActivity(new Intent(this, SocialActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-        Animatoo.animateZoom(this);
-        finish();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //check if user is null
+        if (firebaseUser != null) {
+            final String current_uid = firebaseUser.getUid();
+
+            DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
+            UserRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (!dataSnapshot.hasChild(current_uid)) {
+                        startActivity(new Intent(SignUpActivity.this, SetUpProfileActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                        finish();
+                    }
+                    else {
+                        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+                        DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference()
+                                .child("Tokens");
+                        Token mtoken = new Token(deviceToken);
+                        tokenRef.child(current_uid).setValue(mtoken )
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()){
+
+                                            startActivity(new Intent(SignUpActivity.this, SocialActivity.class)
+                                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                            Animatoo.animateZoom(SignUpActivity.this);
+                                            finish();
+                                        }
+                                    }
+                                });
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        }
+
     }
 
     static final int RC_SIGN_IN = 100;

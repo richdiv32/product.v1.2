@@ -50,6 +50,33 @@
                 android:text="Ad description"
                 android:textColor="?attr/textcolor" />
 
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="40dp">
+
+                <ImageButton
+                    android:id="@+id/ad_site"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/bg_circle_gradient"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_globe"
+                    tools:ignore="VectorDrawableCompat" />
+
+                <ImageButton
+                    android:id="@+id/ad_call"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/bg_circle_gradient"
+                    app:srcCompat="@android:drawable/stat_sys_phone_call" />
+            </RelativeLayout>
+
+
+
         </LinearLayout>
     </ScrollView>
 
@@ -61,5 +88,53 @@
         android:layout_centerHorizontal="true"
         app:adSize="BANNER"
         app:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar2"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="30dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/back_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/bg_circle_gradient"
+                    android:tint="@color/white"
+                    tools:ignore="VectorDrawableCompat"
+                    tools:src="@drawable/ic_arrow_back"
+                    tools:srcCompat="@drawable/ic_arrow_back" />
+
+            </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!--    <com.google.android.gms.ads.NativeExpressAdView-->
+<!--        android:id="@+id/adView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        app:adSize="320x300"-->
+<!--        app:adUnitId="ca-app-pub-3940256099942544/2177258514"/>-->
+
+<!--    <FrameLayout-->
+<!--        android:id="@+id/native_ad"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_centerHorizontal="true"/>-->
 
 </RelativeLayout>

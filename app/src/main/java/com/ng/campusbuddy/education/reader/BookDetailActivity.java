@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -25,7 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.education.Books;
 import com.ng.campusbuddy.utils.SharedPref;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class BookDetailActivity extends AppCompatActivity {
                 Books books1 = dataSnapshot.getValue(Books.class);
 
                 ImageView bookImage = findViewById(R.id.image);
-                Picasso.get().load(books1.getCoverImage()).placeholder(R.drawable.placeholder).into(bookImage);
+                Glide.with(BookDetailActivity.this).load(books1.getCoverImage()).placeholder(R.drawable.placeholder).into(bookImage);
 
                 TextView bookTitle = findViewById(R.id.title);
                 bookTitle.setText(books1.getTitle());

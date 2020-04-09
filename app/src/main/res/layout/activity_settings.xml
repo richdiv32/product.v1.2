@@ -29,7 +29,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
+                    <ImageButton
+                        android:id="@+id/back_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:background="@android:color/transparent"
+                        android:tint="@color/white"
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        tools:ignore="VectorDrawableCompat" />
+
                     <TextView
+                        android:layout_toRightOf="@id/back_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Settings"
@@ -120,6 +132,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/set_theme"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
@@ -166,7 +179,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Acount"
+                            android:text="Account"
                             android:textColor="?attr/title_textcolor"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -175,7 +188,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Privacy, security, balcklist"
+                            android:text="Privacy, security, blacklist"
                             android:textColor="?attr/textcolor" />
                     </LinearLayout>
 
@@ -219,6 +232,7 @@
                     android:orientation="vertical">
 
                     <LinearLayout
+                        android:id="@+id/set_update"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="5dp"
@@ -241,6 +255,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/set_rating"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
@@ -274,6 +289,7 @@
                 app:cardBackgroundColor="?attr/cardbackground">
 
                 <LinearLayout
+                    android:id="@+id/set_invite"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"

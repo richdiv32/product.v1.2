@@ -9,24 +9,28 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.ViewPager;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
@@ -40,6 +44,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.model.AD;
 import com.ng.campusbuddy.social.post.AllPostAdapter;
 import com.ng.campusbuddy.social.post.Post;
@@ -48,6 +53,7 @@ import com.ng.campusbuddy.social.post.PostAdapter;
 import com.ng.campusbuddy.social.post.story.Story;
 import com.ng.campusbuddy.social.post.story.StoryAdapter;
 import com.ng.campusbuddy.tools.AdInfoActivity;
+import com.ng.campusbuddy.utils.CustomRecyclerView;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -62,189 +68,139 @@ import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 public class FeedsFragment extends Fragment {
     View view;
 
+    ImageButton AllPost, FollowPost;
+
+    Fragment selectedfragment = null;
+
     private static  final int ITEM_PER_AD = 5;
     private static final String BANNER_AD_ID = "ca-app-pub-3940256099942544/6300978111";
     private int count = 0;
-
-
-    private RecyclerView UsersPostrecyclerView;
-    private AllPostAdapter AllpostAdapter;
-    private List<Post> UserpostList;
-
-    private RecyclerView recyclerView;
-    private PostAdapter postAdapter;
-    private List<Post> postList;
-
-    private RecyclerView recyclerView_story;
-    private StoryAdapter storyAdapter;
-    private List<Story> storyList;
-
-    private List<String> followingList;
-
-//    ProgressBar progress_circular;
-
-    //permissions constants
-    private static final int CAMERA_REQUEST_CODE = 100;
-    private static final int STORAGE_REQUEST_CODE = 200;
 
     //image pick constants
     private static final int IMAGE_PICK_CAMERA_CODE = 300;
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
 
-    //permissions array
-    String[] cameraPermissions;
-    String[] storagePermissions;
 
     //for image
     Uri image_rui = null;
 
-    ProgressBar progressBar;
+    private static String POST_STATE = "post_state";
+    private Parcelable savedRecyclerLayoutState;
+    private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout";
+    private ArrayList<? extends Post> postsInstance = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_feeds, container, false);
+        if (restorePrefData()){
 
-        UsersPostrecyclerView = view.findViewById(R.id.users_post_recycler);
-        UsersPostrecyclerView.setHasFixedSize(true);
-//        LinearLayoutManager uLayoutManager = new LinearLayoutManager(getContext());
-//        uLayoutManager.setStackFromEnd(true);
-        StaggeredGridLayoutManager uLayoutManager = new StaggeredGridLayoutManager(2,
-                StaggeredGridLayoutManager.VERTICAL);
-        uLayoutManager.setReverseLayout(true);
-        UsersPostrecyclerView.setLayoutManager(uLayoutManager);
-        UserpostList = new ArrayList<>();
-        AllpostAdapter = new AllPostAdapter(getContext(), UserpostList);
-        UsersPostrecyclerView.setAdapter(AllpostAdapter);
-
-        recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        mLayoutManager.setReverseLayout(true);
-        mLayoutManager.setStackFromEnd(true);
-        recyclerView.setLayoutManager(mLayoutManager);
-        postList = new ArrayList<>();
-        postAdapter = new PostAdapter(getContext(), postList);
-        recyclerView.setAdapter(postAdapter);
-
-        recyclerView_story = view.findViewById(R.id.recycler_view_story);
-        recyclerView_story.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
-                LinearLayoutManager.HORIZONTAL, false);
-        recyclerView_story.setLayoutManager(linearLayoutManager);
-        storyList = new ArrayList<>();
-        storyAdapter = new StoryAdapter(getContext(), storyList);
-        recyclerView_story.setAdapter(storyAdapter);
+        }
+        else {
+            TapTarget();
+        }
 
 
-        checkFollowing();
-        loadAllPosts();
+        AllPost = view.findViewById(R.id.all_post);
+        FollowPost = view.findViewById(R.id.follow_post);
 
-        ADimageslider();
         Init();
         PostInit();
-        TapTarget();
+
+        Home();
 
         return view;
     }
 
+    private void Home() {
+        ImageView home = view.findViewById(R.id.logo);
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), HomeActivity.class));
+            }
+        });
+    }
+
     private void TapTarget() {
-        TapTargetView.showFor(getActivity(),                 // `this` is an Activity
-                TapTarget.forView(view.findViewById(R.id.post_fab), "Post Your Moments", "share your favourite moments with friends all over the country")
+        TapTargetView.showFor(getActivity(),
+                TapTarget.forView(view.findViewById(R.id.post_fab),
+                        "Post Your Moments",
+                        "share your favourite moments with friends all over the country")
                         .tintTarget(false)
-                        .outerCircleColor(R.color.colorPrimary));
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);
+                        savePrefsData();
+
+                        view.dismiss(true);
+                    }
+                });
     }
 
     private void Init() {
 
-        ImageButton UsersPost = view.findViewById(R.id.users_post);
-        ImageButton FollowPost = view.findViewById(R.id.follow_post);
-        final ImageView Line_1 = view.findViewById(R.id.line_1);
-        final ImageView Line_2 = view.findViewById(R.id.line_2);
 
+
+        final ViewPager FeedsPager = view.findViewById(R.id.feedsPager);
+        FeedsPager.setOffscreenPageLimit(1);
+
+        FeedsPagerViewAdapter mPagerViewAdapter = new FeedsPagerViewAdapter(getChildFragmentManager());
+        FeedsPager.setAdapter(mPagerViewAdapter);
+
+//        FeedsPager.setCurrentItem(0);
         FollowPost.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                recyclerView.setVisibility(View.VISIBLE);
-                recyclerView_story.setVisibility(View.VISIBLE);
-                UsersPostrecyclerView.setVisibility(View.GONE);
-                Line_1.setVisibility(View.VISIBLE);
-                Line_2.setVisibility(View.GONE);
+            public void onClick(View view) {
 
-                checkFollowing();
+                FeedsPager.setCurrentItem(0);
 
             }
         });
 
-        UsersPost.setOnClickListener(new View.OnClickListener() {
+        AllPost.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                recyclerView.setVisibility(View.GONE);
-                recyclerView_story.setVisibility(View.GONE);
-                UsersPostrecyclerView.setVisibility(View.VISIBLE);
-                Line_1.setVisibility(View.GONE);
-                Line_2.setVisibility(View.VISIBLE);
+            public void onClick(View view) {
 
-                loadAllPosts();
+                FeedsPager.setCurrentItem(1);
+
             }
         });
 
-//        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
-//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//
-//                //implement Handler to wait for 3 seconds and then update UI
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //cancel the visual indication of a refresh
-//                        swipeRefreshLayout.setRefreshing(false);
-//
-//                        checkFollowing();
-//                        loadAllPosts();
-//                    }
-//                }, 3000);
-//            }
-//        });
+        FeedsPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                changeTabs(position);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
-    private void ADimageslider() {
-        final ArrayList<AD> sliderList = new ArrayList<>();
-        final SliderView sliderView = view.findViewById(R.id.ADsSlider);
-        final SliderAdapterADs adapter = new SliderAdapterADs(getActivity(), sliderList);
-        sliderView.setSliderAdapter(adapter);
+    private void changeTabs(int position) {
 
-        DatabaseReference Adref= FirebaseDatabase.getInstance().getReference().child("ADs").child("Social")
-                .child("Slides");
+        if(position == 0){
 
-        Adref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                sliderList.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()){
-                    AD ad = ds.getValue(AD.class);
-                    sliderList.add(ad);
-                }
+        }
 
-                adapter.notifyDataSetChanged();
-            }
+        if(position == 1){
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        sliderView.setIndicatorAnimation(IndicatorAnimations.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
-        sliderView.setSliderTransformAnimation(SliderAnimations.CUBEINROTATIONTRANSFORMATION);
-        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
-        sliderView.setIndicatorSelectedColor(Color.RED);
-        sliderView.setIndicatorUnselectedColor(Color.GRAY);
-        sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
-        sliderView.startAutoCycle();
+        }
     }
+
+
 
     private void PostInit() {
         final boolean[] isFABOpen = new boolean[1];
@@ -287,14 +243,15 @@ public class FeedsFragment extends Fragment {
         post_camera_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Camera", Toast.LENGTH_SHORT).show();
+                if (ActivityCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
-                //Carmera Clicked
-                if (!checkCameraPermission()){
-                    requestCameraPermission();
+                    pickFromCamera();
                 }
                 else {
-                    pickFromCamera();
+                    final String[] PERMISSIONS_STORAGE = {Manifest.permission.CAMERA};
+                    //Asking request Permissions
+                    ActivityCompat.requestPermissions(getActivity(), PERMISSIONS_STORAGE, 1);
                 }
             }
         });
@@ -302,18 +259,18 @@ public class FeedsFragment extends Fragment {
         post_gallery_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Post Image", Toast.LENGTH_SHORT).show();
 
-                //Gallery Clicked
-                if (!checkStoragePermission()){
-                    requestStoragePermission();
-                }
-                else {
+                if (ActivityCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
                     pickFromGallery();
                 }
+                else {
+                    final String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    //Asking request Permissions
+                    ActivityCompat.requestPermissions(getActivity(), PERMISSIONS_STORAGE, 2);
+                }
 
-//                startActivity(new Intent(getActivity(), PostActivity.class));
-//                Animatoo.animateShrink(getContext());
             }
         });
 
@@ -333,133 +290,6 @@ public class FeedsFragment extends Fragment {
         });
     }
 
-    private void checkFollowing(){
-        followingList = new ArrayList<>();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("following");
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                followingList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    followingList.add(snapshot.getKey());
-                }
-
-                readPosts();
-                readStory();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void readPosts(){
-
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                postList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Post post = snapshot.getValue(Post.class);
-                    for (String id : followingList){
-                        if (post.getPublisher().equals(id)){
-                            postList.add(post);
-
-//                            count++;
-                        }
-
-
-                    }
-                }
-
-                postAdapter.notifyDataSetChanged();
-//                progress_circular.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-//    private void getBannerAds(){
-//        for (int i = 0 ; i < postList.size(); i += ITEM_PER_AD){
-//
-//            final AdView adView = new AdView(getActivity());
-//            adView.setAdSize(AdSize.BANNER);
-//            adView.setAdUnitId(BANNER_AD_ID);
-//            postList.add(adView);
-//        }
-//    }
-
-    private void readStory(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                long timecurrent = System.currentTimeMillis();
-                storyList.clear();
-                storyList.add(new Story("", 0, 0, "",
-                        FirebaseAuth.getInstance().getCurrentUser().getUid()));
-                for (String id : followingList) {
-                    int countStory = 0;
-                    Story story = null;
-                    for (DataSnapshot snapshot : dataSnapshot.child(id).getChildren()) {
-                        story = snapshot.getValue(Story.class);
-                        if (timecurrent > story.getTimestart() && timecurrent < story.getTimeend()) {
-                            countStory++;
-                        }
-                    }
-                    if (countStory > 0){
-                        storyList.add(story);
-                    }
-                }
-
-                storyAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void loadAllPosts() {
-        //path of all posts
-        final DatabaseReference UserPostref = FirebaseDatabase.getInstance().getReference("Posts");
-        //get all data from this ref
-        UserPostref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                UserpostList.clear();
-                for (DataSnapshot ds:dataSnapshot.getChildren()){
-                    Post post = ds.getValue(Post.class);
-
-                    UserpostList.add(post);
-
-                }
-
-                AllpostAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
     private void pickFromCamera(){
         //Intent to pick image from camera
         ContentValues cv = new ContentValues();
@@ -467,39 +297,41 @@ public class FeedsFragment extends Fragment {
         cv.put(MediaStore.Images.Media.DESCRIPTION,"Temp Descr");
         image_rui = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
 
+        Toast.makeText(getContext(), "Camera", Toast.LENGTH_SHORT).show();
         startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, image_rui)
                 , IMAGE_PICK_CAMERA_CODE);
         Animatoo.animateShrink(getContext());
     }
 
     private void pickFromGallery(){
+        Toast.makeText(getContext(), "Post Image", Toast.LENGTH_SHORT).show();
+
         //Intent to pick image from gallery
         startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*")
                 , IMAGE_PICK_GALLERY_CODE);
+        Animatoo.animateShrink(getContext());
     }
 
-    private boolean checkCameraPermission(){
-
-        boolean result = ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-
-    private void requestCameraPermission(){
-        ActivityCompat.requestPermissions(getActivity(), cameraPermissions, CAMERA_REQUEST_CODE);
-    }
-
-    private boolean checkStoragePermission(){
-
-        boolean result = ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-        return result;
-    }
-
-    private void requestStoragePermission(){
-        ActivityCompat.requestPermissions(getActivity(), storagePermissions, STORAGE_REQUEST_CODE);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        boolean permissionGranted = false;
+        switch (requestCode){
+            case 1:
+                permissionGranted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                break;
+            case 2:
+                permissionGranted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+        if (permissionGranted){
+            pickFromCamera();
+        }
+        else if (permissionGranted){
+            pickFromGallery();
+        }
+        else {
+            Toast.makeText(getActivity(), "You've not allowed permission", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -537,73 +369,53 @@ public class FeedsFragment extends Fragment {
 
     }
 
+    private boolean restorePrefData() {
+
+        SharedPreferences pref = getActivity().getSharedPreferences("myPrefs",MODE_PRIVATE);
+        Boolean isTapTargetClickedBefore = pref.getBoolean("isTapOpnend",false);
+        return  isTapTargetClickedBefore;
+
+    }
+    private void savePrefsData() {
+
+        SharedPreferences pref = getActivity().getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("isTapOpnend",true);
+        editor.apply();
+
+    }
 
 
-    private class SliderAdapterADs  extends SliderViewAdapter<SliderAdapterADs.SliderAdapterVH> {
 
-        private Context context;
-        private ArrayList<AD> sliderlist;
+    class FeedsPagerViewAdapter extends FragmentPagerAdapter {
 
-        public SliderAdapterADs(Context context, ArrayList<AD> sliderlist) {
-            this.context = context;
-            this.sliderlist = sliderlist;
+        public FeedsPagerViewAdapter(FragmentManager fm) {
+            super(fm);
         }
 
         @Override
-        public SliderAdapterADs.SliderAdapterVH onCreateViewHolder(ViewGroup parent) {
-            View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image_slider_layout, null);
-            return new SliderAdapterADs.SliderAdapterVH(inflate);
-        }
+        public Fragment getItem(int position) {
 
+            switch (position) {
+                case 0:
+                    Feeds_Follow_PostFragment follow_postFragment = new Feeds_Follow_PostFragment();
+                    return follow_postFragment;
 
-        @Override
-        public void onBindViewHolder(SliderAdapterADs.SliderAdapterVH viewHolder, final int position) {
+                case 1:
+                    Feeds_All_PostFragment feeds_all_postFragment = new Feeds_All_PostFragment();
+                    return feeds_all_postFragment;
 
-            final AD ad = sliderlist.get(position);
+                default:
+                    return null;
 
-
-            viewHolder.textViewDescription.setText(ad.getTitle());
-
-
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, AdInfoActivity.class);
-                    intent.putExtra("Ad_id", ad.getId());
-                    intent.putExtra("context", "Social");
-                    context.startActivity(intent);
-                }
-            });
-
-
-            Glide.with(context)
-                    .load(ad.getImage())
-                    .placeholder(R.drawable.placeholder)
-                    .into(viewHolder.imageViewBackground);
+            }
 
         }
-
-
 
         @Override
         public int getCount() {
-            return sliderlist.size();
+            return 2;
         }
-
-        class SliderAdapterVH extends SliderViewAdapter.ViewHolder {
-
-            public View itemView;
-            public ImageView imageViewBackground;
-            public TextView textViewDescription;
-
-            public SliderAdapterVH(View itemView) {
-                super(itemView);
-                imageViewBackground = itemView.findViewById(R.id.iv_auto_image_slider);
-                textViewDescription = itemView.findViewById(R.id.tv_auto_image_slider);
-                this.itemView = itemView;
-            }
-        }
-
 
     }
 }

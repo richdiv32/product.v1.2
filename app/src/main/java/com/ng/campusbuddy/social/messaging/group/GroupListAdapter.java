@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +25,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -62,9 +62,10 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         }
         else {
 
-            Picasso.get()
+            Glide.with(mContext)
                     .load(group.getGroup_image())
                     .placeholder(R.drawable.placeholder)
+                    .thumbnail(0.1f)
                     .into(holder.group_image);
         }
 

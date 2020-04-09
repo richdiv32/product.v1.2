@@ -75,7 +75,6 @@ import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.social.messaging.chat.Chat;
 import com.ng.campusbuddy.utils.SharedPref;
-import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
@@ -233,7 +232,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 }
                 else {
 
-                    Picasso.get()
+                    Glide.with(getApplicationContext())
                             .load(group.getGroup_image())
                             .placeholder(R.drawable.placeholder)
                             .into(group_image);
@@ -603,7 +602,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 }
                 else {
 
-                    Picasso.get()
+                    Glide.with(GroupChatActivity.this)
                             .load(group.getGroup_image())
                             .placeholder(R.drawable.placeholder)
                             .into(Group_image);
@@ -1009,6 +1008,7 @@ public class GroupChatActivity extends AppCompatActivity {
                     User user = dataSnapshot.getValue(User.class);
                     Glide.with(getApplicationContext())
                             .load(user.getImageurl())
+                            .thumbnail(0.1f)
                             .into(Profile_image);
                     username.setText(user.getUsername());
                 }
@@ -1070,20 +1070,18 @@ public class GroupChatActivity extends AppCompatActivity {
             String dateTime = DateFormat.format("hh:mm aa, dd/MM", cal).toString();
 
             holder.txt_date.setText(dateTime);
-            holder.username.setText(username);
 
 
 
+            holder.txt_seen.setVisibility(View.GONE);
 
-            if (id.equals(fuser.getUid())){
+            if (chat.getSender().equals(fuser.getUid())){
                 holder.username.setVisibility(View.GONE);
             }
             else {
                 holder.username.setVisibility(View.VISIBLE);
             }
 
-            holder.username.setVisibility(View.GONE);
-            holder.profile_image.setVisibility(View.GONE);
 
             if (type.equals("text")){
                 //text message
@@ -1097,18 +1095,24 @@ public class GroupChatActivity extends AppCompatActivity {
                 holder.show_message.setVisibility(View.GONE);
                 holder.show_image.setVisibility(View.VISIBLE);
 
-                Picasso.get()
+                Glide.with(mContext)
                         .load(chat.getMessage())
                         .placeholder(R.drawable.placeholder)
+                        .thumbnail(0.1f)
                         .into(holder.show_image);
             }
 
             if (imageurl.equals("")){
                 holder.profile_image.setImageResource(R.drawable.profile_bg);
             } else {
-                Glide.with(mContext).load(imageurl).into(holder.profile_image);
+                Glide.with(mContext)
+                        .load(imageurl)
+                        .placeholder(R.drawable.profile_bg)
+                        .thumbnail(0.1f)
+                        .into(holder.profile_image);
             }
 
+            publisherInfo(holder.profile_image, holder.username,chat.getSender());
 
             holder.messageLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -1186,7 +1190,7 @@ public class GroupChatActivity extends AppCompatActivity {
             public TextView username;
             public EmoticonTextView show_message;
             public ImageView profile_image, show_image;
-            public TextView txt_date;
+            public TextView txt_date, txt_seen;
             public RelativeLayout messageLayout; //for click listner to show delete
 
             public ViewHolder(View itemView) {
@@ -1198,6 +1202,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 profile_image = itemView.findViewById(R.id.profile_image);
                 txt_date = itemView.findViewById(R.id.txt_date);
                 messageLayout = itemView.findViewById(R.id.messageLayout);
+                txt_seen = itemView.findViewById(R.id.txt_seen);
             }
         }
 
@@ -1209,6 +1214,29 @@ public class GroupChatActivity extends AppCompatActivity {
             } else {
                 return MSG_TYPE_LEFT;
             }
+        }
+
+        private void publisherInfo(final ImageView image_profile, final TextView username, final String userid){
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                    .child("Users").child(userid);
+
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    Glide.with(mContext)
+                            .load(user.getImageurl())
+                            .placeholder(R.drawable.profile_bg)
+                            .thumbnail(0.1f)
+                            .into(image_profile);
+                    username.setText(user.getUsername());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
     }
 }

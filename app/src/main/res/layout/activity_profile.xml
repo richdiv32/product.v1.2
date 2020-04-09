@@ -31,6 +31,8 @@
                 android:background="@color/semi_transparent" />
 
 
+
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -185,6 +187,19 @@
 
             </RelativeLayout>
 
+            <ImageButton
+                android:id="@+id/back_btn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/bg_circle_gradient"
+                android:tint="@color/white"
+                tools:ignore="VectorDrawableCompat"
+                tools:src="@drawable/ic_arrow_back"
+                tools:srcCompat="@drawable/ic_arrow_back" />
+
         </RelativeLayout>
 
         <LinearLayout
@@ -210,8 +225,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/ic_bookmark_grey"
-                android:tint="@color/white" />
+                android:tint="@color/white"
+                app:srcCompat="@drawable/ic_bookmark_grey" />
 
             <ImageButton
                 android:id="@+id/info"

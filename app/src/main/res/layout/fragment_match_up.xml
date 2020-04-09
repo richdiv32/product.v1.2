@@ -51,6 +51,60 @@
         android:layout_height="match_parent"
         android:layout_below="@id/bar">
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/empty_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="10dp"
+            app:cardBackgroundColor="@color/semi_transparent"
+            app:cardCornerRadius="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
+                    android:id="@+id/loader"
+                    android:layout_width="78dp"
+                    android:layout_height="50dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="visible"
+                    app:alliance_animDuration="500"
+                    app:alliance_distanceMultiplier="4"
+                    app:alliance_dotsRadius="10dp"
+                    app:alliance_drawOnlyStroke="true"
+                    app:alliance_firstDotsColor="#FF0000"
+                    app:alliance_secondDotsColor="#FF0000"
+                    app:alliance_strokeWidth="5dp"
+                    app:alliance_thirdDotsColor="#FF0000">
+
+                </com.agrawalsuneet.dotsloader.loaders.AllianceLoader>
+
+                <TextView
+                    android:id="@+id/textView17"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Loading cute guys and hot ladies..."
+                    android:textColor="?attr/title_textcolor" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/bar">
+
         <com.lorentzos.flingswipe.SwipeFlingAdapterView
             android:id="@+id/match_card"
             android:layout_width="match_parent"
@@ -61,16 +115,14 @@
 
         </com.lorentzos.flingswipe.SwipeFlingAdapterView>
 
-
         <ImageButton
             android:id="@+id/love_btn"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="false"
             android:background="@drawable/bg_circle"
-            app:srcCompat="@drawable/ic_match_up"
-            android:tint="@color/colorPrimary" />
+            android:tint="@color/colorPrimary"
+            app:srcCompat="@drawable/ic_match_up" />
 
     </RelativeLayout>
 

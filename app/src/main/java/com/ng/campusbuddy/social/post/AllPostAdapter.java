@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,15 +21,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.agrawalsuneet.dotsloader.loaders.TrailingCircularDotsLoader;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,7 +50,6 @@ import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.profile.FollowersActivity;
 import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.User;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -77,14 +84,31 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
         final Post post = mPosts.get(position);
 
         if (post.getPostimage().equals("")){
-            Glide.with(mContext).load(R.drawable.chat_bg)
-                    .apply(new RequestOptions().placeholder(R.drawable.placeholder))
-                    .into(holder.post_image);
+//            removeItem(holder.getAdapterPosition(), holder.itemView);
+
+            holder.post_image.setImageResource(R.drawable.placeholder);
         }
         else {
 
-            Glide.with(mContext).load(post.getPostimage())
-                    .apply(new RequestOptions().placeholder(R.drawable.placeholder))
+            Glide.with(mContext)
+                    .load(post.getPostimage())
+                    .placeholder(R.drawable.placeholder)
+//                    .override(600, 900)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object o, Target<Drawable> target, boolean b) {
+//                            holder.Pd.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable drawable, Object o, Target<Drawable> target, DataSource dataSource, boolean b) {
+//                            holder.Pd.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+
                     .into(holder.post_image);
 
         }
@@ -128,6 +152,13 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
 
     }
 
+    private void removeItem(int position, View itemView) {
+        mPosts.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mPosts.size());
+        itemView.setVisibility(View.GONE);
+    }
+
     @Override
     public int getItemCount() {
         return mPosts.size();
@@ -137,6 +168,7 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
 
         public ImageView image_profile, post_image, like;
         public TextView likes;
+        public TrailingCircularDotsLoader Pd;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -145,6 +177,8 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
             post_image = itemView.findViewById(R.id.post_image);
             like = itemView.findViewById(R.id.like);
             likes = itemView.findViewById(R.id.likes);
+
+//            Pd = itemView.findViewById(R.id.loader);
         }
     }
 
@@ -174,7 +208,10 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Picasso.get().load(user.getImageurl()).into(image_profile);
+                Glide.with(mContext)
+                        .load(user.getImageurl())
+                        .thumbnail(0.1f)
+                        .into(image_profile);
             }
 
             @Override

@@ -132,6 +132,17 @@
                     android:textColor="@color/white" />
             </RadioGroup>
 
+
+            <Spinner
+                android:visibility="gone"
+                android:id="@+id/relationship_status_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:drawSelectorOnTop="true"
+                android:prompt="@string/select_status"
+                android:background="@drawable/trans_bg" />
+
             <EditText
                 android:id="@+id/relationship_status"
                 android:layout_width="match_parent"
@@ -145,7 +156,6 @@
                 android:hint="Relationship_status"
                 android:paddingLeft="20dp"
                 android:textColorHint="@color/white" />
-
 
             <EditText
                 android:id="@+id/telephone_number"
@@ -233,25 +243,5 @@
 
 
     </ScrollView>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center">
-
-        <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
-            android:id="@+id/loader"
-            android:visibility="gone"
-            android:layout_width="78dp"
-            android:layout_height="50dp"
-            app:alliance_animDuration="500"
-            app:alliance_distanceMultiplier="4"
-            app:alliance_dotsRadius="10dp"
-            app:alliance_drawOnlyStroke="true"
-            app:alliance_firstDotsColor="#FF0000"
-            app:alliance_secondDotsColor="#FF0000"
-            app:alliance_strokeWidth="5dp"
-            app:alliance_thirdDotsColor="#FF0000"/>
-    </RelativeLayout>
 
 </RelativeLayout>

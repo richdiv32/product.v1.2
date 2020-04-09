@@ -1,9 +1,8 @@
 package com.ng.campusbuddy.start;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,24 +11,23 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.auth.LoginActivity;
+import com.ng.campusbuddy.auth.SetUpProfileActivity;
+import com.ng.campusbuddy.home.HomeActivity;
+import com.ng.campusbuddy.social.SocialActivity;
 import com.ng.campusbuddy.utils.SharedPref;
 
-import java.util.List;
-
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.AppSettingsDialog;
-import pub.devrel.easypermissions.EasyPermissions;
-
-public class SplashActivity extends AppCompatActivity{
+public class SplashActivity extends AppCompatActivity {
 
     TextView tv;
     ImageView iv;
 
-    private static int SPLASH_SCREEN_TIME_OUT=1500;
+    private static int SPLASH_SCREEN_TIME_OUT=1000;
 //    After completion of 1500 ms (1.5s), the next activity will get started.
 
     @Override
@@ -59,18 +57,10 @@ public class SplashActivity extends AppCompatActivity{
         tv.startAnimation(myanim);
         iv.startAnimation(myanim);
 
-
-        Next();
-    }
-
-
-
-
-
-    private void Next() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+//                Intent splash = new Intent(SplashActivity.this, IntroActivity.class);
                 Intent splash = new Intent(SplashActivity.this, IntroActivity.class);
                 startActivity(splash);
                 Animatoo.animateZoom(SplashActivity.this);
@@ -78,7 +68,4 @@ public class SplashActivity extends AppCompatActivity{
             }
         }, SPLASH_SCREEN_TIME_OUT);
     }
-
-
-
 }

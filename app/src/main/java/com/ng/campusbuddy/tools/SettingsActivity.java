@@ -4,11 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -19,12 +25,23 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.utils.ForceUpdateChecker;
 import com.ng.campusbuddy.utils.SharedPref;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.ng.campusbuddy.utils.ForceUpdateChecker.KEY_CURRENT_VERSION;
+import static com.ng.campusbuddy.utils.ForceUpdateChecker.KEY_UPDATE_REQUIRED;
+import static com.ng.campusbuddy.utils.ForceUpdateChecker.KEY_UPDATE_URL;
 
 
 public class SettingsActivity extends AppCompatActivity {
+
     Switch Mode_switch;
     Switch postSwitch;
 
@@ -45,13 +62,10 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        ImageButton back = findViewById(R.id.back_btn);
+        back.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 finish();
             }
         });
@@ -59,6 +73,10 @@ public class SettingsActivity extends AppCompatActivity {
         AdMod();
         SetUpDarkMode();
         PostNotification();
+        Invite();
+        Update_App();
+        Themes();
+        Rate_Us();
 
     }
 
@@ -154,7 +172,7 @@ public class SettingsActivity extends AppCompatActivity {
                     sharedPref.setNightModeState(true);
                     startActivity(new Intent(getApplicationContext(), SettingsActivity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                    Animatoo.animateFade(SettingsActivity.this);
+//                    Animatoo.animateFade(SettingsActivity.this);
                     finish();
                 }
                 else {
@@ -164,6 +182,78 @@ public class SettingsActivity extends AppCompatActivity {
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                     Animatoo.animateFade(SettingsActivity.this);
                     finish();
+                }
+            }
+        });
+    }
+
+    private void Invite(){
+        LinearLayout Invite = findViewById(R.id.set_invite);
+
+        Invite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String shareBody = "Check out Campus Buddy App, its the best college student platform. " +
+                        "Inquire, Learn, Connect and Grow your campus experience just like me." +
+                        "Get it for free at https://campusbuddy.xyz/Download " +
+                        "or on Play Store.";
+                Intent sIntent = new Intent(Intent.ACTION_SEND);
+                sIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                sIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
+                sIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sIntent, "Invite a friend via..."));
+            }
+        });
+    }
+
+    private void Update_App(){
+
+
+        LinearLayout Update = findViewById(R.id.set_update);
+
+        Update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String Web = "https://campusbuddy.xyz/Download";
+                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Web));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+            }
+        });
+
+
+    }
+
+    private void Themes(){
+        LinearLayout Themes = findViewById(R.id.set_theme);
+        Themes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v, "Get awesome themes in the next app update.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
+
+    private void Rate_Us(){
+        LinearLayout Rating = findViewById(R.id.set_rating);
+
+        Rating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getApplicationContext().getPackageName()));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+                catch (ActivityNotFoundException e){
+            String Web = "https://campusbuddy.xyz/Download";
+            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Web));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+//                    Toast.makeText(SettingsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

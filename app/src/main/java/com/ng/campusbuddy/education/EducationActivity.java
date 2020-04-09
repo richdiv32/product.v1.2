@@ -53,7 +53,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import eu.long1.spacetablayout.SpaceTabLayout;
 
 public class EducationActivity extends AppCompatActivity {
     Context mcontext = EducationActivity.this;
@@ -95,23 +94,23 @@ public class EducationActivity extends AppCompatActivity {
 
         /*Bottom Navigation*/
         //add the fragments you want to display in a List
-        List<Fragment> fragmentList = new ArrayList<>();
-        fragmentList.add(new TimeTableFragment());
-        fragmentList.add(new ShelfFragment());
-        fragmentList.add(new BrowseFragment());
-        fragmentList.add(new BookmarkFragment());
-        fragmentList.add(new QuestionAnswerFragment());
-
-        ViewPager viewPager = findViewById(R.id.viewPager);
-        SpaceTabLayout tabLayout = findViewById(R.id.spaceTabLayout);
-
-        tabLayout.initialize(viewPager, getSupportFragmentManager(),
-                fragmentList, savedInstanceState);
-        tabLayout.setTabOneIcon(R.drawable.ic_timetable);
-        tabLayout.setTabTwoIcon(R.drawable.ic_shelf);
-        tabLayout.setTabThreeIcon(R.drawable.ic_browse);
-        tabLayout.setTabFourIcon(R.drawable.ic_bookmark);
-        tabLayout.setTabFiveIcon(R.drawable.ic_qa_red);
+//        List<Fragment> fragmentList = new ArrayList<>();
+//        fragmentList.add(new TimeTableFragment());
+//        fragmentList.add(new ShelfFragment());
+//        fragmentList.add(new BrowseFragment());
+//        fragmentList.add(new BookmarkFragment());
+//        fragmentList.add(new QuestionAnswerFragment());
+//
+//        ViewPager viewPager = findViewById(R.id.viewPager);
+//        SpaceTabLayout tabLayout = findViewById(R.id.spaceTabLayout);
+//
+//        tabLayout.initialize(viewPager, getSupportFragmentManager(),
+//                fragmentList, savedInstanceState);
+//        tabLayout.setTabOneIcon(R.drawable.ic_timetable);
+//        tabLayout.setTabTwoIcon(R.drawable.ic_shelf);
+//        tabLayout.setTabThreeIcon(R.drawable.ic_browse);
+//        tabLayout.setTabFourIcon(R.drawable.ic_bookmark);
+//        tabLayout.setTabFiveIcon(R.drawable.ic_qa_red);
         /*---------------------------------------------*/
     }
 

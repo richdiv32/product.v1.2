@@ -3,6 +3,7 @@ package com.ng.campusbuddy.social.post;
 import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,8 +30,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agrawalsuneet.dotsloader.loaders.LightsLoader;
+import com.agrawalsuneet.dotsloader.loaders.TrailingCircularDotsLoader;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,10 +47,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jsibbold.zoomage.ZoomageView;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.profile.FollowersActivity;
 import com.ng.campusbuddy.social.User;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,10 +58,6 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class FullscreenActivity extends AppCompatActivity {
     Context mContext = FullscreenActivity.this;
 
@@ -68,10 +72,12 @@ public class FullscreenActivity extends AppCompatActivity {
 
     FirebaseUser firebaseUser;
 
-    ImageView mContentView;
+    ZoomageView mContentView;
     CircleImageView profile_image;
     ImageView PostImage, like, share, save, comment;
     TextView username, post_description, comments, likes;
+
+    LightsLoader Pd;
 
 
 
@@ -103,6 +109,8 @@ public class FullscreenActivity extends AppCompatActivity {
         comment = findViewById(R.id.comment);
         like = findViewById(R.id.like);
         likes = findViewById(R.id.likes);
+
+        Pd = findViewById(R.id.loader);
 
 
         share = findViewById(R.id.share);
@@ -154,7 +162,20 @@ public class FullscreenActivity extends AppCompatActivity {
 
                 Glide.with(FullscreenActivity.this)
                         .load(post.getPostimage())
-                        .placeholder(R.drawable.placeholder)
+                        .thumbnail(0.1f)
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object o, Target<Drawable> target, boolean b) {
+//                                Pd.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable drawable, Object o, Target<Drawable> target, DataSource dataSource, boolean b) {
+//                                Pd.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
                         .into(mContentView);
 
                 post_description.setText(post.getDescription());
@@ -166,7 +187,7 @@ public class FullscreenActivity extends AppCompatActivity {
                         if (like.getTag().equals("like")) {
                             FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                     .child(firebaseUser.getUid()).setValue(true);
-                            addNotification(post.getPublisher(), post.getPostid());
+                            addNotificationLike(post.getPublisher(), post.getPostid());
                         } else {
                             FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                     .child(firebaseUser.getUid()).removeValue();
@@ -336,7 +357,10 @@ public class FullscreenActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Picasso.get().load(user.getImageurl()).into(image_profile);
+                Glide.with(FullscreenActivity.this)
+                        .load(user.getImageurl())
+                        .thumbnail(0.1f)
+                        .into(image_profile);
                 username.setText(user.getUsername());
             }
 
@@ -347,7 +371,7 @@ public class FullscreenActivity extends AppCompatActivity {
         });
     }
 
-    private void addNotification(String userid, String postid){
+    private void addNotificationLike(String userid, String postid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -471,12 +495,12 @@ public class FullscreenActivity extends AppCompatActivity {
         hashMap.put("commentid", commentid);
 
         reference.child(commentid).setValue(hashMap);
-        addNotification();
+        addNotificationComment();
         addcomment.setText("");
 
     }
 
-    private void addNotification(){
+    private void addNotificationComment(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(publisherid);
 
         HashMap<String, Object> hashMap = new HashMap<>();

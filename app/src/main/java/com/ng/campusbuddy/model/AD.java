@@ -7,13 +7,17 @@ public class AD {
     String image;
     String full_image;
     String description;
+    String tel;
+    String site;
 
-    public AD(String id, String title, String image, String full_image, String description) {
+    public AD(String id, String title, String image, String full_image, String description, String tel, String site) {
         this.id = id;
         this.title = title;
         this.image = image;
         this.full_image = full_image;
         this.description = description;
+        this.tel = tel;
+        this.site = site;
     }
 
     public AD() {
@@ -58,5 +62,21 @@ public class AD {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
     }
 }

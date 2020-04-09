@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
@@ -26,7 +28,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,6 +42,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.social.messaging.PhotoActivity;
 import com.ng.campusbuddy.social.messaging.chat.ChatActivity;
 import com.ng.campusbuddy.social.post.Post;
 import com.ng.campusbuddy.social.User;
@@ -65,6 +71,8 @@ public class UserProfileActivity extends AppCompatActivity {
     CircleImageView image_profile;
     ImageView bg;
 
+    private static final String TAG = "UserProfileActivity";
+
     TextView fullname, username, profile_status
             , posts ,followers, following;
 
@@ -72,7 +80,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     ImageButton my_photos, saved_photos, Info, message;
 
-    TextView Bio, Birthday, Gender, Relationship_status
+    TextView Email,Bio, Birthday, Gender, Relationship_status
             , Institution, Faculty, Department,Telephone;
 
     private LinearLayout profile_info_layout;
@@ -89,6 +97,40 @@ public class UserProfileActivity extends AppCompatActivity {
     //volley request queue for notification
     private RequestQueue requestQueue;
     private boolean notify = false;
+
+    Intent intent;
+
+    DatabaseReference notify_ref;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        SharedPreferences prefs = mContext.getSharedPreferences("PREFS", MODE_PRIVATE);
+        profileid = prefs.getString("profileid", "none");
+
+        //check if user is blocked or not
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(profileid).child("blocked_users");
+
+        reference.orderByChild("userid").equalTo(firebaseUser.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            if (ds.exists()) {
+                                Toast.makeText(mContext, "Sorry..., Not permitted.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,10 +149,30 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_user);
 
+        ImageButton Back = findViewById(R.id.back_btn);
+        Back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
+
         SharedPreferences prefs = mContext.getSharedPreferences("PREFS", MODE_PRIVATE);
-        profileid = prefs.getString("profileid", "none");
+
+
+        intent = getIntent();
+
+        if (intent.getStringExtra("profileid") == null){
+
+            profileid = prefs.getString("profileid", "none");
+
+        }
+        else {
+            profileid = intent.getStringExtra("profileid");
+        }
 
         image_profile = findViewById(R.id.image_profile);
         bg = findViewById(R.id.image_profile_bg);
@@ -127,6 +189,7 @@ public class UserProfileActivity extends AppCompatActivity {
         Info = findViewById(R.id.info);
         message = findViewById(R.id.message);
 
+        Email = findViewById(R.id.email);
         Bio = findViewById(R.id.bio);
         Birthday = findViewById(R.id.birthday);
         Relationship_status = findViewById(R.id.relationship_status);
@@ -197,6 +260,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
                     //send notification
+                    Log.d(TAG, "before notifications");
                     addNotification();
 
                 } else if (btn.equals("following")){
@@ -246,6 +310,13 @@ public class UserProfileActivity extends AppCompatActivity {
                         Department.setText(user.getDepartment());
                         Telephone.setText(user.getTelephone());
                         Relationship_status.setText(user.getRelationship_status());
+                        if (!dataSnapshot.child("email").exists()){
+                            Email.setText("No Email to display");
+                        }
+                        else {
+                            Email.setText(user.getEmail());
+                        }
+
 
                     }
 
@@ -299,27 +370,42 @@ public class UserProfileActivity extends AppCompatActivity {
         hashMap.put("postid", "");
         hashMap.put("type", "follow");
 
-        reference.push().setValue(hashMap);
-
+        reference.push().setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "notification sent");
+            }
+        });
+        Log.d(TAG, "INSIDE NORMAL NOTIFICATION");
 
     }
-
 
     private void userInfo(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(profileid);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (mContext == null){
-                    return;
-                }
-                User user = dataSnapshot.getValue(User.class);
+                final User user = dataSnapshot.getValue(User.class);
 
-                Glide.with(getApplicationContext()).load(user.getImageurl()).into(image_profile);
-                Glide.with(getApplicationContext()).load(user.getImageurl()).into(bg);
+                Glide.with(getApplicationContext())
+                        .load(user.getImageurl())
+                        .into(image_profile);
+                Glide.with(getApplicationContext())
+                        .load(user.getImageurl())
+                        .into(bg);
                 username.setText(user.getUsername());
                 fullname.setText(user.getFullname());
                 profile_status.setText(user.getProfile_status());
+
+
+                image_profile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(UserProfileActivity.this, PhotoActivity.class);
+                        intent.putExtra("imageurl", user.getImageurl());
+                        startActivity(intent);
+                    }
+                });
 
             }
 

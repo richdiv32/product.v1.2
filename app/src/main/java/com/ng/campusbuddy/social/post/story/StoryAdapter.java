@@ -112,9 +112,15 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (dataSnapshot.exists()){
-                    Glide.with(mContext).load(user.getImageurl()).into(viewHolder.story_photo);
+                    Glide.with(mContext)
+                            .load(user.getImageurl())
+                            .thumbnail(0.1f)
+                            .into(viewHolder.story_photo);
                     if (pos != 0) {
-                        Glide.with(mContext).load(user.getImageurl()).into(viewHolder.story_photo_seen);
+                        Glide.with(mContext)
+                                .load(user.getImageurl())
+                                .thumbnail(0.1f)
+                                .into(viewHolder.story_photo_seen);
                         viewHolder.story_username.setText(user.getUsername());
                     }
                 }

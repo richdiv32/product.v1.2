@@ -25,11 +25,19 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.auth.LoginActivity;
+import com.ng.campusbuddy.auth.SetUpProfileActivity;
 import com.ng.campusbuddy.auth.SignUpActivity;
 import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.social.SocialActivity;
+import com.ng.campusbuddy.utils.Token;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -89,10 +97,51 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void Home() {
-        startActivity(new Intent(this, SocialActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-        Animatoo.animateZoom(this);
-        finish();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //check if user is null
+        if (firebaseUser != null) {
+            final String current_uid = firebaseUser.getUid();
+
+            DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
+            UserRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (!dataSnapshot.hasChild(current_uid)) {
+                        startActivity(new Intent(WelcomeActivity.this, SetUpProfileActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                        finish();
+                    }
+                    else {
+                        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+                        DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference()
+                                .child("Tokens");
+                        Token mtoken = new Token(deviceToken);
+                        tokenRef.child(current_uid).setValue(mtoken )
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()){
+
+                                            startActivity(new Intent(WelcomeActivity.this, SocialActivity.class)
+                                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                            Animatoo.animateZoom(WelcomeActivity.this);
+                                            finish();
+                                        }
+                                    }
+                                });
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        }
+
     }
 
     static final int RC_SIGN_IN = 100;

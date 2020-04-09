@@ -9,12 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/image_profile"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="55dp"
         app:cardBackgroundColor="?attr/cardbackground"
         app:cardCornerRadius="5dp">
 
@@ -33,9 +28,9 @@
                 android:hint="Type something here..."
                 android:maxLines="8"
                 android:padding="20dp"
-                android:textSize="30sp"
                 android:textColor="?attr/title_textcolor"
-                android:textColorHint="?attr/textcolor" />
+                android:textColorHint="?attr/textcolor"
+                android:textSize="30sp" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

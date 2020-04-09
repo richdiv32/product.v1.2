@@ -83,12 +83,69 @@
 
             </androidx.appcompat.widget.Toolbar>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@id/bottom"
-                android:layout_below="@id/toolbar" />
+                android:layout_below="@id/toolbar">
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/top2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:elevation="10dp"
+                            android:padding="10dp"
+                            app:cardBackgroundColor="@color/semi_transparent"
+                            app:cardCornerRadius="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableLeft="@drawable/ic_password"
+                                android:gravity="center"
+                                android:text="Message to this group/room are now secured with end-to-end encryption. No-one can read them besides you and the user."
+                                android:textColor="@color/white"
+                                android:textSize="12sp" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            android:text="Say hello to him/her and get connected."
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:visibility="gone" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_above="@id/bottom"
+                            android:layout_below="@id/toolbar" />
+
+                    </LinearLayout>
+                </ScrollView>
+
+            </RelativeLayout>
+
+
 
             <LinearLayout
                 android:id="@+id/bottom"

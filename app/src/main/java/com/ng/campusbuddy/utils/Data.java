@@ -6,18 +6,29 @@ public class Data {
     private String body;
     private String title;
     private String sent;
+    private String imageURL;
     private String notificationType;
 
-    public Data(String user, Integer icon, String body, String title, String sent, String notificationType) {
+    public Data(String user, Integer icon, String body, String title, String sent, String imageURL, String notificationType) {
         this.user = user;
         this.icon = icon;
         this.body = body;
         this.title = title;
         this.sent = sent;
+        this.imageURL = imageURL;
         this.notificationType = notificationType;
     }
 
     public Data() {
+    }
+
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public String getNotificationType() {

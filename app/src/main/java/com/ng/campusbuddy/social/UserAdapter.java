@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,21 +17,38 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.messaging.chat.ChatActivity;
+import com.ng.campusbuddy.utils.Data;
+import com.ng.campusbuddy.utils.Sender;
+import com.ng.campusbuddy.utils.Token;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,6 +59,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
     private Context mContext;
     private List<User> mUsers;
     private boolean isActivity;
+    private boolean notify = false;
 
 
     private FirebaseUser firebaseUser;
@@ -65,13 +85,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
         final User user = mUsers.get(position);
 
         holder.btn_message.setVisibility(View.VISIBLE);
-
         holder.btn_follow.setVisibility(View.VISIBLE);
         isFollowing(user.getId(), holder.btn_follow);
+        isBlock(user.getId(), holder.btn_message, holder.btn_follow);
 
         holder.username.setText(user.getUsername());
         holder.fullname.setText(user.getFullname());
-        Glide.with(mContext).load(user.getImageurl()).into(holder.image_profile);
+        Glide.with(mContext)
+                .load(user.getImageurl())
+                .placeholder(R.drawable.profile_bg)
+                .thumbnail(0.1f)
+                .into(holder.image_profile);
 
         if (user.getId().equals(firebaseUser.getUid())){
             holder.btn_follow.setVisibility(View.GONE);
@@ -79,25 +103,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
         }
 
 
+        checkisBlocked(user.getId(),position, holder.btn_follow, holder.btn_message, holder.block_img);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isActivity){
-                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-                    editor.putString("profileid", user.getId());
-                    editor.apply();
 
-                    mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
-                    Animatoo.animateSplit(mContext);
-
-                }
-                else {
-                    Intent intent = new Intent(mContext, SocialActivity.class);
-                    intent.putExtra("publisherid", user.getId());
-                    mContext.startActivity(intent);
-                    Animatoo.animateSplit(mContext);
-                }
+                isBlocked_or_Not(user.getId());
             }
         });
 
@@ -106,7 +118,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
             public boolean onLongClick(View v) {
 
                 // show delete message confirm dialog
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder.setTitle("Block");
                 builder.setMessage("Are you sure to block this user?");
                 //delete button
@@ -114,12 +126,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-//                        deleteChat(position);
-                        Toast.makeText(mContext, "User Blocked", Toast.LENGTH_SHORT).show();
+//                        if (mUsers.get(position).isBlocked()){
+//                            unblockUser(user.getId());
+//                        }
+//                        else {
+//                            blockUser(user.getId());
+//                        }
 
-                        holder.btn_follow.setVisibility(View.GONE);
-                        holder.btn_message.setVisibility(View.GONE);
-                        holder.block_img.setVisibility(View.VISIBLE);
+                        blockUser(user.getId(), holder.btn_follow, holder.btn_message, holder.block_img);
 
                     }
                 });
@@ -149,6 +163,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                             .child("followers").child(firebaseUser.getUid()).setValue(true);
 
                     addNotification(user.getId());
+
                 } else {
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid())
                             .child("following").child(user.getId()).removeValue();
@@ -171,16 +186,180 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
 
             }
         });
+
+        holder.block_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                unblockUser(user.getId(), holder.btn_follow, holder.btn_message, holder.block_img);
+            }
+        });
+    }
+
+
+    private void isBlock(final String userid, final Button btn_message, final Button btn_follow){
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(userid).child("blocked_users");
+
+        reference.orderByChild("userid").equalTo(firebaseUser.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            if (ds.exists()) {
+                                btn_message.setVisibility(View.GONE);
+                                btn_follow.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+    private void isBlocked_or_Not(final String userid){
+
+        //check if user is blocked or not
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(userid).child("blocked_users");
+
+        reference.orderByChild("userid").equalTo(firebaseUser.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            if (ds.exists()) {
+                                Toast.makeText(mContext, "Sorry..., Not permitted.", Toast.LENGTH_SHORT).show();
+                                return;
+
+                            }
+                        }
+                        SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                        editor.putString("profileid", userid);
+                        editor.apply();
+
+                        mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
+                        Animatoo.animateSplit(mContext);
+
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+    private void checkisBlocked(String id, final int position, final Button btn_follow, final Button btn_message, final ImageView block_img) {
+
+        //check if user is blocked or not
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(firebaseUser.getUid()).child("blocked_users");
+
+        reference.orderByChild("userid").equalTo(id)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            if (ds.exists()){
+                                mUsers.get(position).setBlocked(true);
+
+                                btn_follow.setVisibility(View.GONE);
+                                btn_message.setVisibility(View.GONE);
+                                block_img.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+    private void unblockUser(String id, final Button btn_follow, final Button btn_message, final ImageView block_img) {
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(firebaseUser.getUid()).child("blocked_users");
+
+        reference.orderByChild("userid").equalTo(id)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            if (ds.exists()){
+                                ds.getRef().removeValue()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //unblock successful
+                                                Toast.makeText(mContext, "Unblocking successful", Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                //unblock unsuccessful
+                                                Toast.makeText(mContext, "Failed "+ e, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void blockUser(String id, final Button btn_follow, final Button btn_message, final ImageView block_img) {
+        //block the user by adding id to current user blocked child
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+        .child(firebaseUser.getUid()).child("blocked_users").child(id);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("userid", id);
+
+        reference.setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //blocked successful
+                        Toast.makeText(mContext, "User Blocked", Toast.LENGTH_SHORT).show();
+
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //failed to block user
+                        Toast.makeText(mContext, "Blocking unsuccessful." + e, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void addNotification(String userid){
+        Log.d("UserAdapter", "adding notification");
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "started following you");
         hashMap.put("postid", "");
-        hashMap.put("ispost", false);
+        hashMap.put("type", "follow");
 
         reference.push().setValue(hashMap);
     }

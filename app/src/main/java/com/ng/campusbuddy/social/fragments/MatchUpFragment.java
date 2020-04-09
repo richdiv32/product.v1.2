@@ -1,5 +1,6 @@
 package com.ng.campusbuddy.social.fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,9 +11,11 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,6 +26,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -85,12 +89,14 @@ public class MatchUpFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // when this activity is about to be launch we need to check if its openened before or not
-        if (restorePrefData()) {
 
+        view = inflater.inflate(R.layout.fragment_match_up, container, false);
+        if (restorePrefData()){
 
         }
-        view = inflater.inflate(R.layout.fragment_match_up, container, false);
+        else {
+            TapTarget();
+        }
 
 
         Love_btn = view.findViewById(R.id.love_btn);
@@ -130,7 +136,21 @@ public class MatchUpFragment extends Fragment {
                 obj = (Match) dataObject;
                 userId= obj.getUserId();
                 usersDb.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
-                Toast.makeText(getActivity(), "NOPE", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "NOPE", Toast.LENGTH_SHORT).show();
+
+                //inflate layout for dialog
+                View view = LayoutInflater.from(getActivity()).inflate(R.layout.toast_layout, null);
+                ImageView Image = view.findViewById(R.id.toast_img);
+                TextView Text = view.findViewById(R.id.toast_txt);
+
+                Text.setText("Nope");
+                Image.setImageResource(R.drawable.emoji_samsung_1f60f);
+
+                Toast toast = new Toast(getActivity());
+                toast.setGravity(Gravity.BOTTOM, 0 , 120);
+                toast.setDuration(Toast.LENGTH_SHORT);
+                toast.setView(view);
+                toast.show();
             }
 
             @Override
@@ -139,9 +159,21 @@ public class MatchUpFragment extends Fragment {
                 String userId = obj.getUserId();
                 usersDb.child(userId).child("connections").child("yes").child(currentUId).setValue(true);
                 isConnectionMatch(userId);
-                Toast.makeText(getActivity(), "YES", Toast.LENGTH_SHORT).show();
 
 
+                //inflate layout for dialog
+                View view = LayoutInflater.from(getActivity()).inflate(R.layout.toast_layout, null);
+                ImageView Image = view.findViewById(R.id.toast_img);
+                TextView Text = view.findViewById(R.id.toast_txt);
+
+                Text.setText("Yes");
+                Image.setImageResource(R.drawable.emoji_samsung_1f60d);
+
+                Toast toast = new Toast(getActivity());
+                toast.setGravity(Gravity.BOTTOM, 0 , 120);
+                toast.setDuration(Toast.LENGTH_SHORT);
+                toast.setView(view);
+                toast.show();
             }
 
             @Override
@@ -161,11 +193,21 @@ public class MatchUpFragment extends Fragment {
         flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
             @Override
             public void onItemClicked(int itemPosition, Object dataObject) {
-                Toast.makeText(getActivity(), "I like you too", Toast.LENGTH_SHORT).show();
+                //inflate layout for dialog
+                View view = LayoutInflater.from(getActivity()).inflate(R.layout.toast_layout, null);
+                ImageView Image = view.findViewById(R.id.toast_img);
+                TextView Text = view.findViewById(R.id.toast_txt);
+
+                Text.setText("I like you too");
+                Image.setImageResource(R.drawable.emoji_samsung_1f496);
+
+                Toast toast = new Toast(getActivity());
+                toast.setGravity(Gravity.BOTTOM, 0 , 120);
+                toast.setDuration(Toast.LENGTH_SHORT);
+                toast.setView(view);
+                toast.show();
             }
         });
-
-        TapTarget();
 
         return view;
     }
@@ -178,11 +220,14 @@ public class MatchUpFragment extends Fragment {
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
                     @Override
                     public void onTargetClick(TapTargetView view) {
-                        super.onTargetClick(view);      // This call is optional
+                        super.onTargetClick(view);
+                        savePrefsData();
+
                         view.dismiss(true);
                     }
                 });
     }
+
 
     private void addNotification(String userId){
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -313,8 +358,9 @@ public class MatchUpFragment extends Fragment {
                 if (dataSnapshot.exists()){
                     User user = dataSnapshot.getValue(User.class);
 
-                    Glide.with(getContext())
+                    Glide.with(getActivity())
                             .load(user.getImageurl())
+                            .thumbnail(0.1f)
                             .into(myImage);
 
 //                    Username.setText(user.getUsername());
@@ -336,6 +382,7 @@ public class MatchUpFragment extends Fragment {
 
                     Glide.with(getActivity())
                             .load(user.getImageurl())
+                            .thumbnail(0.1f)
                             .into(userImage);
 
                     Paired.setText("You and " + user.getUsername() + " like each other");
@@ -357,6 +404,7 @@ public class MatchUpFragment extends Fragment {
                 message.putExtra("userid", userId);
                 getContext().startActivity(message);
                 Animatoo.animateSlideUp(getContext());
+                popupWindow.dismiss();
             }
         });
 
@@ -373,8 +421,16 @@ public class MatchUpFragment extends Fragment {
     private boolean restorePrefData() {
 
         SharedPreferences pref = getActivity().getSharedPreferences("myPrefs",MODE_PRIVATE);
-        Boolean isTapTargetClickedBefore = pref.getBoolean("isIntroOpnend",false);
+        Boolean isTapTargetClickedBefore = pref.getBoolean("isTapOpnend",false);
         return  isTapTargetClickedBefore;
+
+    }
+    private void savePrefsData() {
+
+        SharedPreferences pref = getActivity().getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("isTapOpnend",true);
+        editor.apply();
 
     }
 

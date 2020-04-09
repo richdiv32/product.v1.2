@@ -17,12 +17,14 @@ public class User {
     private String online_status;
     private String relationship_status;
     private String typingTo;
-    private boolean isSelected = false;
+    private boolean isBlocked = false;
 
-    public User(String profile_status, String id, String username, String fullname,
-                String imageurl, String bio, String gender, String birthday, String telephone,
-                String faculty, String department, String institution, String email,
-                String online_status, String relationship_status, String typingTo) {
+
+    public User(String profile_status, String id, String username,
+                String fullname, String imageurl, String bio, String gender,
+                String birthday, String telephone, String faculty, String department,
+                String institution, String email, String online_status, String relationship_status,
+                String typingTo, boolean isBlocked) {
         this.profile_status = profile_status;
         this.id = id;
         this.username = username;
@@ -39,6 +41,7 @@ public class User {
         this.online_status = online_status;
         this.relationship_status = relationship_status;
         this.typingTo = typingTo;
+        this.isBlocked = isBlocked;
     }
 
     public User() {
@@ -47,6 +50,7 @@ public class User {
     public String getProfile_status() {
         return profile_status;
     }
+
     public void setProfile_status(String profile_status) {
         this.profile_status = profile_status;
     }
@@ -54,6 +58,7 @@ public class User {
     public String getId() {
         return id;
     }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -61,6 +66,7 @@ public class User {
     public String getUsername() {
         return username;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -68,6 +74,7 @@ public class User {
     public String getFullname() {
         return fullname;
     }
+
     public void setFullname(String fullname) {
         this.fullname = fullname;
     }
@@ -75,6 +82,7 @@ public class User {
     public String getImageurl() {
         return imageurl;
     }
+
     public void setImageurl(String imageurl) {
         this.imageurl = imageurl;
     }
@@ -82,6 +90,7 @@ public class User {
     public String getBio() {
         return bio;
     }
+
     public void setBio(String bio) {
         this.bio = bio;
     }
@@ -89,6 +98,7 @@ public class User {
     public String getGender() {
         return gender;
     }
+
     public void setGender(String gender) {
         this.gender = gender;
     }
@@ -96,6 +106,7 @@ public class User {
     public String getBirthday() {
         return birthday;
     }
+
     public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
@@ -103,6 +114,7 @@ public class User {
     public String getTelephone() {
         return telephone;
     }
+
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
@@ -110,6 +122,7 @@ public class User {
     public String getFaculty() {
         return faculty;
     }
+
     public void setFaculty(String faculty) {
         this.faculty = faculty;
     }
@@ -117,6 +130,7 @@ public class User {
     public String getDepartment() {
         return department;
     }
+
     public void setDepartment(String department) {
         this.department = department;
     }
@@ -124,6 +138,7 @@ public class User {
     public String getInstitution() {
         return institution;
     }
+
     public void setInstitution(String institution) {
         this.institution = institution;
     }
@@ -131,6 +146,7 @@ public class User {
     public String getEmail() {
         return email;
     }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -146,6 +162,7 @@ public class User {
     public String getRelationship_status() {
         return relationship_status;
     }
+
     public void setRelationship_status(String relationship_status) {
         this.relationship_status = relationship_status;
     }
@@ -158,11 +175,11 @@ public class User {
         this.typingTo = typingTo;
     }
 
-    public void setSelected(boolean selected) {
-        isSelected = selected;
+    public boolean isBlocked() {
+        return isBlocked;
     }
 
-    public boolean isSelected(){
-        return  isSelected;
+    public void setBlocked(boolean blocked) {
+        isBlocked = blocked;
     }
 }

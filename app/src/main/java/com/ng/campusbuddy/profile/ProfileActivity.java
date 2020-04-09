@@ -1,5 +1,7 @@
 package com.ng.campusbuddy.profile;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -7,18 +9,32 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,10 +43,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.auth.LoginActivity;
+import com.ng.campusbuddy.social.messaging.PhotoActivity;
 import com.ng.campusbuddy.social.post.Post;
 import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.utils.SharedPref;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +72,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     ImageButton my_photos, saved_photos, Info;
 
-    TextView Bio, Birthday, Gender, Relationship_status
+    TextView Email, Bio, Birthday, Gender, Relationship_status
             , Institution, Faculty, Department,Telephone;
 
     private LinearLayout profile_info_layout;
@@ -86,6 +103,14 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        ImageButton Back = findViewById(R.id.back_btn);
+        Back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         profileid = firebaseUser.getUid();
 
@@ -103,6 +128,7 @@ public class ProfileActivity extends AppCompatActivity {
         saved_photos = findViewById(R.id.saved_photos);
         Info = findViewById(R.id.info);
 
+        Email = findViewById(R.id.email);
         Bio = findViewById(R.id.bio);
         Birthday = findViewById(R.id.birthday);
         Relationship_status = findViewById(R.id.relationship_status);
@@ -164,7 +190,7 @@ public class ProfileActivity extends AppCompatActivity {
                 recyclerView_saves.setVisibility(View.GONE);
 
 
-                DatabaseReference Info_reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+                final DatabaseReference Info_reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
                 Info_reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -177,6 +203,13 @@ public class ProfileActivity extends AppCompatActivity {
                         Department.setText(user.getDepartment());
                         Telephone.setText(user.getTelephone());
                         Relationship_status.setText(user.getRelationship_status());
+                        if (!dataSnapshot.child("email").exists()){
+                            Info_reference.child("email").setValue(firebaseUser.getEmail());
+                        }
+                        else {
+                            Email.setText(user.getEmail());
+                        }
+
 
                     }
 
@@ -210,7 +243,29 @@ public class ProfileActivity extends AppCompatActivity {
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(mContext, EditProfileActivity.class));
+
+                String[] options = {"Edit Info","Change Email", "Change Password"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+                builder.setTitle("Choose image from");
+
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        if (which == 0) {
+                            startActivity(new Intent(mContext, EditProfileActivity.class));
+                        }
+                        if (which == 1){
+                            showUpdateEmail();
+                        }
+                        if (which == 2){
+                            showUpdatePassword();
+                        }
+                    }
+                });
+                builder.create().show();
+
             }
         });
 
@@ -236,16 +291,162 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    private void addNotification(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
+    private void showUpdateEmail() {
+        //inflate layout for dialog
+        View view = LayoutInflater.from(ProfileActivity.this).inflate(R.layout.dialog_update_password, null);
+        final EditText Current_email = view.findViewById(R.id.current_email);
+        final EditText New_email = view.findViewById(R.id.new_email);
+        final EditText Password = view.findViewById(R.id.password);
+        Button Update_Email = view.findViewById(R.id.change_email_btn);
+        LinearLayout Password_Layout = view.findViewById(R.id.password_layout);
+        LinearLayout Email_Layout = view.findViewById(R.id.email_layout);
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("userid", firebaseUser.getUid());
-        hashMap.put("text", "started following you");
-        hashMap.put("postid", "");
-        hashMap.put("ispost", false);
+        Email_Layout.setVisibility(View.VISIBLE);
+        Password_Layout.setVisibility(View.GONE);
 
-        reference.push().setValue(hashMap);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+        builder.setView(view);
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        Update_Email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String str_current_email = Current_email.getText().toString();
+                final String str_new_email = New_email.getText().toString();
+                String str_password = Password.getText().toString();
+
+                if (TextUtils.isEmpty(str_current_email)){
+                    Toast.makeText(ProfileActivity.this, "Input your current email", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(str_new_email)){
+                    Toast.makeText(ProfileActivity.this, "Input your new email", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(str_password)){
+                    Toast.makeText(ProfileActivity.this, "Input your password", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else {
+                    final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                    //before changing password re-authenticate the user
+                    AuthCredential authCredential = EmailAuthProvider.getCredential(fUser.getEmail(), str_password);
+                    fUser.reauthenticate(authCredential)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    //successfully  authenticated, begin update
+                                    fUser.updateEmail(str_new_email)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    //email changed
+                                                    DatabaseReference Info_reference = FirebaseDatabase.getInstance().getReference("Users").child(fUser.getUid());
+                                                    Info_reference.child("email").setValue(str_new_email);
+                                                    Toast.makeText(ProfileActivity.this, "Email changed successfully...", Toast.LENGTH_SHORT).show();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    //failed updating email
+                                                    Toast.makeText(mContext, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    //authentication failed
+                                    Toast.makeText(mContext, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void showUpdatePassword() {
+        //inflate layout for dialog
+        View view = LayoutInflater.from(ProfileActivity.this).inflate(R.layout.dialog_update_password, null);
+        final EditText Current_Password = view.findViewById(R.id.current_password);
+        final EditText New_Password = view.findViewById(R.id.new_password);
+        Button Update_Password = view.findViewById(R.id.update_btn);
+        LinearLayout Password_Layout = view.findViewById(R.id.password_layout);
+        LinearLayout Email_Layout = view.findViewById(R.id.email_layout);
+
+        Email_Layout.setVisibility(View.GONE);
+        Password_Layout.setVisibility(View.VISIBLE);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+        builder.setView(view);
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        Update_Password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String str_current_password = Current_Password.getText().toString();
+                final String str_new_password = New_Password.getText().toString();
+
+                if (TextUtils.isEmpty(str_current_password)){
+                    Toast.makeText(ProfileActivity.this, "Input your current password", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(str_new_password)){
+                    Toast.makeText(ProfileActivity.this, "Input your new password", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (str_new_password.length()<6){
+                    Toast.makeText(ProfileActivity.this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else {
+                    final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                    //before changing password re-authenticate the user
+                    AuthCredential authCredential = EmailAuthProvider.getCredential(fUser.getEmail(), str_current_password);
+                    fUser.reauthenticate(authCredential)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    //successfully  authenticated, begin update
+                                    fUser.updatePassword(str_new_password)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    //password changed
+                                                    Toast.makeText(ProfileActivity.this, "Password changed successfully...", Toast.LENGTH_SHORT).show();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    //failed updating password
+                                                    Toast.makeText(mContext, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    //authentication failed
+                                    Toast.makeText(mContext, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                }
+
+                dialog.dismiss();
+            }
+        });
     }
 
     private void userInfo(){
@@ -254,23 +455,30 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-                    String profile_image = dataSnapshot.child("imageurl").getValue().toString();
-                    String fullname = dataSnapshot.child("fullname").getValue().toString();
-                    String username = dataSnapshot.child("username").getValue().toString();
-                    String profile_status = dataSnapshot.child("profile_status").getValue().toString();
 
-                    if(profile_image.isEmpty()){
-                        Picasso.get().load(R.drawable.profile_bg).into(image_profile);
-                    }
-                    else {
-                        Picasso.get().load(profile_image).into(image_profile);
-                        Picasso.get().load(profile_image).into(bg);
-                    }
+                    final User user = dataSnapshot.getValue(User.class);
 
+                    Glide.with(getApplicationContext())
+                            .load(user.getImageurl())
+                            .thumbnail(0.1f)
+                            .into(image_profile);
 
-                    Fullname.setText(fullname);
-                    Username.setText(username);
-                    Profile_status.setText(profile_status);
+                    Glide.with(getApplicationContext())
+                            .load(user.getImageurl())
+                            .thumbnail(0.1f)
+                            .into(bg);
+                    Username.setText(user.getUsername());
+                    Fullname.setText(user.getFullname());
+                    Profile_status.setText(user.getProfile_status());
+
+                    image_profile.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(ProfileActivity.this, PhotoActivity.class);
+                            intent.putExtra("imageurl", user.getImageurl());
+                            startActivity(intent);
+                        }
+                    });
                 }
             }
 

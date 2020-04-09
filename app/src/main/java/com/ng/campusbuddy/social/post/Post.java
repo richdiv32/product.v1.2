@@ -5,15 +5,25 @@ public class Post {
     private String postimage;
     private String description;
     private String publisher;
+    private String timestamp;
 
-    public Post(String postid, String postimage, String description, String publisher) {
+    public Post(String postid, String postimage, String description, String publisher, String timestamp) {
         this.postid = postid;
         this.postimage = postimage;
         this.description = description;
         this.publisher = publisher;
+        this.timestamp = timestamp;
     }
 
     public Post() {
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getPostid() {

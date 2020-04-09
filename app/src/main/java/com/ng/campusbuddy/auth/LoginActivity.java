@@ -3,6 +3,7 @@ package com.ng.campusbuddy.auth;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -47,11 +48,15 @@ import com.ng.campusbuddy.utils.Token;
 public class LoginActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
+    CardView pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        pd = findViewById(R.id.loader);
+
 
         //Configure google sign in
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -67,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         InitLogin();
         InitSignUp();
         InitForgotPassword();
-//        googleauth();
+
 
 
 
@@ -75,11 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         verification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
-                pd.setTitle("Sending Verification Code");
-                pd.setMessage("Please wait.....");
-                pd.show();
-                pd.setCanceledOnTouchOutside(true);
+                pd.setVisibility(View.VISIBLE);
 
                 final EditText Email = findViewById(R.id.email);
                 final EditText Password = findViewById(R.id.password);
@@ -97,12 +98,13 @@ public class LoginActivity extends AppCompatActivity {
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
+
                                     if (task.isSuccessful()) {
-                                        pd.dismiss();
+                                        pd.setVisibility(View.GONE);
                                         SendVerificationEmail();
                                     }
                                     else {
-                                        pd.dismiss();
+                                        pd.setVisibility(View.GONE);
                                         String message = task.getException().getMessage();
                                         Toast.makeText(LoginActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
                                     }
@@ -146,6 +148,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void InitLogin() {
 
+
         final EditText Email = findViewById(R.id.email);
         final EditText Password = findViewById(R.id.password);
 
@@ -154,18 +157,14 @@ public class LoginActivity extends AppCompatActivity {
         LogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
-                pd.setTitle("Logging In ");
-                pd.setMessage("Please wait.....");
-                pd.show();
-                pd.setCanceledOnTouchOutside(true);
+                pd.setVisibility(View.VISIBLE);
 
                 String str_email = Email.getText().toString();
                 String str_password = Password.getText().toString();
 
                 if (TextUtils.isEmpty(str_email) || TextUtils.isEmpty(str_password)){
                     Toast.makeText(LoginActivity.this, "All fields are required!", Toast.LENGTH_SHORT).show();
-                    pd.dismiss();
+                    pd.setVisibility(View.GONE);
                 } else {
 
                     auth.signInWithEmailAndPassword(str_email, str_password)
@@ -174,10 +173,9 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         CheckVerification();
-                                        pd.dismiss();
                                     }
                                     else {
-                                        pd.dismiss();
+                                        pd.setVisibility(View.GONE);
                                         String message = task.getException().getMessage();
                                         Toast.makeText(LoginActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
                                     }
@@ -189,6 +187,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void CheckVerification() {
+        pd.setVisibility(View.VISIBLE);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Boolean emailCheck = user.isEmailVerified();
@@ -197,16 +196,58 @@ public class LoginActivity extends AppCompatActivity {
             Home();
         }
         else {
+            pd.setVisibility(View.GONE);
             Toast.makeText(this, "Please check your mail to verify your account first", Toast.LENGTH_SHORT).show();
             FirebaseAuth.getInstance().signOut();
         }
     }
 
     private void Home() {
-        startActivity(new Intent(this, SocialActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-        Animatoo.animateZoom(this);
-        finish();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //check if user is null
+        if (firebaseUser != null) {
+            final String current_uid = firebaseUser.getUid();
+
+            DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
+            UserRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (!dataSnapshot.hasChild(current_uid)) {
+                        startActivity(new Intent(LoginActivity.this, SetUpProfileActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                        finish();
+                    }
+                    else {
+                        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+                        DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference()
+                                .child("Tokens");
+                        Token mtoken = new Token(deviceToken);
+                        tokenRef.child(current_uid).setValue(mtoken )
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()){
+
+                                            startActivity(new Intent(LoginActivity.this, SocialActivity.class)
+                                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                            Animatoo.animateZoom(LoginActivity.this);
+                                            finish();
+                                        }
+                                    }
+                                });
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        }
+
     }
 
     private void SendVerificationEmail() {

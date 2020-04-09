@@ -66,7 +66,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostActivity extends AppCompatActivity {
 
-    private Uri mImageUri;
+   Uri mImageUri = null;
     String miUrlOk = "";
     private StorageTask uploadTask;
     StorageReference storageRef;
@@ -77,6 +77,7 @@ public class PostActivity extends AppCompatActivity {
 
     CircleImageView Profile_image;
     TextView Username;
+    ImageView Add;
 
     //permissions constants
     private static final int CAMERA_REQUEST_CODE = 100;
@@ -209,8 +210,8 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
-        ImageView image_added = findViewById(R.id.image_added);
-        image_added.setOnClickListener(new View.OnClickListener() {
+        ImageView Add = findViewById(R.id.add_btn);
+        Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showImagePickDialog();
@@ -218,30 +219,13 @@ public class PostActivity extends AppCompatActivity {
         });
 
 
+
+
         final RelativeLayout ImageLayout = findViewById(R.id.post_imageLayout);
         final LinearLayout TextLayout = findViewById(R.id.post_textLayout);
 
 //        ImageLayout.setVisibility(View.VISIBLE);
 //        TextLayout.setVisibility(View.GONE);
-
-        ImageButton Button_post_text = findViewById(R.id.btn_post_text);
-        Button_post_text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ImageLayout.setVisibility(View.GONE);
-                TextLayout.setVisibility(View.VISIBLE);
-            }
-        });
-
-        ImageButton Button_post_image = findViewById(R.id.btn_post_image);
-        Button_post_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ImageLayout.setVisibility(View.VISIBLE);
-                TextLayout.setVisibility(View.GONE);
-            }
-        });
-
 
 
 
@@ -393,6 +377,7 @@ public class PostActivity extends AppCompatActivity {
                         miUrlOk = downloadUri.toString();
 
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+                        final String timestamp = String.valueOf(System.currentTimeMillis());
 
                         String postid = reference.push().getKey();
 
@@ -401,6 +386,7 @@ public class PostActivity extends AppCompatActivity {
                         hashMap.put("postimage", miUrlOk);
                         hashMap.put("description", description.getText().toString());
                         hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        hashMap.put("timestamp", timestamp);
 
                         reference.child(postid).setValue(hashMap)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -410,7 +396,7 @@ public class PostActivity extends AppCompatActivity {
                                         Pd.setVisibility(View.GONE);
 
                                         prepareNotification(
-                                                "",
+                                                ""+timestamp,
                                                 "" + Username + " added new post",
                                                 ""+ description,
                                                 "PostNotification",
@@ -420,15 +406,6 @@ public class PostActivity extends AppCompatActivity {
                                         finish();
                                     }
                                 });
-
-                        //send Notification
-
-//                        prepareNotification(
-//                                ""+ timestamp,
-//                                ""+ username + "added new post",
-//                                ""+ description,
-//                                "PostNotification",
-//                                "POST" );
                     } else {
                         Toast.makeText(PostActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                     }
@@ -444,6 +421,7 @@ public class PostActivity extends AppCompatActivity {
         else if (description.getText().toString() != null && mImageUri == null){
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
 
+            String timestamp = String.valueOf(System.currentTimeMillis());
             String postid = reference.push().getKey();
 
             HashMap<String, Object> hashMap = new HashMap<>();
@@ -451,6 +429,7 @@ public class PostActivity extends AppCompatActivity {
             hashMap.put("postimage", "");
             hashMap.put("description", description.getText().toString());
             hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
+            hashMap.put("timestamp", timestamp);
 
 
             reference.child(postid).setValue(hashMap)
@@ -483,39 +462,29 @@ public class PostActivity extends AppCompatActivity {
 
 
         if (resultCode == RESULT_OK){
-            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
-                //image picked from Gallery, get uri of image
-                CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            mImageUri = result.getUri();
+//            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+//                //image picked from Gallery, get uri of image
+//                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+//            mImageUri = result.getUri();
+//            }
 
-            ImageView image_added = findViewById(R.id.image_added);
-            image_added.setImageURI(mImageUri);
+            if (requestCode == IMAGE_PICK_GALLERY_CODE){
+                //image is picked from gallery, get uri of image
+                mImageUri = data.getData();
 
+                ImageView image_added = findViewById(R.id.image_added);
+                image_added.setImageURI(mImageUri);
             }
             else if (requestCode == IMAGE_PICK_CAMERA_CODE){
                 //image is picked from camera, get uri of image
-
                 ImageView image_added = findViewById(R.id.image_added);
-                image_added.setImageURI(image_rui);
+                image_added.setImageURI(mImageUri);
             }
             else {
                 Toast.makeText(this, "Image sending unsuccessful", Toast.LENGTH_SHORT).show();
             }
         }
 
-//        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-//
-//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-//            mImageUri = result.getUri();
-//
-//            ImageView image_added = findViewById(R.id.image_added);
-//            image_added.setImageURI(mImageUri);
-//        }
-//        else {
-//            Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
-//            startActivity(new Intent(PostActivity.this, PostActivity.class));
-//            finish();
-//        }
     }
 
     private void showImagePickDialog() {
@@ -543,13 +512,13 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void pickFromGallery(){
-        //Intent to pick image from gallery
-//        startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*")
-//                , IMAGE_PICK_GALLERY_CODE);
+//        Intent to pick image from gallery
+        startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*")
+                , IMAGE_PICK_GALLERY_CODE);
 
-        CropImage.activity()
-                .setAspectRatio(1,1)
-                .start(PostActivity.this);
+//        CropImage.activity()
+//                .setAspectRatio(1,1)
+//                .start(PostActivity.this);
     }
 
     private void pickFromCamera(){
@@ -557,9 +526,9 @@ public class PostActivity extends AppCompatActivity {
         ContentValues cv = new ContentValues();
         cv.put(MediaStore.Images.Media.TITLE, "Temp Pick");
         cv.put(MediaStore.Images.Media.DESCRIPTION,"Temp Descr");
-        image_rui = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
+        mImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
 
-        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, image_rui)
+        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, mImageUri)
                 , IMAGE_PICK_CAMERA_CODE);
     }
 

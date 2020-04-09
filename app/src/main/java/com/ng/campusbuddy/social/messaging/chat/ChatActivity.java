@@ -13,10 +13,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,6 +72,7 @@ import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.social.messaging.MessageAdapter;
+import com.ng.campusbuddy.utils.CustomRecyclerView;
 import com.ng.campusbuddy.utils.Data;
 import com.ng.campusbuddy.utils.Sender;
 import com.ng.campusbuddy.utils.SharedPref;
@@ -89,9 +93,11 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatActivity extends AppCompatActivity {
+    private static final String TAG = "ChatActivity";
 
     CircleImageView profile_image;
     TextView username, online_status;
+    ImageView block_img;
 
     FirebaseUser fuser;
     DatabaseReference reference;
@@ -103,7 +109,7 @@ public class ChatActivity extends AppCompatActivity {
     MessageAdapter messageAdapter;
     List<Chat> mchat;
 
-    RecyclerView recyclerView;
+    CustomRecyclerView recyclerView;
 
     Intent intent;
 
@@ -130,6 +136,39 @@ public class ChatActivity extends AppCompatActivity {
 
     //for image
     Uri image_rui = null;
+
+    boolean isBlocked = false;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+        String profileid = getIntent().getStringExtra("userid");
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //check if user is blocked or not
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(profileid).child("blocked_users");
+
+        reference.orderByChild("userid").equalTo(firebaseUser.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            if (ds.exists()) {
+                                Toast.makeText(ChatActivity.this, "Sorry..., Not permitted.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,12 +239,18 @@ public class ChatActivity extends AppCompatActivity {
                 });
 
         //GIF config
+        //Create GIF config
         EmoticonGIFKeyboardFragment.GIFConfig gifConfig = new EmoticonGIFKeyboardFragment
+
+        /*
+          Here we are using GIPHY to provide GIFs. Create Giphy GIF provider by passing your key.
+          It is required to set GIF provider before adding fragment into container.
+         */
                 .GIFConfig(GiphyGifProvider.create(this, "0OADsQMbBfnSjyQudSukHfvyi9Tj0BTX"))
                 .setGifSelectListener(new GifSelectListener() {
                     @Override
                     public void onGifSelected(@NonNull Gif gif) {
-
+                        //Do something with the selected GIF.
                     }
                 });
 
@@ -238,6 +283,7 @@ public class ChatActivity extends AppCompatActivity {
         username = findViewById(R.id.username);
         text_send = findViewById(R.id.text_send);
         online_status = findViewById(R.id.status);
+        block_img = findViewById(R.id.blocked_image);
 
         text_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,14 +298,17 @@ public class ChatActivity extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
+                final User user = dataSnapshot.getValue(User.class);
                 username.setText(user.getUsername());
 
                 if (user.getImageurl().equals("default")){
                     profile_image.setImageResource(R.mipmap.ic_launcher);
                 } else {
                     //and this
-                    Glide.with(getApplicationContext()).load(user.getImageurl()).into(profile_image);
+                    Glide.with(getApplicationContext())
+                            .load(user.getImageurl())
+                            .thumbnail(0.1f)
+                            .into(profile_image);
                 }
 
                 if (user.getTypingTo().equals(fuser.getUid())){
@@ -279,6 +328,20 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 }
 
+                block_img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (isBlocked){
+                            unblockUser(userid);
+                        }
+                        else {
+                            blockUser(userid);
+                        }
+                    }
+                });
+
+                checkisBlocked(userid);
+
                 readMesagges(fuser.getUid(), userid, user.getImageurl());
             }
 
@@ -287,6 +350,131 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+
+    private void isBlocked_or_Not(final String userid){
+
+        //check if user is blocked or not
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(userid).child("blocked_users");
+
+        reference.orderByChild("userid").equalTo(fuser.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            if (ds.exists()) {
+                                Toast.makeText(ChatActivity.this, "Sorry..., Not permitted.", Toast.LENGTH_SHORT).show();
+                                return;
+
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+    private void checkisBlocked(String id) {
+
+        //check if user is blocked or not
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(fuser.getUid()).child("blocked_users");
+
+        reference.orderByChild("userid").equalTo(id)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            if (ds.exists()){
+                                isBlocked = true;
+
+                                block_img.setImageResource(R.drawable.ic_globe);
+                            }
+                            else {
+                                block_img.setImageResource(R.drawable.ic_fullname);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+    private void unblockUser(String id) {
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(fuser.getUid()).child("blocked_users");
+
+        reference.orderByChild("userid").equalTo(id)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            if (ds.exists()){
+                                ds.getRef().removeValue()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //unblock successful
+                                                Toast.makeText(ChatActivity.this, "Unblocking successful", Toast.LENGTH_SHORT).show();
+
+                                                block_img.setImageResource(R.drawable.ic_fullname);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                //unblock unsuccessful
+                                                Toast.makeText(ChatActivity.this, "Failed "+ e, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void blockUser(String id) {
+        //block the user by adding id to current user blocked child
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(fuser.getUid()).child("blocked_users").child(id);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("userid", id);
+
+        reference.setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //blocked successful
+                        Toast.makeText(ChatActivity.this, "User Blocked", Toast.LENGTH_SHORT).show();
+
+                        block_img.setImageResource(R.drawable.ic_globe);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //failed to block user
+                        Toast.makeText(ChatActivity.this, "Blocking unsuccessful." + e, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void Init(){
@@ -430,6 +618,7 @@ public class ChatActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 if (notify) {
                     sendNotifiaction(receiver, user.getUsername(), msg);
+                    Log.d(TAG, "attempting to send push notification");
                 }
                 notify = false;
             }
@@ -585,11 +774,13 @@ public class ChatActivity extends AppCompatActivity {
                     Token token = snapshot.getValue(Token.class);
                     Data data = new Data(
                             ""+fuser.getUid(),
-                            R.drawable.ic_notifications,
+                            R.drawable.logo,
                             ""+ username+": "+message,
                             "New Message",
                             ""+ userid,
+                            "",
                             "ChatNotification");
+                    Log.d(TAG, "Info ready to send");
 
                     Sender sender = new Sender(data, token.getToken());
 
@@ -600,7 +791,7 @@ public class ChatActivity extends AppCompatActivity {
                                 new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
-
+                                        Log.d(TAG, "sent push notification");
 
                                     }
                                 }, new Response.ErrorListener() {
@@ -738,20 +929,6 @@ public class ChatActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
-    private void currentUser(String userid){
-        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-        editor.putString("currentuser", userid);
-        editor.apply();
-    }
-
-    private void online_status(String online_status){
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("online_status", online_status);
-
-        reference.updateChildren(hashMap);
-    }
 
     private void typingstatus(String typing){
         reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
@@ -760,32 +937,6 @@ public class ChatActivity extends AppCompatActivity {
         hashMap.put("typingTo", typing);
 
         reference.updateChildren(hashMap);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        online_status("online");
-        currentUser(userid);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        online_status("online");
-        currentUser(userid);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        String timestamp = String.valueOf(System.currentTimeMillis());
-
-        reference.removeEventListener(seenListener);
-        online_status(timestamp);
-        typingstatus("noOne");
-        currentUser("none");
     }
 
     @Override

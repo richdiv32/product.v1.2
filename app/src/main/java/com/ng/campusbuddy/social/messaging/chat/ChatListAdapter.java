@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,7 +29,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.User;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -66,7 +66,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
 
         if (!user.getImageurl().equals(" ")){
-            Picasso.get().load(user.getImageurl()).into(holder.profile_image);
+            Glide.with(mContext)
+                    .load(user.getImageurl())
+                    .placeholder(R.drawable.profile_bg)
+                    .thumbnail(0.1f)
+                    .into(holder.profile_image);
 
         } else {
             holder.profile_image.setImageResource(R.mipmap.ic_launcher);
@@ -76,6 +80,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
         if (ischat){
             lastMessage(user.getId(), holder.last_msg);
+            BadgeInit(holder.Message_counter, user.getId());
         } else {
             holder.last_msg.setVisibility(View.GONE);
         }
@@ -188,6 +193,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         private ImageView img_on;
         private ImageView img_off;
         private TextView last_msg;
+        private TextView Message_counter;
         public RelativeLayout UserchatLayout; //for click listner to show delete
 
         public ViewHolder(View itemView) {
@@ -199,6 +205,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             img_off = itemView.findViewById(R.id.img_off);
             last_msg = itemView.findViewById(R.id.last_msg);
             UserchatLayout = itemView.findViewById(R.id.chatUserLayout);
+            Message_counter = itemView.findViewById(R.id.counter);
         }
     }
 
@@ -239,6 +246,38 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                 }
 
                 theLastMessage = "default";
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    //Update Badge
+    private void BadgeInit(final TextView message_counter, final String id) {
+        final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int unread = 0;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Chat chat = snapshot.getValue(Chat.class);
+                    if (chat.getReceiver().equals(fUser.getUid()) && !chat.isIsseen() && chat.getSender().equals(id)){
+                        unread++;
+                    }
+                }
+
+                if (unread == 0){
+                    message_counter.setVisibility(View.GONE);
+
+                } else {
+                    message_counter.setVisibility(View.VISIBLE );
+                    message_counter.setText(String.valueOf(unread));
+                }
+
             }
 
             @Override

@@ -30,8 +30,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.kevalpatel2106.emoticongifkeyboard.widget.EmoticonTextView;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.social.messaging.chat.Chat;
-import com.ng.campusbuddy.social.post.FullscreenActivity;
-import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.List;
@@ -96,19 +94,28 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             holder.show_message.setVisibility(View.GONE);
             holder.show_image.setVisibility(View.VISIBLE);
 
-            Picasso.get()
+            Glide.with(mContext)
                     .load(chat.getMessage())
-                    .placeholder(R.drawable.placeholder)
+                    .thumbnail(0.1f)
                     .into(holder.show_image);
         }
 
         if (imageurl.equals("default")){
             holder.profile_image.setImageResource(R.mipmap.ic_launcher);
         } else {
-            Glide.with(mContext).load(imageurl).into(holder.profile_image);
+            Glide.with(mContext)
+                    .load(imageurl)
+                    .thumbnail(0.1f)
+                    .into(holder.profile_image);
         }
 
 
+        if (chat.getSender().equals(fuser.getUid())){
+            holder.txt_seen.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.txt_seen.setVisibility(View.GONE);
+        }
 
         if (position == mChat.size()-1){
             if (chat.isIsseen()){
@@ -166,37 +173,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     }
 
-    private void deleteMessage(int position) {
-        final String myUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        String msgTimeStamp = mChat.get(position).getTimestamp();
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
-        Query query = dbRef.orderByChild("timestamp").equalTo(msgTimeStamp);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    if (ds.child("sender").getValue().equals(myUID)){
-
-                        //To remove the message completly from chat
-                        ds.getRef().removeValue();
-
-                        Toast.makeText(mContext, "message deleted.....", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-
-                        Toast.makeText(mContext, "You can delete only your messages....", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     @Override
     public int getItemCount() {
         return mChat.size();
@@ -230,4 +206,36 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             return MSG_TYPE_LEFT;
         }
     }
+
+    private void deleteMessage(int position) {
+        final String myUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        String msgTimeStamp = mChat.get(position).getTimestamp();
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
+        Query query = dbRef.orderByChild("timestamp").equalTo(msgTimeStamp);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+                    if (ds.child("sender").getValue().equals(myUID)){
+
+                        //To remove the message completly from chat
+                        ds.getRef().removeValue();
+
+                        Toast.makeText(mContext, "message deleted.....", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+
+                        Toast.makeText(mContext, "You can delete only your messages....", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 }

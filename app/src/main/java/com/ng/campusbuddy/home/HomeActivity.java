@@ -1,30 +1,44 @@
 
 package com.ng.campusbuddy.home;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,6 +46,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.annotation.GlideExtension;
+import com.bumptech.glide.annotation.GlideOption;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.NotificationTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -46,10 +67,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.RemoteMessage;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.auth.SetUpProfileActivity;
 import com.ng.campusbuddy.education.EducationActivity;
 import com.ng.campusbuddy.model.AD;
+import com.ng.campusbuddy.social.match.MatchesActivity;
+import com.ng.campusbuddy.social.messaging.chat.ChatActivity;
+import com.ng.campusbuddy.tools.WebViewActivity;
 import com.ng.campusbuddy.utils.Token;
 import com.ng.campusbuddy.profile.ProfileActivity;
 import com.ng.campusbuddy.social.SocialActivity;
@@ -63,14 +88,24 @@ import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 import com.smarteist.autoimageslider.SliderViewAdapter;
-import com.squareup.picasso.Picasso;
 
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.http.Url;
+
+import static com.ng.campusbuddy.utils.App.CHANNEL_FOLLOW_ID;
+import static com.ng.campusbuddy.utils.App.CHANNEL_MATCH_ID;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -81,6 +116,11 @@ public class HomeActivity extends AppCompatActivity {
     FirebaseUser firebaseUser;
     FirebaseAuth mAuth;
     DatabaseReference user_Ref;
+
+    private NotificationManagerCompat notificationManager;
+    private EditText Title_txt, Message_txt;
+    ImageView Image;
+    Uri image_rui = null;
 
 
     @Override
@@ -103,8 +143,7 @@ public class HomeActivity extends AppCompatActivity {
                         startActivity(new Intent(mcontext, SetUpProfileActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         finish();
-                    }
-                    else {
+                    } else {
 
                     }
                 }
@@ -122,27 +161,13 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    DatabaseReference ref;
-    ValueEventListener seenListener;
-    private void online_status(String online_status){
-        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
-        ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("online_status", online_status);
-
-        ref.updateChildren(hashMap);
-    }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPref sharedPref = new SharedPref(this);
-        if (sharedPref.loadNightModeState() == true){
+        if (sharedPref.loadNightModeState() == true) {
             setTheme(R.style.AppDarkTheme);
-        }
-        else{
+        } else {
             setTheme(R.style.AppTheme);
         }
         //targets the status bar color
@@ -185,10 +210,9 @@ public class HomeActivity extends AppCompatActivity {
 
                         final String groupName_str = groupName.getText().toString();
 
-                        if (TextUtils.isEmpty(groupName_str)){
+                        if (TextUtils.isEmpty(groupName_str)) {
                             Toast.makeText(mcontext, "You can't create a room without a name", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
+                        } else {
                             DatabaseReference roomRef = FirebaseDatabase.getInstance().getReference().child("ADs").child("Home")
                                     .child("Slides");
                             String room_id = roomRef.push().getKey();
@@ -198,14 +222,16 @@ public class HomeActivity extends AppCompatActivity {
                             hashMap.put("full_image", "");
                             hashMap.put("image", "");
                             hashMap.put("description", "new ad added to campus buddy");
-                            hashMap.put("title", groupName_str);
+                            //TODO: work on the next two lines
+                            hashMap.put("web", groupName_str);
+                            hashMap.put("call", groupName_str);
 
                             roomRef.child(room_id).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
+                                    if (task.isSuccessful()) {
 
-                                        Toast.makeText(mcontext, groupName_str+ " has been created", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(mcontext, groupName_str + " has been created", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -229,18 +255,245 @@ public class HomeActivity extends AppCompatActivity {
 
         RecommendedUsers();
 
-        UpdateToken();
+//        UpdateToken();
+
+        channels();
 
     }
 
-    private void UpdateToken() {
-        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
-        String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
-        DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference()
-                .child("Tokens");
-        Token mtoken = new Token(deviceToken);
-        tokenRef.child(fuser.getUid()).setValue(mtoken);
+    private void channels() {
+        notificationManager = NotificationManagerCompat.from(this);
+
+        Title_txt = findViewById(R.id.title);
+        Message_txt = findViewById(R.id.message);
+
+        Button matchup_btn = findViewById(R.id.match_channel);
+        Button follow_btn = findViewById(R.id.follow_channel);
+        Button like_btn = findViewById(R.id.like_channel);
+        Button comment_btn = findViewById(R.id.comment_channel);
+
+
+
+        matchup_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                matchChannel();
+                imageChannel();
+            }
+        });
+
+        follow_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                followChannel();
+            }
+        });
+
+        like_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postChannel();
+            }
+        });
+
+        comment_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postChannel();
+            }
+        });
+    }
+
+    public void imageChannel() {
+        String title = Title_txt.getText().toString();
+        String body = Message_txt.getText().toString();
+
+        //Init for the custom notification layout
+        final RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.item_notification_bar);
+        notificationLayout.setTextViewText(R.id.title, title);
+        notificationLayout.setTextViewText(R.id.description, body);
+        notificationLayout.setImageViewResource(R.id.imageView, R.drawable.logo);
+
+
+        //get bitmap from image uri
+//        image_url = image_rui.to
+
+        //Large Icon
+//        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.chat_bg);
+
+
+        final Intent intent = new Intent(this, MatchesActivity.class);
+        Bundle bundle = new Bundle();
+        intent.putExtras(bundle);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_MATCH_ID)
+                .setSmallIcon(R.drawable.logo)
+//                .setContentTitle(title)
+//                .setContentText(body)
+//                .setLargeIcon(largeIcon)
+                .setColor(Color.RED)
+                .setContent(notificationLayout)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setAutoCancel(true)
+                .setSound(defaultSound)
+                .setContentIntent(pendingIntent);
+
+
+        final Notification notification = builder.build();
+
+
+        final NotificationTarget notificationTarget = new NotificationTarget(getApplicationContext(),
+                R.id.image_profile,
+                notificationLayout,notification,
+                1);
+
+        final NotificationTarget notificationTarget2 = new NotificationTarget(getApplicationContext(),
+                R.id.post_image,
+                notificationLayout,notification,
+                2);
+
+
+
+        //        Loading profile image
+        String profileid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference Nav_reference = FirebaseDatabase.getInstance().getReference().child("Users");
+        Nav_reference.child(profileid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    User user = dataSnapshot.getValue(User.class);
+
+
+                    Glide.with(getApplicationContext())
+                            .asBitmap()
+                            .load(R.drawable.profile_bg)
+                            .into(notificationTarget);
+
+                    Glide.with(getApplicationContext())
+                            .asBitmap()
+                            .load(user.getImageurl())
+                            .into(notificationTarget2);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        noti.notify(1, notification);
+    }
+
+
+    @GlideExtension
+    public static class MyGlideExtension{
+        private MyGlideExtension(){}
+
+        @NonNull
+        @GlideOption
+        public static RequestOptions roundedCorners(RequestOptions options, @NonNull Context context, int cornerRadius){
+            int px = Math.round(cornerRadius * (context.getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+            return options.transform(new RoundedCorners(px));
+        }
+    }
+
+    public void matchChannel() {
+        //show post detail activity using post id when notification clicked
+        Intent intent = new Intent(this, MatchesActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+
+
+        //Large Icon
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.logo);
+        //sound
+        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_MATCH_ID)
+                .setSmallIcon(R.drawable.logo)
+//                .setLargeIcon(largeIcon)
+                .setContentTitle(Title_txt.getText().toString())
+                .setContentText(Message_txt.getText().toString())
+                .setSound(defaultSound)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setColor(Color.RED)
+                .build();
+        notificationManager.notify(1, notification);
+    }
+
+    public void followChannel() {
+        //show post detail activity using post id when notification clicked
+        Intent intent = new Intent(this, SettingsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 2, intent, PendingIntent.FLAG_ONE_SHOT);
+
+
+        //Large Icon
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.logo);
+        //sound
+        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_FOLLOW_ID)
+                .setSmallIcon(R.drawable.logo)
+                .setLargeIcon(largeIcon)
+                .setNumber(3)
+                .setContentTitle(Title_txt.getText().toString())
+                .setContentText(Message_txt.getText().toString())
+                .setSound(defaultSound)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setColor(Color.RED)
+                .build();
+
+        notificationManager.notify(2, notification);
+    }
+
+    public void postChannel() {
+        //show post detail activity using post id when notification clicked
+        Intent intent = new Intent(this, WebViewActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 3, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        //Large Icon
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.logo);
+        //sound
+        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_FOLLOW_ID)
+                .setSmallIcon(R.drawable.logo)
+                .setLargeIcon(largeIcon)
+                .setContentTitle(Title_txt.getText().toString())
+                .setContentText(Message_txt.getText().toString())
+                .setSound(defaultSound)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setColor(Color.RED)
+                .build();
+
+
+        notificationManager.notify(3, notification);
     }
 
 
@@ -252,7 +505,7 @@ public class HomeActivity extends AppCompatActivity {
         final List<User> mUserList = new ArrayList<>();
         User_recycler.hasFixedSize();
         LinearLayoutManager mLayoutManger = new LinearLayoutManager(this,
-                LinearLayoutManager.HORIZONTAL , false);
+                LinearLayoutManager.HORIZONTAL, false);
         User_recycler.setLayoutManager(mLayoutManger);
         final UserAdapter userAdapter = new UserAdapter(this, mUserList);
         User_recycler.setAdapter(userAdapter);
@@ -262,7 +515,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUserList.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     User user = ds.getValue(User.class);
 //                    if (user.getId().equals(firebaseUser.getUid())){
 //
@@ -280,6 +533,7 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
 
@@ -296,14 +550,14 @@ public class HomeActivity extends AppCompatActivity {
         final SliderAdapterADs adapter = new SliderAdapterADs(this, sliderList);
         sliderView.setSliderAdapter(adapter);
 
-        DatabaseReference Adref= FirebaseDatabase.getInstance().getReference().child("ADs").child("Browse")
+        DatabaseReference Adref = FirebaseDatabase.getInstance().getReference().child("ADs").child("Browse")
                 .child("Slides");
 
         Adref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 sliderList.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     AD ad = ds.getValue(AD.class);
                     sliderList.add(ad);
                 }
@@ -344,7 +598,7 @@ public class HomeActivity extends AppCompatActivity {
         Nav_reference.child(profileid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     User user = dataSnapshot.getValue(User.class);
 
                     Glide.with(getApplicationContext())
@@ -363,11 +617,10 @@ public class HomeActivity extends AppCompatActivity {
 
     private void SetupNavigationDrawer() {
 
-        
 
         final DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
         NavigationView navigationView = findViewById(R.id.nav_drawer);
-        View headerview=navigationView.getHeaderView(0);
+        View headerview = navigationView.getHeaderView(0);
         RelativeLayout navigationHeader = headerview.findViewById(R.id.nav_header_container);
 
         LinearLayout Nav_button = findViewById(R.id.nav);
@@ -375,6 +628,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                Toast.makeText(mcontext, "drawer", Toast.LENGTH_SHORT).show();
                 drawerLayout.openDrawer(GravityCompat.START, true);
 
             }
@@ -393,22 +647,22 @@ public class HomeActivity extends AppCompatActivity {
         Nav_reference.child(profileid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    User user = dataSnapshot.getValue(User.class);
-
-                    Picasso.get().load(user.getImageurl()).into(Profile_image);
-                    Glide.with(getApplicationContext())
-                            .load(user.getImageurl())
-                            .into(Profile_image_bg);
-                    Username.setText(user.getUsername());
-                    Profile_status.setText(user.getProfile_status());
-                }
-                else{
-
-                    Picasso.get().load(R.drawable.profile_bg).into(Profile_image);
-                    Username.setText("Username");
-                    Profile_status.setText("Hey there, am on Campus Buddy");
-                }
+//                if (dataSnapshot.exists()){
+//                    User user = dataSnapshot.getValue(User.class);
+//
+//                    Picasso.get().load(user.getImageurl()).into(Profile_image);
+//                    Glide.with(getApplicationContext())
+//                            .load(user.getImageurl())
+//                            .into(Profile_image_bg);
+//                    Username.setText(user.getUsername());
+//                    Profile_status.setText(user.getProfile_status());
+//                }
+//                else{
+//
+//                    Picasso.get().load(R.drawable.profile_bg).into(Profile_image);
+//                    Username.setText("Username");
+//                    Profile_status.setText("Hey there, am on Campus Buddy");
+//                }
             }
 
             @Override
@@ -421,7 +675,7 @@ public class HomeActivity extends AppCompatActivity {
         Followers_reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Followers.setText(""+dataSnapshot.getChildrenCount());
+                Followers.setText("" + dataSnapshot.getChildrenCount());
             }
 
             @Override
@@ -434,7 +688,7 @@ public class HomeActivity extends AppCompatActivity {
         reference1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Following.setText(""+dataSnapshot.getChildrenCount());
+                Following.setText("" + dataSnapshot.getChildrenCount());
             }
 
             @Override
@@ -455,7 +709,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-                switch (menuItem.getItemId()){
+                switch (menuItem.getItemId()) {
 //                    case R.id.nav_home:
 //                        Toast.makeText(mcontext, "Home", Toast.LENGTH_SHORT).show();
 //                        drawerLayout.closeDrawer(GravityCompat.START, true);
@@ -482,7 +736,7 @@ public class HomeActivity extends AppCompatActivity {
                     case R.id.nav_settings:
                         drawerLayout.closeDrawer(GravityCompat.START, true);
                         startActivity(new Intent(mcontext, SettingsActivity.class));
-                        Animatoo .animateSlideLeft(mcontext);
+                        Animatoo.animateSlideLeft(mcontext);
                         break;
                     case R.id.nav_about_us:
                         String url = "https://campusbuddy.xyz/Organisation";
@@ -526,21 +780,17 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()){
+        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()) {
             super.onBackPressed();
             return;
-        }
-        else {
+        } else {
             Toast.makeText(mcontext, "Tap again to exit", Toast.LENGTH_SHORT).show();
         }
         mBackPressed = System.currentTimeMillis();
     }
 
 
-
-
-
-    private class SliderAdapterADs  extends SliderViewAdapter<SliderAdapterADs.SliderAdapterVH> {
+    private class SliderAdapterADs extends SliderViewAdapter<SliderAdapterADs.SliderAdapterVH> {
 
         private Context context;
         private ArrayList<AD> sliderlist;
@@ -586,7 +836,6 @@ public class HomeActivity extends AppCompatActivity {
         }
 
 
-
         @Override
         public int getCount() {
             return sliderlist.size();
@@ -617,7 +866,7 @@ public class HomeActivity extends AppCompatActivity {
 
         private FirebaseUser firebaseUser;
 
-        public UserAdapter(Context context, List<User> users){
+        public UserAdapter(Context context, List<User> users) {
             mContext = context;
             mUsers = users;
         }
@@ -666,7 +915,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
-        private void isFollowing(final String userid, final CardView layout, final int position){
+        private void isFollowing(final String userid, final CardView layout, final int position) {
 
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 

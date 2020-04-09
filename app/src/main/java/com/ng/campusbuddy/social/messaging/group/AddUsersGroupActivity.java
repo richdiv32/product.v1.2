@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +33,6 @@ import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.utils.SharedPref;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,13 +180,16 @@ public class AddUsersGroupActivity extends AppCompatActivity {
 
 
 
-            holder.itemView.setBackgroundColor(user.isSelected() ? Color.CYAN : Color.TRANSPARENT);
+//            holder.itemView.setBackgroundColor(user.isSelected() ? Color.CYAN : Color.TRANSPARENT);
 
             holder.username.setText(user.getUsername());
 
 
             if (!user.getImageurl().equals(" ")){
-                Picasso.get().load(user.getImageurl()).into(holder.profile_image);
+                Glide.with(mContext)
+                        .load(user.getImageurl())
+                        .thumbnail(0.1f)
+                        .into(holder.profile_image);
 
             } else {
                 holder.profile_image.setImageResource(R.mipmap.ic_launcher);

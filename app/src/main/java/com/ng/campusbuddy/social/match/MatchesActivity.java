@@ -13,10 +13,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,9 +28,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.social.messaging.chat.ChatActivity;
-import com.ng.campusbuddy.social.messaging.group.GroupListAdapter;
+import com.ng.campusbuddy.utils.CustomRecyclerView;
 import com.ng.campusbuddy.utils.SharedPref;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,13 +54,10 @@ public class MatchesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_matches);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        ImageButton back = findViewById(R.id.back_btn);
+        back.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 finish();
             }
         });
@@ -68,6 +66,7 @@ public class MatchesActivity extends AppCompatActivity {
 
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setNestedScrollingEnabled(false);
+//        mRecyclerView.setEmptyView(findViewById(R.id.empty_item));
         mRecyclerView.setHasFixedSize(true);
         mMatchesLayoutManager = new GridLayoutManager(MatchesActivity.this, 3);
         mRecyclerView.setLayoutManager(mMatchesLayoutManager);
@@ -162,9 +161,9 @@ public class MatchesActivity extends AppCompatActivity {
             holder.username.setText(match.getUsername());
 
 
-            Picasso.get()
+            Glide.with(MatchesActivity.this)
                     .load(match.getImageurl())
-                    .placeholder(R.drawable.placeholder)
+                    .thumbnail(0.1f)
                     .into(holder.profile_image);
 
 

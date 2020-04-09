@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,21 +23,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.agrawalsuneet.dotsloader.loaders.AllianceLoader;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,12 +45,13 @@ import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.profile.FollowersActivity;
 import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.User;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -65,7 +60,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
     private Context mContext;
     private List<Post> mPosts;
 
-    boolean isImageFitToScreen;
+    public static  final int limit = 11;
+    public static  final int ITEM_OCCUPIED = 1;
 
     private FirebaseUser firebaseUser;
 
@@ -96,21 +92,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
             Glide.with(mContext)
                     .load(post.getPostimage())
-                    .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-
-                            holder.Pd.setVisibility(View.GONE);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            holder.Pd.setVisibility(View.GONE);
-                            return false;
-                        }
-                    })
-                    .placeholder(R.drawable.placeholder)
+                    .thumbnail(0.1f)
                     .into(holder.post_image);
         }
         else if (post.getPostimage().equals("") && !post.getDescription().equals("")){
@@ -124,29 +106,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         else {
             holder.description.setVisibility(View.VISIBLE);
             holder.description.setText(post.getDescription());
-
             Glide.with(mContext)
                     .load(post.getPostimage())
-                    .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-
-                            holder.Pd.setVisibility(View.GONE);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            holder.Pd.setVisibility(View.GONE);
-                            return false;
-                        }
-                    })
-                    .placeholder(R.drawable.placeholder)
+                    .thumbnail(0.1f)
                     .into(holder.post_image);
 
             holder.post_container.setVisibility(View.VISIBLE);
             holder.post_text_container.setVisibility(View.GONE);
         }
+
+        String timeStamp = mPosts.get(position).getTimestamp();
+
+        //converting time stamp to dd/mm/yyyy hh:mm am/pm
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(Long.parseLong(timeStamp));
+        String dateTime = DateFormat.format("hh:mm aa, dd/MM", cal).toString();
+
+        holder.time_date.setText(dateTime);
 
         publisherInfo(holder.image_profile, holder.username, holder.publisher, post.getPublisher());
         isLiked(post.getPostid(), holder.like);
@@ -160,7 +136,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 if (holder.like.getTag().equals("like")) {
                     FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                             .child(firebaseUser.getUid()).setValue(true);
-                    addNotification(post.getPublisher(), post.getPostid());
+                    addNotificationLike(post.getPublisher(), post.getPostid());
                 } else {
                     FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                             .child(firebaseUser.getUid()).removeValue();
@@ -280,8 +256,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 mContext.startActivity(intent);
                 Animatoo.animateShrink(mContext);
 
-
-
             }
         });
 
@@ -343,6 +317,47 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         });
     }
 
+
+    @Override
+    public int getItemCount() {
+//        if (mPosts.size() > limit){
+//            return limit;
+//        }
+//        else {
+//            return mPosts.size();
+//        }
+        return mPosts.size();
+    }
+
+    public class ImageViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView image_profile, post_image, like, comment, save, more, share;
+        public TextView username, time_date, likes, publisher, description, comments;
+        public TextView post_text_container;
+        public RelativeLayout post_container;
+
+        public ImageViewHolder(View itemView) {
+            super(itemView);
+
+            image_profile = itemView.findViewById(R.id.image_profile);
+            username = itemView.findViewById(R.id.username);
+            time_date = itemView.findViewById(R.id.time_date);
+            post_image = itemView.findViewById(R.id.post_image);
+            like = itemView.findViewById(R.id.like);
+            comment = itemView.findViewById(R.id.comment);
+            share = itemView.findViewById(R.id.share);
+            save = itemView.findViewById(R.id.save);
+            likes = itemView.findViewById(R.id.likes);
+            publisher = itemView.findViewById(R.id.publisher);
+            description = itemView.findViewById(R.id.description);
+            comments = itemView.findViewById(R.id.comments);
+            more = itemView.findViewById(R.id.more);
+
+            post_text_container = itemView.findViewById(R.id.post_text_container);
+            post_container = itemView.findViewById(R.id.post_container);
+        }
+    }
+
     private long downloadImage(String url, String extention) {
 
         DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -390,42 +405,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         return uri;
     }
 
-    @Override
-    public int getItemCount() {
-        return mPosts.size();
-    }
-
-    public class ImageViewHolder extends RecyclerView.ViewHolder {
-
-        public ImageView image_profile, post_image, like, comment, save, more, share;
-        public TextView username, likes, publisher, description, comments;
-        public TextView post_text_container;
-        public RelativeLayout post_container;
-        public AllianceLoader Pd;
-
-        public ImageViewHolder(View itemView) {
-            super(itemView);
-
-            image_profile = itemView.findViewById(R.id.image_profile);
-            username = itemView.findViewById(R.id.username);
-            post_image = itemView.findViewById(R.id.post_image);
-            like = itemView.findViewById(R.id.like);
-            comment = itemView.findViewById(R.id.comment);
-            share = itemView.findViewById(R.id.share);
-            save = itemView.findViewById(R.id.save);
-            likes = itemView.findViewById(R.id.likes);
-            publisher = itemView.findViewById(R.id.publisher);
-            description = itemView.findViewById(R.id.description);
-            comments = itemView.findViewById(R.id.comments);
-            more = itemView.findViewById(R.id.more);
-            Pd = itemView.findViewById(R.id.loader);
-
-            post_text_container = itemView.findViewById(R.id.post_text_container);
-            post_container = itemView.findViewById(R.id.post_container);
-        }
-    }
-
-    private void addNotification(String userid, String postid){
+    private void addNotificationLike(String userid, String postid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -501,7 +481,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Picasso.get().load(user.getImageurl()).into(image_profile);
+                Glide.with(mContext)
+                        .load(user.getImageurl())
+                        .thumbnail(0.1f)
+                        .into(image_profile);
                 username.setText(user.getUsername());
                 publisher.setText(user.getUsername());
             }
@@ -612,4 +595,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             }
         });
     }
+
+
 }

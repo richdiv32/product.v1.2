@@ -31,23 +31,73 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <ImageButton
+                <RelativeLayout
                     android:id="@+id/tab_chat"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:tint="@color/white"
-                    app:srcCompat="@drawable/ic_chat" />
+                    android:layout_weight="1">
 
-                <ImageButton
+                    <ImageButton
+                        android:id="@+id/tab_c"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:background="@android:color/transparent"
+                        android:tint="@color/white"
+                        app:srcCompat="@drawable/ic_chat" />
+
+                    <TextView
+                        android:id="@+id/message_counter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="-25dp"
+                        android:layout_toRightOf="@id/tab_c"
+                        android:background="@drawable/button_white"
+                        android:gravity="center"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="+99"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="10dp"
+                        android:visibility="gone"/>
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:id="@+id/tab_group_chat"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:tint="@color/white"
-                    app:srcCompat="@drawable/ic_group_chat" />
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:id="@+id/tab_group_c"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_centerHorizontal="true"
+                        android:background="@android:color/transparent"
+                        android:tint="@color/white"
+                        app:srcCompat="@drawable/ic_group_chat" />
+
+                    <TextView
+                        android:id="@+id/counter2"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_marginBottom="-25dp"
+                        android:layout_toRightOf="@id/tab_group_c"
+                        android:background="@drawable/button_white"
+                        android:gravity="center"
+                        android:text="+99"
+                        android:layout_centerVertical="true"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="10dp"
+                        android:visibility="gone"/>
+                </RelativeLayout>
+
+
+
             </LinearLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -64,14 +114,16 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
+
+
+            <com.ng.campusbuddy.utils.CustomRecyclerView
                 android:id="@+id/recycler_view_chat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:visibility="visible" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <com.ng.campusbuddy.utils.CustomRecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/recycler_view_group_chat"
@@ -130,6 +182,38 @@
         android:src="@drawable/ic_add"
         android:tint="@color/white"
         app:backgroundTint="@color/colorPrimary" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <LinearLayout
+        android:id="@+id/empty_item2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:gravity="center"
+            android:text="Recent conversations with your friends will appear here."
+            android:textColor="?attr/textcolor"
+            android:textSize="18sp"/>
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:tint="?attr/textcolor"
+            android:src="@drawable/ic_chat"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

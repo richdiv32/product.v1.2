@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp"
     android:id="@+id/chatUserLayout"
     android:layout_height="wrap_content">
 
@@ -11,7 +10,9 @@
         android:layout_height="wrap_content"
         app:cardBackgroundColor="?attr/cardbackground"
         app:cardCornerRadius="3dp"
-        android:elevation="3dp">
+        android:elevation="3dp"
+        android:padding="10dp"
+        android:layout_marginBottom="5dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -22,10 +23,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_toRightOf="@id/profile_image"
                 android:text="username"
-                android:textSize="18sp"
-                android:textColor="?attr/title_textcolor"/>
+                android:textColor="?attr/title_textcolor"
+                android:textSize="18sp" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
@@ -67,12 +69,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/username"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@id/profile_image"
                 android:maxLines="1"
-                android:paddingTop="5dp"
+                android:paddingTop="2dp"
                 android:textColor="?attr/textcolor" />
+
+            <TextView
+                android:id="@+id/counter"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/button_white"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="+99"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="10dp"
+                android:visibility="gone" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
