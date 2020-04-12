@@ -1,5 +1,6 @@
 package com.ng.campusbuddy.social.post;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +59,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.ng.campusbuddy.utils.GlideExtentions.isValidContextForGlide;
 
 public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageViewHolder> {
 
@@ -86,7 +89,9 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
         if (post.getPostimage().equals("")){
 //            removeItem(holder.getAdapterPosition(), holder.itemView);
 
-            holder.post_image.setImageResource(R.drawable.placeholder);
+//            holder.post_image.setImageResource(R.drawable.placeholder);
+            holder.itemView.setVisibility(View.GONE);
+            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0,0));
         }
         else {
 
@@ -208,10 +213,15 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(mContext)
-                        .load(user.getImageurl())
-                        .thumbnail(0.1f)
-                        .into(image_profile);
+
+                if (isValidContextForGlide(mContext)){
+                    Glide.with(mContext)
+                            .load(user.getImageurl())
+                            .thumbnail(0.1f)
+                            .into(image_profile);
+                }
+
+
             }
 
             @Override

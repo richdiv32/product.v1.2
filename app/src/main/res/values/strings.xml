@@ -2,8 +2,15 @@
     <string name="app_name">Campus Buddy</string>
 
     <!--Admod-->
+    <!--Original-->
+    <!--    TODO: Use this when ready to lauch-->
+    <!--    <string name="App_ID">ca-app-pub-8641069722196673~9557545849</string>-->
+    <!--    <string name="banner_unit_id">ca-app-pub-8641069722196673/2581073958</string>-->
+    <!--    <string name="native_unit_id">ca-app-pub-8641069722196673/1892205329</string>-->
+    <!--Test-->
     <string name="App_ID">ca-app-pub-3940256099942544~3347511713</string>
-    <string name="ad_unit_id">ca-app-pub-3940256099942544/8135179316</string>
+    <string name="banner_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="native_unit_id">ca-app-pub-3940256099942544/2247696110</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="google_maps_api_key">AIzaSyA0N-5V5fcSbFsK4AMwxYmTs1X6e_NGF74</string>
@@ -11,6 +18,11 @@
     <!--Drawer-->
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
+
+    <string name="native_icon_image">native_icon_image</string>
+    <string name="native_main_image">native_main_image</string>
+    <string name="native_privacy_information_icon_image">Privacy Information Icon image</string>
+    <string name="learn_more">Learn More</string>
 
 
     <string name="title_activity_settings">Settings</string>
@@ -42,6 +54,7 @@
     <string name="select_status">Select your relationship status</string>
     <string name="title_activity_nearby">Map</string>
     <string name="title_activity_near">Map</string>
+    <string name="PostTransition">image_transition</string>
 
 
 </resources>

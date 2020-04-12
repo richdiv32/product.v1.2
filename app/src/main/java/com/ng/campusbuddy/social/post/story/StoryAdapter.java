@@ -25,6 +25,8 @@ import com.ng.campusbuddy.social.User;
 
 import java.util.List;
 
+import static com.ng.campusbuddy.utils.GlideExtentions.isValidContextForGlide;
+
 public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
 
     private Context mContext;
@@ -112,17 +114,20 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (dataSnapshot.exists()){
-                    Glide.with(mContext)
-                            .load(user.getImageurl())
-                            .thumbnail(0.1f)
-                            .into(viewHolder.story_photo);
-                    if (pos != 0) {
+                    if (isValidContextForGlide(mContext)){
                         Glide.with(mContext)
                                 .load(user.getImageurl())
                                 .thumbnail(0.1f)
-                                .into(viewHolder.story_photo_seen);
-                        viewHolder.story_username.setText(user.getUsername());
+                                .into(viewHolder.story_photo);
+                        if (pos != 0) {
+                            Glide.with(mContext)
+                                    .load(user.getImageurl())
+                                    .thumbnail(0.1f)
+                                    .into(viewHolder.story_photo_seen);
+                            viewHolder.story_username.setText(user.getUsername());
+                        }
                     }
+
                 }
             }
 

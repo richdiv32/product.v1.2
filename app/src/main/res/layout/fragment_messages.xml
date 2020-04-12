@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -26,112 +27,31 @@
 
             </androidx.appcompat.widget.Toolbar>
 
-            <LinearLayout
+            <com.google.android.material.tabs.TabLayout
+                android:layout_marginLeft="20dp"
+                android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:id="@+id/tab_chat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/tab_c"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_centerHorizontal="true"
-                        android:background="@android:color/transparent"
-                        android:tint="@color/white"
-                        app:srcCompat="@drawable/ic_chat" />
-
-                    <TextView
-                        android:id="@+id/message_counter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="20dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginBottom="-25dp"
-                        android:layout_toRightOf="@id/tab_c"
-                        android:background="@drawable/button_white"
-                        android:gravity="center"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        android:text="+99"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="10dp"
-                        android:visibility="gone"/>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/tab_group_chat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/tab_group_c"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:layout_centerHorizontal="true"
-                        android:background="@android:color/transparent"
-                        android:tint="@color/white"
-                        app:srcCompat="@drawable/ic_group_chat" />
-
-                    <TextView
-                        android:id="@+id/counter2"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="20dp"
-                        android:layout_marginBottom="-25dp"
-                        android:layout_toRightOf="@id/tab_group_c"
-                        android:background="@drawable/button_white"
-                        android:gravity="center"
-                        android:text="+99"
-                        android:layout_centerVertical="true"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="10dp"
-                        android:visibility="gone"/>
-                </RelativeLayout>
-
-
-
-            </LinearLayout>
-
+                app:tabSelectedTextColor="#fff"
+                app:tabIconTint="@color/white"
+                app:tabTextColor="#fff"
+                app:tabIndicatorColor="?attr/cardbackground"
+                app:tabIndicatorHeight="5dp">
+            </com.google.android.material.tabs.TabLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/backgroundcolor"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <LinearLayout
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/messagesPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-
-
-            <com.ng.campusbuddy.utils.CustomRecyclerView
-                android:id="@+id/recycler_view_chat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:visibility="visible" />
-
-            <com.ng.campusbuddy.utils.CustomRecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/recycler_view_group_chat"
-                android:visibility="gone"/>
-
-
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+            android:layout_height="match_parent" />
+    </RelativeLayout>
 
 
 

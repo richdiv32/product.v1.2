@@ -1,14 +1,19 @@
 package com.ng.campusbuddy.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
@@ -59,6 +64,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.text.setText(notification.getText());
 
         getUserInfo(holder.image_profile, holder.username, notification.getUserid());
+        CheckIsSeen(holder.layout, notification.getId());
+
+
 
 
         if (notification.getType().equals("follow") || notification.getType().equals("contest")){
@@ -76,27 +84,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (notification.isIspost()) {
-//                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-//                    editor.putString("postid", notification.getPostid());
-//                    editor.apply();
-//
-//                    Intent intent = new Intent(mContext, PostDetailActivity.class);
-//                    intent.putExtra("postid", notification.getPostid());
-//                    intent.putExtra("publisherid", notification.getPublisher());
-//                    mContext.startActivity(intent);
-//                    Animatoo.animateZoom(mContext);
-//
-//
-//                }
-//                else {
-//                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-//                    editor.putString("profileid", notification.getUserid());
-//                    editor.apply();
-//
-//                    mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
-//                    Animatoo.animateSplit(mContext);
-//                }
+
                 if (notification.getType().equals("follow") || notification.getType().equals("contest")){
                     SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
                     editor.putString("profileid", notification.getUserid());
@@ -104,10 +92,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
                     mContext.startActivity(new Intent(mContext, UserProfileActivity.class));
                     Animatoo.animateSplit(mContext);
+                    isSeen(notification.getId());
                 }
                 else if (notification.getType().equals("match")){
                     mContext.startActivity(new Intent(mContext, MatchesActivity.class));
                     Animatoo.animateZoom(mContext);
+                    isSeen(notification.getId());
 
                 }
                 else if (notification.getType().equals("post")){
@@ -121,13 +111,54 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     intent.putExtra("publisherid", notification.getPublisher());
                     mContext.startActivity(intent);
                     Animatoo.animateZoom(mContext);
+
+                    isSeen(notification.getId());
                 }
+
+
 
             }
         });
 
 
 
+    }
+
+    private void isSeen(String id){
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase.getInstance().getReference().child("Notifications").child(firebaseUser.getUid())
+                .child(id).child("isseen").setValue(true);
+    }
+
+
+    private void CheckIsSeen(final View layout, String id) {
+
+        final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications")
+                .child(fUser.getUid()).child(id);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Notification notification = dataSnapshot.getValue(Notification.class);
+                if (dataSnapshot.exists()){
+                    if (dataSnapshot.child("isseen").exists()){
+                        if (notification.isIsseen()){
+                            layout.setBackgroundColor(Color.parseColor("#00FFFFFF"));
+                        }
+                        else {
+                            layout.setBackgroundColor(Color.parseColor("#6F8890A6"));
+                        }
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -141,6 +172,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         public ImageView image_profile, post_image;
         public TextView username, text;
+        public RelativeLayout layout;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -149,6 +181,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             post_image = itemView.findViewById(R.id.post_image);
             username = itemView.findViewById(R.id.title);
             text = itemView.findViewById(R.id.description);
+
+            layout = itemView.findViewById(R.id.notification_background);
         }
     }
 

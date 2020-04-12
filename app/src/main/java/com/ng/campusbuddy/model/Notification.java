@@ -1,19 +1,22 @@
 package com.ng.campusbuddy.model;
 
 public class Notification {
+    private String id;
     private String userid;
     private String text;
     private String postid;
     private String publisher;
     private String type;
+    private boolean isseen;
 
-
-    public Notification(String userid, String text, String postid, String publisher, String type) {
+    public Notification(String id, String userid, String text, String postid, String publisher, String type, boolean isseen) {
+        this.id = id;
         this.userid = userid;
         this.text = text;
         this.postid = postid;
         this.publisher = publisher;
         this.type = type;
+        this.isseen = isseen;
     }
 
     public Notification() {
@@ -25,6 +28,14 @@ public class Notification {
 
     public void setUserid(String userid) {
         this.userid = userid;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getText() {
@@ -57,5 +68,13 @@ public class Notification {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isIsseen() {
+        return isseen;
+    }
+
+    public void setIsseen(boolean isseen) {
+        this.isseen = isseen;
     }
 }

@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -80,6 +82,23 @@ public class NotificationsActivity extends AppCompatActivity {
 
         readNotifications();
         AdMod();
+
+        final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.refreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                //implement Handler to wait for 3 seconds and then update UI
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //cancel the visual indication of a refresh
+                        swipeRefreshLayout.setRefreshing(false);
+                        readNotifications();
+                    }
+                }, 3000);
+            }
+        });
 
     }
 

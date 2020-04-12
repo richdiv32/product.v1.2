@@ -96,9 +96,11 @@
                             android:id="@+id/post_text_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:gravity="center"
                             android:maxLines="10"
                             android:text="TEXT"
+                            android:padding="10dp"
                             android:textColor="?attr/title_textcolor"
                             android:textSize="18sp"
                             android:visibility="gone" />
@@ -114,7 +116,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:adjustViewBounds="true"
-                                android:background="@drawable/placeholder" />
+                                android:background="@drawable/placeholder"
+                                android:transitionName="@string/PostTransition"/>
 
                         </RelativeLayout>
 

@@ -6,14 +6,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,10 +64,36 @@ public class MyPhotosAdapter extends RecyclerView.Adapter<MyPhotosAdapter.ImageV
         final Post post = mPosts.get(position);
         final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        Glide.with(mContext)
-                .load(post.getPostimage())
-                .thumbnail(0.1f)
-                .into(holder.post_image);
+
+        if (post.getPostimage().equals("")){
+//            holder.post_image.setImageResource(R.drawable.placeholder);
+            holder.itemView.setVisibility(View.GONE);
+            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0,0));
+        }
+        else {
+
+            Glide.with(mContext)
+                    .load(post.getPostimage())
+                    .placeholder(R.drawable.placeholder)
+//                    .override(600, 900)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object o, Target<Drawable> target, boolean b) {
+//                            holder.Pd.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable drawable, Object o, Target<Drawable> target, DataSource dataSource, boolean b) {
+//                            holder.Pd.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+
+                    .into(holder.post_image);
+
+        }
 
         holder.post_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +106,7 @@ public class MyPhotosAdapter extends RecyclerView.Adapter<MyPhotosAdapter.ImageV
                 intent.putExtra("postid", post.getPostid());
                 intent.putExtra("publisherid", post.getPublisher());
                 mContext.startActivity(intent);
+                Animatoo.animateSlideUp(mContext);
             }
         });
 

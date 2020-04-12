@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
 import com.gauravk.bubblenavigation.listener.BubbleNavigationChangeListener;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,12 +54,14 @@ import com.ng.campusbuddy.auth.SetUpProfileActivity;
 import com.ng.campusbuddy.education.EducationActivity;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.home.HomeActivity;
+import com.ng.campusbuddy.model.Notification;
 import com.ng.campusbuddy.profile.ProfileActivity;
 import com.ng.campusbuddy.social.fragments.ChatRoomFragment;
 import com.ng.campusbuddy.social.fragments.FeedsFragment;
 import com.ng.campusbuddy.social.fragments.FindFriendFragment;
 import com.ng.campusbuddy.social.fragments.MatchUpFragment;
 import com.ng.campusbuddy.social.fragments.MessagesFragment;
+import com.ng.campusbuddy.social.messaging.chat.Chat;
 import com.ng.campusbuddy.start.WelcomeActivity;
 import com.ng.campusbuddy.tools.NotificationsActivity;
 import com.ng.campusbuddy.tools.SettingsActivity;
@@ -139,6 +143,9 @@ public class SocialActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_social);
         ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
 
+        // Initialize the Mobile Ads SDK.
+        MobileAds.initialize(this, getString(R.string.App_ID));
+
 
         profileid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -166,7 +173,15 @@ public class SocialActivity extends AppCompatActivity implements
 //        tabLayout.setTabFourIcon(R.drawable.ic_chat_room);
 //        tabLayout.setTabFiveIcon(R.drawable.ic_search);
 
+
+
         BubbleNavigationLinearView bubbleNavigationLinearView = findViewById(R.id.bubbleNavigation);
+
+
+        bubbleNavigationLinearView.setBadgeValue(0, "10");
+        bubbleNavigationLinearView.setBadgeValue(1, "200");
+        bubbleNavigationLinearView.setBadgeValue(2, "6");
+        bubbleNavigationLinearView.setBadgeValue(3, "1203");
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new FeedsFragment()).commit();
@@ -203,22 +218,10 @@ public class SocialActivity extends AppCompatActivity implements
     }
 
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        SharedPref sharedPref = new SharedPref(this);
-//        if (sharedPref.loadNightModeState() == true){
-//            setTheme(R.style.AppDarkTheme);
-//        }
-//        else{
-//            setTheme(R.style.AppTheme);
-//        }
-//    }
-
     private void SetupNavigationDrawer() {
 
         final DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
-        NavigationView navigationView = findViewById(R.id.nav_drawer);
+        final NavigationView navigationView = findViewById(R.id.nav_drawer);
         View headerview=navigationView.getHeaderView(0);
         RelativeLayout navigationHeader = headerview.findViewById(R.id.nav_header_container);
 
@@ -231,18 +234,43 @@ public class SocialActivity extends AppCompatActivity implements
         final TextView Following = headerview.findViewById(R.id.following);
 
         //badge
-        TextView counter = findViewById(R.id.counter);
-        int Notifications = 0;
+        //for nav button
+        final TextView counter = findViewById(R.id.counter);
+        final FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(fuser.getUid());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int unread = 0;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Notification notification = snapshot.getValue(Notification.class);
+                    if (!notification.isIsseen()){
+                        unread++;
+                    }
+                }
+                if (unread == 0){
+                    counter.setVisibility(View.GONE);
+                }
+                else if (unread > 99){
+                    counter.setText("+99");
+                    // showing dot next to notifications label
+                    navigationView.getMenu().getItem(1).setActionView(R.layout.menu_dot);
+                }
+                else {
+                    counter.setText(String.valueOf(unread));
+                    // showing dot next to notifications label
+                    navigationView.getMenu().getItem(1).setActionView(R.layout.menu_dot);
+                }
 
-        if (Notifications == 0){
-            counter.setVisibility(View.GONE);
-        }
-        else if (Notifications > 99){
-            counter.setText("+99");
-        }
-        else {
-            counter.setText(String.valueOf(Notifications));
-        }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
 
         ImageButton Nav = findViewById(R.id.nav_button);
         Nav.setOnClickListener(new View.OnClickListener() {
@@ -402,27 +430,28 @@ public class SocialActivity extends AppCompatActivity implements
 
     @Override
     public void onUpdateNeeded(final String updateUrl) {
-//        final  View popup_view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialog_update_app, null);
-//        final PopupWindow popupWindow = new PopupWindow(popup_view, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+//        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+//        final  View popup_view = inflater.inflate(R.layout.dialog_update_app, null);
+//        final PopupWindow popupWindow = new PopupWindow(popup_view, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 //        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        popupWindow.setOutsideTouchable(true);
-//        popupWindow.setFocusable(true);
+//        popupWindow.setOutsideTouchable(false);
+//        popupWindow.setFocusable(false);
 //        popupWindow.showAtLocation(popup_view, Gravity.CENTER, 0, 0);
-//        popupWindow.isShowing();
 
         //inflate layout for dialog
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_update_app, null);
 
-        Button Update_App =view.findViewById(R.id.update_btn);
-        Button Cancel =view.findViewById(R.id.nope_btn);
+        Button Update_App = view.findViewById(R.id.update_btn);
+        Button Cancel = view.findViewById(R.id.nope_btn);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.Dialog)
                 .setCancelable(false);
         builder.setView(view);
 
 
         final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
+        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         dialog.show();
 
         Update_App.setOnClickListener(new View.OnClickListener() {
@@ -436,9 +465,7 @@ public class SocialActivity extends AppCompatActivity implements
         Cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                finish();
-                //TODO: change before launching
-                dialog.dismiss();
+                finish();
             }
         });
 

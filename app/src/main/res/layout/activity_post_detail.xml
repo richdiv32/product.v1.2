@@ -59,7 +59,8 @@
                                     android:layout_height="match_parent"
                                     android:adjustViewBounds="true"
                                     android:scaleType="centerCrop"
-                                    android:background="@drawable/placeholder" />
+                                    android:background="@drawable/placeholder"
+                                    android:transitionName="@string/PostTransition"/>
 
                                 <com.agrawalsuneet.dotsloader.loaders.LightsLoader
                                     android:id="@+id/loader"
@@ -244,16 +245,50 @@
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/recycler_view_post"
-                android:visibility="gone"/>
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:id="@+id/recycler_view_post"-->
+<!--                android:visibility="gone"/>-->
 
-            <androidx.recyclerview.widget.RecyclerView
+            <LinearLayout
+                android:id="@+id/empty_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/recycler_view_comments" />
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="No comments yet. Be the first to comment."
+                    android:textColor="?attr/textcolor"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_comment" />
+            </LinearLayout>
+
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:id="@+id/recycler_view_comments" />-->
+
+            <com.ng.campusbuddy.utils.CustomRecyclerView
+                android:id="@+id/recycler_view_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical"
+                android:visibility="visible"
+                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable" />
 
         </LinearLayout>
 

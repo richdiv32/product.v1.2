@@ -37,6 +37,7 @@ import com.bumptech.glide.Glide;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -228,18 +229,66 @@ public class MatchUpFragment extends Fragment {
                 });
     }
 
-
     private void addNotification(String userId){
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userId);
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userId);
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("userid", firebaseUser.getUid());
-        hashMap.put("text", "is matched with you");
-        hashMap.put("postid", "");
-        hashMap.put("type", "match");
+        final String orderBy = "match"+firebaseUser.getUid();
+        reference.orderByChild("orderby").equalTo(orderBy)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            dataSnapshot.getRef().removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    String notification_id = reference.push().getKey();
 
-        reference.push().setValue(hashMap);
+                                    HashMap<String, Object> hashMap = new HashMap<>();
+                                    hashMap.put("userid", firebaseUser.getUid());
+                                    hashMap.put("text", "is matched with you");
+                                    hashMap.put("postid", "");
+                                    hashMap.put("type", "match");
+                                    hashMap.put("id", notification_id);
+                                    hashMap.put("isseen", false);
+                                    hashMap.put("orderby", orderBy);
+
+
+                                    reference.child(notification_id).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            String notification_id = reference.push().getKey();
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("userid", firebaseUser.getUid());
+                            hashMap.put("text", "is matched with you");
+                            hashMap.put("postid", "");
+                            hashMap.put("type", "match");
+                            hashMap.put("id", notification_id);
+                            hashMap.put("isseen", false);
+                            hashMap.put("orderby", orderBy);
+
+
+                            reference.child(notification_id).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
     }
 
     private void isConnectionMatch(final String userId) {

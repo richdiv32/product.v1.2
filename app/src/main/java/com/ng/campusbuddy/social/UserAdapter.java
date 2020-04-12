@@ -125,14 +125,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                 builder.setPositiveButton("Block", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-//                        if (mUsers.get(position).isBlocked()){
-//                            unblockUser(user.getId());
-//                        }
-//                        else {
-//                            blockUser(user.getId());
-//                        }
-
                         blockUser(user.getId(), holder.btn_follow, holder.btn_message, holder.block_img);
 
                     }
@@ -169,6 +161,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                             .child("following").child(user.getId()).removeValue();
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(user.getId())
                             .child("followers").child(firebaseUser.getUid()).removeValue();
+
+                    deleteNotification(user.getId());
                 }
             }
 
@@ -195,6 +189,118 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
         });
     }
 
+
+    @Override
+    public int getItemCount() {
+        return mUsers.size();
+    }
+
+    public class ImageViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView username;
+        public TextView fullname;
+        public CircleImageView image_profile;
+        public Button btn_follow;
+        public Button btn_message;
+        public ImageView block_img;
+
+        public ImageViewHolder(View itemView) {
+            super(itemView);
+
+            username = itemView.findViewById(R.id.username);
+            fullname = itemView.findViewById(R.id.fullname);
+            image_profile = itemView.findViewById(R.id.image_profile);
+            btn_follow = itemView.findViewById(R.id.btn_follow);
+            btn_message = itemView.findViewById(R.id.btn_message);
+            block_img = itemView.findViewById(R.id.blocked_image);
+        }
+    }
+
+    private void addNotification(String userid){
+
+
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
+
+        String orderBy = "follow"+firebaseUser.getUid();
+        reference.orderByChild("orderby").equalTo(orderBy)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            dataSnapshot.getRef().removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    String notification_id = reference.push().getKey();
+
+                                    HashMap<String, Object> hashMap = new HashMap<>();
+                                    hashMap.put("userid", firebaseUser.getUid());
+                                    hashMap.put("text", "started following you");
+                                    hashMap.put("postid", "");
+                                    hashMap.put("type", "follow");
+                                    hashMap.put("id", notification_id);
+                                    hashMap.put("isseen", false);
+                                    hashMap.put("orderby", "follow"+firebaseUser.getUid());
+
+
+                                    reference.child(notification_id).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            String notification_id = reference.push().getKey();
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("userid", firebaseUser.getUid());
+                            hashMap.put("text", "started following you");
+                            hashMap.put("postid", "");
+                            hashMap.put("type", "follow");
+                            hashMap.put("id", notification_id);
+                            hashMap.put("isseen", false);
+                            hashMap.put("orderby", "follow"+firebaseUser.getUid());
+
+
+                            reference.child(notification_id).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+    private void deleteNotification(String userid){
+
+
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
+
+        String orderBy = "follow"+firebaseUser.getUid();
+        reference.orderByChild("orderby").equalTo(orderBy)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            dataSnapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
 
     private void isBlock(final String userid, final Button btn_message, final Button btn_follow){
 
@@ -327,7 +433,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
     private void blockUser(String id, final Button btn_follow, final Button btn_message, final ImageView block_img) {
         //block the user by adding id to current user blocked child
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
-        .child(firebaseUser.getUid()).child("blocked_users").child(id);
+                .child(firebaseUser.getUid()).child("blocked_users").child(id);
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", id);
@@ -349,45 +455,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                         Toast.makeText(mContext, "Blocking unsuccessful." + e, Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    private void addNotification(String userid){
-        Log.d("UserAdapter", "adding notification");
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("userid", firebaseUser.getUid());
-        hashMap.put("text", "started following you");
-        hashMap.put("postid", "");
-        hashMap.put("type", "follow");
-
-        reference.push().setValue(hashMap);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mUsers.size();
-    }
-
-    public class ImageViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView username;
-        public TextView fullname;
-        public CircleImageView image_profile;
-        public Button btn_follow;
-        public Button btn_message;
-        public ImageView block_img;
-
-        public ImageViewHolder(View itemView) {
-            super(itemView);
-
-            username = itemView.findViewById(R.id.username);
-            fullname = itemView.findViewById(R.id.fullname);
-            image_profile = itemView.findViewById(R.id.image_profile);
-            btn_follow = itemView.findViewById(R.id.btn_follow);
-            btn_message = itemView.findViewById(R.id.btn_message);
-            block_img = itemView.findViewById(R.id.blocked_image);
-        }
     }
 
     private void isFollowing(final String userid, final Button button){

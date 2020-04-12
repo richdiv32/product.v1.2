@@ -63,7 +63,8 @@
                 android:padding="5dp"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
-                app:srcCompat="@drawable/placeholder" />
+                app:srcCompat="@drawable/placeholder"
+                android:transitionName="@string/PostTransition"/>
 
             <com.kevalpatel2106.emoticongifkeyboard.widget.EmoticonTextView
                 android:id="@+id/show_message"

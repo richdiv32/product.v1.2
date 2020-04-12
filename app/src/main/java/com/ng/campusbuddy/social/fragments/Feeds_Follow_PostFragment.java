@@ -1,5 +1,6 @@
 package com.ng.campusbuddy.social.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdLoader;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.NativeExpressAdView;
+import com.google.android.gms.ads.formats.NativeAd;
+import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,12 +49,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Feeds_Follow_PostFragment extends Fragment {
+    Context context;
     View view;
 
 
     private CustomRecyclerView recyclerView;
     private PostAdapter postAdapter;
-    private List<Post> postList;
+//    private List<Post> postList;
 
     private RecyclerView recyclerView_story;
     private StoryAdapter storyAdapter;
@@ -54,24 +64,97 @@ public class Feeds_Follow_PostFragment extends Fragment {
 
     private List<String> followingList;
 
+    // The number of native ads to load.
+    public static final int NUMBER_OF_ADS = 1;
+    public static final int ITEM_PER_AD = 2;
+
+    // The AdLoader used to load ads.
+    private AdLoader adLoader;
+
+    // List of MenuItems and native ads that populate the RecyclerView.
+    private List<Object> post_ad_list = new ArrayList<>();
+
+    // List of native ads that have been successfully loaded.
+    private List<UnifiedNativeAd> mNativeAds = new ArrayList<>();
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //get fragment context
+        context = container.getContext();
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_feeds__follow__post, container, false);
 
-
+        // Initialize the Mobile Ads SDK.
+        MobileAds.initialize(getContext(), getActivity().getString(R.string.App_ID));
 
 
         ADimageslider();
         checkFollowing();
-        readStory();
+        loadNativeAds();
+
+//        if (savedInstanceState == null) {
+//
+//            // Update the RecyclerView item's list with menu items.
+//            checkFollowing();
+//            // Update the RecyclerView item's list with native ads.
+//            loadNativeAds();
+//        }
+
+//        loadNativeAds();
 
 
         return view;
+    }
+
+    private void insertAdsInPostItems() {
+        Log.d("Feeds", "Getting Ads");
+        if (mNativeAds.size() <= 0) {
+            return;
+        }
+
+        int offset = (post_ad_list.size() / mNativeAds.size()) + 1;
+        int index = 0;
+        for (UnifiedNativeAd ad : mNativeAds) {
+            post_ad_list.add(index, ad);
+            index = index + offset;
+
+            Log.d("Feeds", "Adding Ads");
+        }
+    }
+
+    private void loadNativeAds() {
+
+        AdLoader.Builder builder = new AdLoader.Builder(context,context.getString(R.string.native_unit_id));
+        adLoader = builder.forUnifiedNativeAd(
+                new UnifiedNativeAd.OnUnifiedNativeAdLoadedListener() {
+                    @Override
+                    public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
+                        // A native ad loaded successfully, check if the ad loader has finished loading
+                        // and if so, insert the ads into the list.
+                        mNativeAds.add(unifiedNativeAd);
+                        if (!adLoader.isLoading()) {
+                            insertAdsInPostItems();
+                        }
+                    }
+                }).withAdListener(
+                new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(int errorCode) {
+                        // A native ad failed to load, check if the ad loader has finished loading
+                        // and if so, insert the ads into the list.
+                        Log.e("MainActivity", "The previous native ad failed to load. Attempting to"
+                                + " load another.");
+                        if (!adLoader.isLoading()) {
+                            insertAdsInPostItems();
+                        }
+                    }
+                }).build();
+
+        // Load the Native ads.
+        adLoader.loadAds(new AdRequest.Builder().build(), NUMBER_OF_ADS);
     }
 
     private void ADimageslider() {
@@ -124,8 +207,10 @@ public class Feeds_Follow_PostFragment extends Fragment {
                     followingList.add(snapshot.getKey());
                 }
 
+//                loadNativeAds();
                 readPosts();
                 readStory();
+
             }
 
             @Override
@@ -143,8 +228,8 @@ public class Feeds_Follow_PostFragment extends Fragment {
         mLayoutManager.setReverseLayout(true);
         mLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(mLayoutManager);
-        postList = new ArrayList<>();
-        postAdapter = new PostAdapter(getContext(), postList);
+//        postList = new ArrayList<>();
+        postAdapter = new PostAdapter(getActivity(), post_ad_list);
         recyclerView.setAdapter(postAdapter);
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
@@ -152,22 +237,19 @@ public class Feeds_Follow_PostFragment extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                postList.clear();
+                post_ad_list.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Post post = snapshot.getValue(Post.class);
                     for (String id : followingList){
                         if (post.getPublisher().equals(id)){
-                            postList.add(post);
+                            post_ad_list.add(post);
 
-//                            count++;
                         }
-
-
                     }
                 }
 
+//                loadNativeAds();
                 postAdapter.notifyDataSetChanged();
-//                progress_circular.setVisibility(View.GONE);
             }
 
             @Override

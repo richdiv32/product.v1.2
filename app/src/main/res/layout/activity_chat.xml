@@ -96,59 +96,90 @@
             android:layout_above="@id/bottom"
             android:layout_below="@id/toolbar">
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/top2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:elevation="10dp"
+                android:padding="10dp"
+                app:cardBackgroundColor="@color/semi_transparent"
+                app:cardCornerRadius="6dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" >
+                    android:drawableLeft="@drawable/ic_password"
+                    android:gravity="center"
+                    android:text="Message to this chat are now secured with end-to-end encryption. No-one can read them besides you and the user."
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </androidx.cardview.widget.CardView>
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/top2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:elevation="10dp"
-                        android:padding="10dp"
-                        app:cardBackgroundColor="@color/semi_transparent"
-                        app:cardCornerRadius="6dp">
+            <com.ng.campusbuddy.utils.CustomRecyclerView
+                android:layout_below="@+id/top2"
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:drawableLeft="@drawable/ic_password"
-                            android:gravity="center"
-                            android:text="Message to this chat are now secured with end-to-end encryption. No-one can read them besides you and the user."
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
-                    </androidx.cardview.widget.CardView>
+<!--            <ScrollView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent">-->
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="Say hello to him/her and get connected."
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:visibility="gone" />
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical" >-->
 
-                    <com.ng.campusbuddy.utils.CustomRecyclerView
-                        android:id="@+id/recycler_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+<!--                    <androidx.cardview.widget.CardView-->
+<!--                        android:id="@+id/top2"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="10dp"-->
+<!--                        android:layout_marginLeft="10dp"-->
+<!--                        android:layout_marginTop="10dp"-->
+<!--                        android:layout_marginEnd="10dp"-->
+<!--                        android:layout_marginRight="10dp"-->
+<!--                        android:layout_marginBottom="10dp"-->
+<!--                        android:elevation="10dp"-->
+<!--                        android:padding="10dp"-->
+<!--                        app:cardBackgroundColor="@color/semi_transparent"-->
+<!--                        app:cardCornerRadius="6dp">-->
 
-                    </com.ng.campusbuddy.utils.CustomRecyclerView>
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:drawableLeft="@drawable/ic_password"-->
+<!--                            android:gravity="center"-->
+<!--                            android:text="Message to this chat are now secured with end-to-end encryption. No-one can read them besides you and the user."-->
+<!--                            android:textColor="@color/white"-->
+<!--                            android:textSize="12sp" />-->
+<!--                    </androidx.cardview.widget.CardView>-->
 
-                </LinearLayout>
-            </ScrollView>
+<!--                    <TextView-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center"-->
+<!--                        android:padding="10dp"-->
+<!--                        android:text="Say hello to him/her and get connected."-->
+<!--                        android:textColor="@color/white"-->
+<!--                        android:textSize="18sp"-->
+<!--                        android:visibility="gone" />-->
+
+<!--                    <com.ng.campusbuddy.utils.CustomRecyclerView-->
+<!--                        android:id="@+id/recycler_view"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent">-->
+
+<!--                    </com.ng.campusbuddy.utils.CustomRecyclerView>-->
+
+<!--                </LinearLayout>-->
+<!--            </ScrollView>-->
 
         </RelativeLayout>
 

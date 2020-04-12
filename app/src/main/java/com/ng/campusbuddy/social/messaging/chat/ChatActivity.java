@@ -352,7 +352,6 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-
     private void isBlocked_or_Not(final String userid){
 
         //check if user is blocked or not
@@ -929,14 +928,34 @@ public class ChatActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
+    private void currentUser(String userid){
+
+        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+        editor.putString("currentuser", userid);
+        editor.apply();
+
+    }
 
     private void typingstatus(String typing){
+
         reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("typingTo", typing);
 
         reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        currentUser(userid);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        currentUser("none");
     }
 
     @Override

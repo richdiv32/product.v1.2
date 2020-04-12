@@ -30,7 +30,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,6 +44,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.model.Notification;
 import com.ng.campusbuddy.social.messaging.PhotoActivity;
 import com.ng.campusbuddy.social.messaging.chat.ChatActivity;
 import com.ng.campusbuddy.social.post.Post;
@@ -260,7 +263,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
                     //send notification
-                    Log.d(TAG, "before notifications");
                     addNotification();
 
                 } else if (btn.equals("following")){
@@ -269,6 +271,9 @@ public class UserProfileActivity extends AppCompatActivity {
                             .child("following").child(profileid).removeValue();
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(profileid)
                             .child("followers").child(firebaseUser.getUid()).removeValue();
+
+                    //delete notification
+                    deleteNotification();
 
                 }
             }
@@ -362,21 +367,92 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void addNotification(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("userid", firebaseUser.getUid());
-        hashMap.put("text", "started following you");
-        hashMap.put("postid", "");
-        hashMap.put("type", "follow");
 
-        reference.push().setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "notification sent");
-            }
-        });
-        Log.d(TAG, "INSIDE NORMAL NOTIFICATION");
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
+
+        final String orderBy = "follow"+firebaseUser.getUid();
+        reference.orderByChild("orderby").equalTo(orderBy)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            dataSnapshot.getRef().removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    String notification_id = reference.push().getKey();
+
+                                    Log.d(TAG, "In notification");
+                                    HashMap<String, Object> hashMap = new HashMap<>();
+                                    hashMap.put("userid", firebaseUser.getUid());
+                                    hashMap.put("text", "started following you");
+                                    hashMap.put("postid", "");
+                                    hashMap.put("type", "follow");
+                                    hashMap.put("id", notification_id);
+                                    hashMap.put("isseen", false);
+                                    hashMap.put("orderby", orderBy);
+
+
+                                    reference.child(notification_id).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "notification sent");
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            String notification_id = reference.push().getKey();
+
+                            Log.d(TAG, "In notification");
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("userid", firebaseUser.getUid());
+                            hashMap.put("text", "started following you");
+                            hashMap.put("postid", "");
+                            hashMap.put("type", "follow");
+                            hashMap.put("id", notification_id);
+                            hashMap.put("isseen", false);
+                            hashMap.put("orderby", orderBy);
+
+
+                            reference.child(notification_id).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "notification sent");
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+    private void deleteNotification(){
+
+
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
+
+        String orderBy = "follow"+firebaseUser.getUid();
+        reference.orderByChild("orderby").equalTo(orderBy)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            dataSnapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
     }
 

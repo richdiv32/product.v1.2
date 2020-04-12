@@ -33,7 +33,8 @@
                 app:zoomage_zoomable="true"
                 app:zoomage_translatable="true"
                 app:zoomage_minScale="0.6"
-                app:zoomage_maxScale="8" />
+                app:zoomage_maxScale="8"
+                android:transitionName="@string/PostTransition"/>
 
             <LinearLayout
                 android:id="@+id/fullscreen_content_controls2"

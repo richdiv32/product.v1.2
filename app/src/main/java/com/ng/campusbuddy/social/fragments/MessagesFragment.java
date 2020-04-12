@@ -10,21 +10,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,44 +32,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.social.User;
 import com.ng.campusbuddy.social.messaging.chat.Chat;
-import com.ng.campusbuddy.social.messaging.chat.ChatListAdapter;
-import com.ng.campusbuddy.social.messaging.chat.Chatlist;
 import com.ng.campusbuddy.social.messaging.chat.NewChatActivity;
-import com.ng.campusbuddy.social.messaging.group.Group;
-import com.ng.campusbuddy.social.messaging.group.GroupListAdapter;
-import com.ng.campusbuddy.social.messaging.group.Grouplist;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
-import com.ng.campusbuddy.utils.CustomRecyclerView;
+import com.ng.campusbuddy.tools.AdActivity;
 
 import static android.content.Context.MODE_PRIVATE;
 
 
 public class MessagesFragment extends Fragment {
-
-    RelativeLayout Chat_tab, GroupChat_tab;
-
-    CustomRecyclerView Chats_recycler;
-    private List<Chatlist> usersList;
-    private ChatListAdapter userAdapter;
-
-    private List<Group> mGroup;
-    private List<User> mUsers;
-
-    FirebaseUser fuser;
-    DatabaseReference reference;
-
-    CustomRecyclerView GroupChats_recycler;
-    private List<Grouplist> usersGroupList;
-    private GroupListAdapter groupListAdapter;
-
     View view;
 
 
@@ -85,30 +60,20 @@ public class MessagesFragment extends Fragment {
             TapTarget();
         }
 
-        fuser = FirebaseAuth.getInstance().getCurrentUser();
-
-
-
-
-        Init();
         AddInit();
-        LoadChatlist();
-        LoadGrouplist();
-        BadgeInit();
+//        BadgeInit();
 
-        Chats_recycler.setVisibility(View.VISIBLE);
-        GroupChats_recycler.setVisibility(View.GONE);
+        final FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
 
-        return view;
-    }
+        final ViewPager MessagesPager = view.findViewById(R.id.messagesPager);
+        final TabLayout tabLayout = view.findViewById(R.id.tab_layout);
 
-    private void BadgeInit() {
-        final TextView Message_counter = view.findViewById(R.id.message_counter);
-        final TextView Group_message_counter = view.findViewById(R.id.counter2);
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final MessagesPagerAdapter mPagerViewAdapter = new MessagesPagerAdapter(getChildFragmentManager());
                 int unread = 0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
@@ -118,12 +83,17 @@ public class MessagesFragment extends Fragment {
                 }
 
                 if (unread == 0){
-                    Message_counter.setVisibility(View.GONE);
-
-                } else {
-                    Message_counter.setVisibility(View.VISIBLE );
-                    Message_counter.setText(String.valueOf(unread));
+                    mPagerViewAdapter.addFragment(new Messages_ChatFragment(), "Chats");
                 }
+                else {
+                    mPagerViewAdapter.addFragment(new Messages_ChatFragment(), "("+unread+") Chats");
+                }
+
+                mPagerViewAdapter.addFragment(new Messages_GroupFragment(), "Groups");
+                mPagerViewAdapter.addFragment(new Messages_RoomFragment(), "Rooms");
+
+                MessagesPager.setAdapter(mPagerViewAdapter);
+                tabLayout.setupWithViewPager(MessagesPager);
 
             }
 
@@ -133,33 +103,64 @@ public class MessagesFragment extends Fragment {
             }
         });
 
-//        DatabaseReference group_reference = FirebaseDatabase.getInstance().getReference("Groups");
-//        group_reference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                int unread = 0;
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-//                    Chat chat = snapshot.getValue(Chat.class);
-//                    if (chat.getReceiver().equals(fuser.getUid()) && !chat.isIsseen()){
-//                        unread++;
-//                    }
-//                }
+//        mPagerViewAdapter.addFragment(new Messages_ChatFragment(), "Chats");
+//        mPagerViewAdapter.addFragment(new Messages_GroupFragment(), "Groups");
+//        mPagerViewAdapter.addFragment(new Messages_RoomFragment(), "Rooms");
 //
-//                if (unread == 0){
-//                    Group_message_counter.setVisibility(View.GONE);
-//
-//                } else {
-//                    Group_message_counter.setText(String.valueOf(unread));
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
+//        MessagesPager.setAdapter(mPagerViewAdapter);
+//        tabLayout.setupWithViewPager(MessagesPager);
+
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        return view;
     }
+
+//    private void BadgeInit() {
+//        final TextView Message_counter = view.findViewById(R.id.message_counter);
+//        final TextView Group_message_counter = view.findViewById(R.id.counter2);
+//
+////        DatabaseReference group_reference = FirebaseDatabase.getInstance().getReference("Groups");
+////        group_reference.addValueEventListener(new ValueEventListener() {
+////            @Override
+////            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+////                int unread = 0;
+////                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+////                    Chat chat = snapshot.getValue(Chat.class);
+////                    if (chat.getReceiver().equals(fuser.getUid()) && !chat.isIsseen()){
+////                        unread++;
+////                    }
+////                }
+////
+////                if (unread == 0){
+////                    Group_message_counter.setVisibility(View.GONE);
+////
+////                } else {
+////                    Group_message_counter.setText(String.valueOf(unread));
+////                }
+////
+////            }
+////
+////            @Override
+////            public void onCancelled(@NonNull DatabaseError databaseError) {
+////
+////            }
+////        });
+//    }
 
     private void TapTarget() {
         TapTargetView.showFor(getActivity(),                 // `this` is an Activity
@@ -192,35 +193,6 @@ public class MessagesFragment extends Fragment {
         editor.apply();
 
     }
-
-
-
-
-    private void Init() {
-        Chat_tab = view.findViewById(R.id.tab_chat);
-        GroupChat_tab = view.findViewById(R.id.tab_group_chat);
-
-        Chat_tab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GroupChats_recycler.setVisibility(View.GONE);
-                Chats_recycler.setVisibility(View.VISIBLE);
-
-                chatList();
-            }
-        });
-
-        GroupChat_tab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GroupChats_recycler.setVisibility(View.VISIBLE);
-                Chats_recycler.setVisibility(View.GONE);
-
-//                GroupList();
-            }
-        });
-    }
-
 
     private void AddInit() {
         final boolean[] isFABOpen = new boolean[1];
@@ -298,9 +270,6 @@ public class MessagesFragment extends Fragment {
                             CreateNewGroup(groupName_str);
                         }
 
-                        GroupChats_recycler.setVisibility(View.VISIBLE);
-                        Chats_recycler.setVisibility(View.GONE);
-
                     }
                 });
 
@@ -321,11 +290,13 @@ public class MessagesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Chat with a counselor", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getActivity(), AdActivity.class));
             }
         });
     }
 
     private void CreateNewGroup(final String groupName_str) {
+        final FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
 
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("Groups");
 
@@ -376,117 +347,40 @@ public class MessagesFragment extends Fragment {
 
     }
 
-    private void LoadChatlist() {
-        Chats_recycler = view.findViewById(R.id.recycler_view_chat);
-        Chats_recycler.setHasFixedSize(true);
-        Chats_recycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        usersList = new ArrayList<>();
 
 
-        reference = FirebaseDatabase.getInstance().getReference("Chatlist").child(fuser.getUid());
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                usersList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Chatlist chatlist = snapshot.getValue(Chatlist.class);
-                    usersList.add(chatlist);
-                }
+    class MessagesPagerAdapter extends FragmentPagerAdapter {
 
-                Collections.reverse(usersList);
-                chatList();
-            }
+        private ArrayList<Fragment> fragments;
+        private ArrayList<String> titles;
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+        MessagesPagerAdapter(FragmentManager fm){
+            super(fm);
+            this.fragments = new ArrayList<>();
+            this.titles = new ArrayList<>();
+        }
 
-            }
-        });
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+
+        public void addFragment(Fragment fragment, String title){
+            fragments.add(fragment);
+            titles.add(title);
+        }
+
+        // Ctrl + O
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles.get(position);
+        }
     }
-
-    private void LoadGrouplist() {
-        GroupChats_recycler = view.findViewById(R.id.recycler_view_group_chat);
-        GroupChats_recycler.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
-        GroupChats_recycler.setLayoutManager(mLayoutManager);
-        usersGroupList = new ArrayList<>();
-
-
-        reference = FirebaseDatabase.getInstance().getReference("Grouplist").child(fuser.getUid());
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                usersGroupList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Grouplist grouplist = snapshot.getValue(Grouplist.class);
-                    usersGroupList.add(grouplist);
-                }
-
-                Collections.reverse(usersGroupList);
-                GroupList();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-    private void GroupList() {
-         mGroup = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference("Groups");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mGroup.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Group group = snapshot.getValue(Group.class);
-                    for (Grouplist grouplist : usersGroupList){
-                        if (group.getGroupid().equals(grouplist.getGroupid())){
-                            mGroup.add(group);
-                        }
-                    }
-                }
-                groupListAdapter = new GroupListAdapter(getContext(), mGroup);
-                GroupChats_recycler.setAdapter(groupListAdapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-    private void chatList() {
-        mUsers = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference("Users");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mUsers.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    User user = snapshot.getValue(User.class);
-                    for (Chatlist chatlist : usersList){
-                        assert user != null;
-                        if (user.getId().equals(chatlist.getId())){
-                            mUsers.add(user);
-                        }
-                    }
-                }
-                userAdapter = new ChatListAdapter(getContext(), mUsers, true);
-                Chats_recycler.setAdapter(userAdapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
 }

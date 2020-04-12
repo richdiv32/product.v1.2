@@ -1,5 +1,6 @@
 package com.ng.campusbuddy.social.messaging;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
@@ -67,7 +70,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final MessageAdapter.ViewHolder holder, final int position) {
 
         final Chat chat = mChat.get(position);
 
@@ -164,8 +167,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, PhotoActivity.class);
+                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, holder.show_image, ViewCompat.getTransitionName(holder.show_image));
                 intent.putExtra("imageurl", chat.getMessage());
-                mContext.startActivity(intent);
+                mContext.startActivity(intent, optionsCompat.toBundle());
                 Animatoo.animateShrink(mContext);
 
             }

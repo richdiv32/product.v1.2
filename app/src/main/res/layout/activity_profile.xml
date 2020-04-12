@@ -12,6 +12,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/gradient_bg">
 
+
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="300dp"
@@ -62,7 +64,8 @@
                         android:layout_marginLeft="36dp"
                         android:layout_marginTop="-20dp"
                         android:background="@drawable/button_white"
-                        android:textColor="@color/colorPrimary" />
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="12sp" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -226,7 +229,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:tint="@color/white"
-                app:srcCompat="@drawable/ic_bookmark_grey" />
+                app:srcCompat="@drawable/ic_bookmarks"
+                tools:ignore="VectorDrawableCompat" />
 
             <ImageButton
                 android:id="@+id/info"

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.baoyz.widget.PullRefreshLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,6 +63,21 @@ public class Feeds_All_PostFragment extends Fragment {
                 }, 3000);
             }
         });
+//        final PullRefreshLayout pullRefreshLayout = view.findViewById(R.id.refreshLayout);
+//        pullRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                //implement Handler to wait for 3 seconds and then update UI
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        //cancel the visual indication of a refresh
+//                        pullRefreshLayout.setRefreshing(false);
+//                        loadAllPosts();
+//                    }
+//                }, 3000);
+//            }
+//        });
     }
 
     private void loadAllPosts() {

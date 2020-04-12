@@ -12,6 +12,9 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -22,7 +25,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -192,15 +197,36 @@ public class FeedsFragment extends Fragment {
     private void changeTabs(int position) {
 
         if(position == 0){
-
+            FollowPost.setColorFilter(ContextCompat.getColor(getContext(), R.color.white));
+            AllPost.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey));
         }
 
         if(position == 1){
-
+            FollowPost.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey));
+            AllPost.setColorFilter(ContextCompat.getColor(getContext(), R.color.white));
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.feed_menu, menu);
+        MenuItem item = menu.findItem(R.id.app_bar_search);
+        SearchView searchView = (SearchView) item.getActionView();
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                return false;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     private void PostInit() {
         final boolean[] isFABOpen = new boolean[1];

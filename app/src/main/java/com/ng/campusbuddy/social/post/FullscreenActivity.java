@@ -7,8 +7,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.view.ViewCompat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +23,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -39,6 +43,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -57,6 +62,8 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.ng.campusbuddy.utils.GlideExtentions.isValidContextForGlide;
 
 public class FullscreenActivity extends AppCompatActivity {
     Context mContext = FullscreenActivity.this;
@@ -210,11 +217,12 @@ public class FullscreenActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(mContext, PostDetailActivity.class);
+                        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, mContentView, ViewCompat.getTransitionName(mContentView));
                         intent.putExtra("postid", post.getPostid());
                         intent.putExtra("publisherid", post.getPublisher());
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        Animatoo.animateShrink(mContext);
+                        startActivity(intent, optionsCompat.toBundle());
+//                        Animatoo.animateShrink(mContext);
 
                     }
                 });
@@ -357,11 +365,15 @@ public class FullscreenActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(FullscreenActivity.this)
-                        .load(user.getImageurl())
-                        .thumbnail(0.1f)
-                        .into(image_profile);
-                username.setText(user.getUsername());
+
+                if (isValidContextForGlide(mContext)){
+                    Glide.with(FullscreenActivity.this)
+                            .load(user.getImageurl())
+                            .thumbnail(0.1f)
+                            .into(image_profile);
+                    username.setText(user.getUsername());
+                }
+
             }
 
             @Override
@@ -371,17 +383,91 @@ public class FullscreenActivity extends AppCompatActivity {
         });
     }
 
-    private void addNotificationLike(String userid, String postid){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
+    private void addNotificationLike(String userid, final String postid){
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("userid", firebaseUser.getUid());
-        hashMap.put("text", "liked your post");
-        hashMap.put("postid", postid);
-        hashMap.put("type", "post");
 
-        reference.push().setValue(hashMap);
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
+
+        final String orderBy = "like"+firebaseUser.getUid();
+        reference.orderByChild("orderby").equalTo(orderBy)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            dataSnapshot.getRef().removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    String notification_id = reference.push().getKey();
+
+                                    HashMap<String, Object> hashMap = new HashMap<>();
+                                    hashMap.put("userid", firebaseUser.getUid());
+                                    hashMap.put("text", "liked your post");
+                                    hashMap.put("postid", postid);
+                                    hashMap.put("type", "post");
+                                    hashMap.put("id", notification_id);
+                                    hashMap.put("isseen", false);
+                                    hashMap.put("orderby", orderBy);
+
+
+                                    reference.child(notification_id).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            String notification_id = reference.push().getKey();
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("userid", firebaseUser.getUid());
+                            hashMap.put("text", "liked your post");
+                            hashMap.put("postid", postid);
+                            hashMap.put("type", "post");
+                            hashMap.put("id", notification_id);
+                            hashMap.put("isseen", false);
+                            hashMap.put("orderby", orderBy);
+
+
+                            reference.child(notification_id).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
     }
+
+//    private void deleteNotification(){
+//
+//
+//        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
+//
+//        String orderBy = "follow"+firebaseUser.getUid();
+//        reference.orderByChild("orderby").equalTo(orderBy)
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot.exists()){
+//                            dataSnapshot.getRef().removeValue();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//
+//    }
 
     private void isLiked(final String postid, final ImageView imageView){
 
@@ -501,14 +587,66 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     private void addNotificationComment(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(publisherid);
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("userid", firebaseUser.getUid());
-        hashMap.put("text", "commented: "+addcomment.getText().toString());
-        hashMap.put("postid", postid);
-        hashMap.put("type", "post");
 
-        reference.push().setValue(hashMap);
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(publisherid);
+
+        final String orderBy = "comment"+firebaseUser.getUid();
+        reference.orderByChild("orderby").equalTo(orderBy)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            dataSnapshot.getRef().removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    String notification_id = reference.push().getKey();
+
+                                    HashMap<String, Object> hashMap = new HashMap<>();
+                                    hashMap.put("userid", firebaseUser.getUid());
+                                    hashMap.put("text", "commented: "+addcomment.getText().toString());
+                                    hashMap.put("postid", postid);
+                                    hashMap.put("type", "post");
+                                    hashMap.put("id", notification_id);
+                                    hashMap.put("isseen", false);
+                                    hashMap.put("orderby", orderBy);
+
+
+                                    reference.child(notification_id).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            String notification_id = reference.push().getKey();
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("userid", firebaseUser.getUid());
+                            hashMap.put("text", "commented: "+addcomment.getText().toString());
+                            hashMap.put("postid", postid);
+                            hashMap.put("type", "post");
+                            hashMap.put("id", notification_id);
+                            hashMap.put("isseen", false);
+                            hashMap.put("orderby", orderBy);
+
+
+                            reference.child(notification_id).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
     }
+
 }

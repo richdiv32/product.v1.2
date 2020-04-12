@@ -59,7 +59,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
         SharedPreferences preferences = getSharedPreferences("PREFS", MODE_PRIVATE);
         String currentUser = preferences.getString("currentuser", "none");
-
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
 
         /*Here we identify that there are two types of notifications
@@ -73,7 +73,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
             //chat notifications
             String sent = remoteMessage.getData().get("sent");//my ID
             String user = remoteMessage.getData().get("user");//user ID
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
             if (firebaseUser != null && sent.equals(firebaseUser.getUid())){
                 if (!currentUser.equals(user)) {
@@ -101,7 +101,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
             //match notifications
             String sent = remoteMessage.getData().get("sent");//user ID
             String user = remoteMessage.getData().get("user");//my ID
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
             if (firebaseUser != null && sent.equals(firebaseUser.getUid())){
                 if (!currentUser.equals(user)) {
@@ -121,7 +121,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
             String title = remoteMessage.getData().get("title");
             String description = remoteMessage.getData().get("body");
             String image = remoteMessage.getData().get("imageURL");
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
             if (firebaseUser != null && sent.equals(firebaseUser.getUid())){
                 if (!currentUser.equals(user)) {

@@ -1,103 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.gms.ads.formats.UnifiedNativeAdView
     android:id="@+id/ad_view"
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/backgroundcolor"
-        android:orientation="vertical">
+        android:layout_margin="5dp"
+        app:cardBackgroundColor="?attr/cardbackground"
+        app:cardCornerRadius="10dp">
+
+        <TextView
+            android:id="@+id/ad_attribution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:text="Ad"
+            android:background="#FFCC66"
+            android:width="15dp"
+            android:height="15dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-            <ImageView
-                android:id="@+id/ad_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="20dp"
-                android:background="@color/grey"/>
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ad_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/profile_bg"
+                    app:civ_border_color="@color/colorPrimary"
+                    app:civ_border_width="1dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/ad_headline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="headline"
+                        android:textColor="?attr/title_textcolor" />
+
+                    <TextView
+                        android:id="@+id/ad_advertiser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="advertiser"
+                        android:textColor="?attr/textcolor" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="173dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:cardBackgroundColor="?attr/backgroundcolor"
+                app:cardCornerRadius="20dp">
+
+                <com.google.android.gms.ads.formats.MediaView
+                    android:id="@+id/ad_media"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </androidx.cardview.widget.CardView>
+
+            <RatingBar
+                android:id="@+id/ad_rating"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:stepSize="0.5" />
+
+            <TextView
+                android:id="@+id/ad_body"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:padding="5dp"
+                android:text="body of ad"
+                android:textColor="?attr/title_textcolor" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:padding="5dp">
 
                 <TextView
-                    android:id="@+id/ad_headline"
+                    android:id="@+id/ad_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="headline"
-                    android:textColor="@color/grey"/>
+                    android:padding="10dp"
+                    android:text="price"
+                    android:textColor="?attr/textcolor" />
 
                 <TextView
-                    android:id="@+id/ad_advertiser"
+                    android:id="@+id/ad_store"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="advertiser"
-                    android:textColor="@color/grey"/>
+                    android:padding="10dp"
+                    android:text="store"
+                    android:textColor="?attr/textcolor" />
 
-                <RatingBar
-                    android:id="@+id/ad_rating"
+                <Button
+                    android:id="@+id/ad_call_to_action"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:isIndicator="true"
-                    android:numStars="5"
-                    android:stepSize="0.5"/>
+                    android:layout_height="40dp"
+                    android:background="@drawable/button_gradient"
+                    android:text="Action"
+                    android:textColor="@color/white" />
             </LinearLayout>
         </LinearLayout>
-
-        <com.google.android.gms.ads.formats.MediaView
-            android:id="@+id/ad_media"
-            android:layout_width="match_parent"
-            android:layout_height="175dp"
-            android:background="?attr/cardbackground">
-        </com.google.android.gms.ads.formats.MediaView>
-
-        <TextView
-            android:id="@+id/ad_body"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp"
-            android:text="body of ad"
-            android:textColor="@color/grey"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/ad_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="price"
-                android:padding="10dp"
-                android:textColor="@color/grey"/>
-
-            <TextView
-                android:id="@+id/ad_store"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="store"
-                android:textColor="@color/grey"/>
-
-            <Button
-                android:id="@+id/ad_call_to_action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/cardbackground"
-                android:text="Action"
-                android:textColor="@color/grey"/>
-        </LinearLayout>
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </com.google.android.gms.ads.formats.UnifiedNativeAdView>

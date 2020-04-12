@@ -90,6 +90,9 @@ dependencies {
     //Tap Target
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.13.0'
 
+    //swipeRefresh
+    implementation 'com.baoyz.pullrefreshlayout:library:1.2.0'
+
     //Space BottomNav TabLayout
 //    implementation 'eu.long1:spacetablayout:1.0.4'
     //Bubble nav

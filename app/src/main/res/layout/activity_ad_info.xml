@@ -87,7 +87,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         app:adSize="BANNER"
-        app:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+        app:adUnitId="@string/banner_unit_id" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"

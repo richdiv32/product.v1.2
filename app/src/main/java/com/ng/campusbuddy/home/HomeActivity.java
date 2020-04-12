@@ -199,9 +199,15 @@ public class HomeActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mcontext);
                 builder.setTitle("Create New AD");
 
+                LinearLayout linearLayout = new LinearLayout(mcontext);
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
                 final EditText groupName = new EditText(mcontext);
+                final EditText web = new EditText(mcontext);
+                final EditText tel = new EditText(mcontext);
                 groupName.setHint("Type Ad title... ");
-                builder.setView(groupName);
+                web.setHint("Website");
+                tel.setHint("Tel");
+                builder.setView(linearLayout);
 
 
                 builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
@@ -213,7 +219,7 @@ public class HomeActivity extends AppCompatActivity {
                         if (TextUtils.isEmpty(groupName_str)) {
                             Toast.makeText(mcontext, "You can't create a room without a name", Toast.LENGTH_SHORT).show();
                         } else {
-                            DatabaseReference roomRef = FirebaseDatabase.getInstance().getReference().child("ADs").child("Home")
+                            DatabaseReference roomRef = FirebaseDatabase.getInstance().getReference().child("ADs").child("Social")
                                     .child("Slides");
                             String room_id = roomRef.push().getKey();
 
@@ -221,10 +227,11 @@ public class HomeActivity extends AppCompatActivity {
                             hashMap.put("id", room_id);
                             hashMap.put("full_image", "");
                             hashMap.put("image", "");
+                            hashMap.put("title", groupName_str);
                             hashMap.put("description", "new ad added to campus buddy");
                             //TODO: work on the next two lines
-                            hashMap.put("web", groupName_str);
-                            hashMap.put("call", groupName_str);
+                            hashMap.put("web", web.getText().toString());
+                            hashMap.put("call", tel.getText().toString());
 
                             roomRef.child(room_id).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -260,7 +267,6 @@ public class HomeActivity extends AppCompatActivity {
         channels();
 
     }
-
 
     private void channels() {
         notificationManager = NotificationManagerCompat.from(this);
@@ -821,7 +827,6 @@ public class HomeActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(context, AdInfoActivity.class);
                     intent.putExtra("Ad_id", ad.getId());
-                    //TODO: change this intent value to HOME
                     intent.putExtra("context", "Home");
                     context.startActivity(intent);
                 }

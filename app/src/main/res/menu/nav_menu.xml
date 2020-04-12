@@ -12,7 +12,7 @@
     <item
         android:id="@+id/nav_social"
         android:icon="@drawable/ic_chat_room"
-        android:title="Social" />
+        android:title="Home" />
 
     <item
         android:id="@+id/nav_notifications"
