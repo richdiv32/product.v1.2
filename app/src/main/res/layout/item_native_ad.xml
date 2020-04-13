@@ -130,6 +130,7 @@
                     android:layout_height="40dp"
                     android:background="@drawable/button_gradient"
                     android:text="Action"
+                    android:textSize="12sp"
                     android:textColor="@color/white" />
             </LinearLayout>
         </LinearLayout>

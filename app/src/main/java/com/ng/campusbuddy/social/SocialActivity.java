@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -239,6 +240,7 @@ public class SocialActivity extends AppCompatActivity implements
         final FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(fuser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("ResourceType")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int unread = 0;
@@ -250,6 +252,7 @@ public class SocialActivity extends AppCompatActivity implements
                 }
                 if (unread == 0){
                     counter.setVisibility(View.GONE);
+                    navigationView.getMenu().getItem(1).setActionView(R.layout.menu_dot_gone);
                 }
                 else if (unread > 99){
                     counter.setText("+99");

@@ -26,7 +26,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -146,22 +148,16 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
                 editor.apply();
 
                 Intent intent = new Intent(mContext, FullscreenActivity.class);
+                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, holder.post_image, ViewCompat.getTransitionName(holder.post_image));
                 intent.putExtra("postid", post.getPostid());
                 intent.putExtra("publisherid", post.getPublisher());
-                mContext.startActivity(intent);
+                mContext.startActivity(intent, optionsCompat.toBundle());
                 Animatoo.animateShrink(mContext);
 
             }
         });
 
 
-    }
-
-    private void removeItem(int position, View itemView) {
-        mPosts.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, mPosts.size());
-        itemView.setVisibility(View.GONE);
     }
 
     @Override

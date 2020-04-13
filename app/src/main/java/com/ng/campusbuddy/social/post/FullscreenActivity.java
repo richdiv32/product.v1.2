@@ -147,6 +147,7 @@ public class FullscreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                Animatoo.animateFade(getApplicationContext());
             }
         });
     }

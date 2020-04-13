@@ -22,8 +22,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.social.post.AllPostAdapter;
 import com.ng.campusbuddy.social.post.Post;
+import com.ng.campusbuddy.utils.SpannedGridLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class Feeds_All_PostFragment extends Fragment {
@@ -83,9 +86,24 @@ public class Feeds_All_PostFragment extends Fragment {
     private void loadAllPosts() {
         UsersPostrecyclerView = view.findViewById(R.id.all_post_recycler);
         UsersPostrecyclerView.setHasFixedSize(true);
-        StaggeredGridLayoutManager uLayoutManager = new StaggeredGridLayoutManager(2,
-                StaggeredGridLayoutManager.VERTICAL);
-        uLayoutManager.setReverseLayout(true);
+//        StaggeredGridLayoutManager uLayoutManager = new StaggeredGridLayoutManager(2,
+//                StaggeredGridLayoutManager.VERTICAL);
+        SpannedGridLayoutManager uLayoutManager = new SpannedGridLayoutManager(
+                new SpannedGridLayoutManager.GridSpanLookup() {
+                    @Override
+                    public SpannedGridLayoutManager.SpanInfo getSpanInfo(int position) {
+                        //Conditions for 2x2 items
+                        if (position % 12 == 0 || position % 12 == 7){
+                            return new SpannedGridLayoutManager.SpanInfo(2,2);
+                        }
+                        else {
+                            return new SpannedGridLayoutManager.SpanInfo(1, 1);
+                        }
+                    }
+                },
+                3,//number of colums
+                1f //how big is default item
+        );
         UsersPostrecyclerView.setLayoutManager(uLayoutManager);
         UserpostList = new ArrayList<>();
         AllpostAdapter = new AllPostAdapter(getContext(), UserpostList);
@@ -106,6 +124,7 @@ public class Feeds_All_PostFragment extends Fragment {
 
                 }
 
+                Collections.reverse(UserpostList);
                 AllpostAdapter.notifyDataSetChanged();
 
             }

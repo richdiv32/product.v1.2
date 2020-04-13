@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.56882256" />
+        app:layout_constraintGuide_percent="0.5" />
 
     <TextView
         android:id="@+id/intro_title"
@@ -43,7 +43,6 @@
         android:layout_marginBottom="8dp"
         android:lineSpacingExtra="16dp"
         android:text="TextView"
-        android:textAlignment="center"
         android:textColor="@color/grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
