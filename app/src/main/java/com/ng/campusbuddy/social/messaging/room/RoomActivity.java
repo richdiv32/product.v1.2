@@ -74,6 +74,8 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.ng.campusbuddy.utils.GlideExtentions.isValidContextForGlide;
+
 public class RoomActivity extends AppCompatActivity {
     CircleImageView image;
     TextView title, count;
@@ -94,7 +96,8 @@ public class RoomActivity extends AppCompatActivity {
 
     Intent intent;
 
-    String room_id,roomlist_id, userid;
+    String room_id,
+            userid;
 
     //volley request queue for notification
     private RequestQueue requestQueue;
@@ -170,7 +173,6 @@ public class RoomActivity extends AppCompatActivity {
 
         intent = getIntent();
 
-        roomlist_id = intent.getStringExtra("roomlist_id");
         room_id = intent.getStringExtra("room_id");
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -269,8 +271,9 @@ public class RoomActivity extends AppCompatActivity {
     }
 
     private void InitRoomInfo() {
-        reference = FirebaseDatabase.getInstance().getReference().child("Rooms")
-                .child(roomlist_id);
+        //TODO: change this -Rooms-
+        reference = FirebaseDatabase.getInstance().getReference().child("Rooms");
+//                .child(room_id);
 
         reference.child(room_id).addValueEventListener(new ValueEventListener() {
             @Override
@@ -280,14 +283,17 @@ public class RoomActivity extends AppCompatActivity {
                 title.setText(room.getTitle_chatroom());
 
                 if (room.getImage_chatroom().equals("")){
-                    image.setImageResource(R.drawable.placeholder);
+                    image.setImageResource(R.drawable.chat_bg);
                 }
                 else {
 
-                    Glide.with(RoomActivity.this)
-                            .load(room.getImage_chatroom())
-                            .thumbnail(0.1f)
-                            .into(image);
+                    if (isValidContextForGlide(RoomActivity.this)){
+                        Glide.with(RoomActivity.this)
+                                .load(room.getImage_chatroom())
+                                .thumbnail(0.1f)
+                                .into(image);
+                    }
+
                 }
 
 
@@ -314,7 +320,6 @@ public class RoomActivity extends AppCompatActivity {
         hashMap.put("type", "text");
 
         reference.child("Rooms")
-                .child(roomlist_id)
                 .child(room_id)
                 .child("messages").push().setValue(hashMap);
 
@@ -327,7 +332,7 @@ public class RoomActivity extends AppCompatActivity {
         mchat = new ArrayList<>();
 
 
-        reference = FirebaseDatabase.getInstance().getReference("Rooms").child(roomlist_id)
+        reference = FirebaseDatabase.getInstance().getReference("Rooms")
                 .child(room_id).child("messages");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -569,8 +574,7 @@ public class RoomActivity extends AppCompatActivity {
             }
         });
 
-        reference = FirebaseDatabase.getInstance().getReference().child("Rooms")
-                .child(roomlist_id);
+        reference = FirebaseDatabase.getInstance().getReference().child("Rooms");
 
         reference.child(room_id).addValueEventListener(new ValueEventListener() {
             @Override
@@ -584,10 +588,13 @@ public class RoomActivity extends AppCompatActivity {
                 }
                 else {
 
-                    Glide.with(RoomActivity.this)
-                            .load(room.getImage_chatroom())
-                            .thumbnail(0.1f)
-                            .into(Group_image);
+                    if (isValidContextForGlide(RoomActivity.this)){
+                        Glide.with(RoomActivity.this)
+                                .load(room.getImage_chatroom())
+                                .thumbnail(0.1f)
+                                .into(Group_image);
+                    }
+
                 }
 
             }
@@ -601,37 +608,6 @@ public class RoomActivity extends AppCompatActivity {
     }
 
 
-    DatabaseReference ref;
-    private void online_status(String online_status){
-        ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("online_status", online_status);
-
-        ref.updateChildren(hashMap);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        online_status("online");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        online_status("online");
-    }
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//
-//        String timestamp = String.valueOf(System.currentTimeMillis());
-//
-//        ref.removeEventListener(seenListener);
-//        online_status(timestamp);
-//    }
 
 
     public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
@@ -709,7 +685,7 @@ public class RoomActivity extends AppCompatActivity {
 
                 Glide.with(mContext)
                         .load(chat.getMessage())
-                        .placeholder(R.drawable.placeholder)
+                        .placeholder(R.drawable.chat_bg)
                         .thumbnail(0.1f)
                         .into(holder.show_image);
             }
@@ -765,7 +741,7 @@ public class RoomActivity extends AppCompatActivity {
             final String myUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             String msgTimeStamp = mChat.get(position).getTimestamp();
-            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Rooms").child(roomlist_id)
+            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Rooms")
                     .child(room_id).child("messages");
             Query query = dbRef.orderByChild("timestamp").equalTo(msgTimeStamp);
             query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -836,12 +812,16 @@ public class RoomActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
-                    Glide.with(mContext)
-                            .load(user.getImageurl())
-                            .placeholder(R.drawable.profile_bg)
-                            .thumbnail(0.1f)
-                            .into(image_profile);
-                    username.setText(user.getUsername());
+
+                    if (isValidContextForGlide(mContext)){
+                        Glide.with(mContext)
+                                .load(user.getImageurl())
+                                .placeholder(R.drawable.profile_bg)
+                                .thumbnail(0.1f)
+                                .into(image_profile);
+                        username.setText(user.getUsername());
+                    }
+
                 }
 
                 @Override

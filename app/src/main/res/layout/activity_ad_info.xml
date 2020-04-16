@@ -47,6 +47,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:autoLink="all"
+                android:linksClickable="true"
+                android:textColorLink="@color/colorPrimary"
                 android:text="Ad description"
                 android:textColor="?attr/textcolor" />
 
@@ -89,37 +92,23 @@
         app:adSize="BANNER"
         app:adUnitId="@string/banner_unit_id" />
 
-    <com.google.android.material.appbar.AppBarLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/transparent">
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="10dp">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar2"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_marginTop="30dp">
+        <ImageButton
+            android:id="@+id/back_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/bg_circle_gradient"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_arrow_back"
+            tools:ignore="VectorDrawableCompat" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageButton
-                    android:id="@+id/back_btn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/bg_circle_gradient"
-                    android:tint="@color/white"
-                    tools:ignore="VectorDrawableCompat"
-                    tools:src="@drawable/ic_arrow_back"
-                    tools:srcCompat="@drawable/ic_arrow_back" />
-
-            </RelativeLayout>
-        </androidx.appcompat.widget.Toolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>
+    </RelativeLayout>
 
     <!--    <com.google.android.gms.ads.NativeExpressAdView-->
 <!--        android:id="@+id/adView"-->

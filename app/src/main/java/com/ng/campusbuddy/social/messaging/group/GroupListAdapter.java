@@ -58,13 +58,13 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
 
         if (group.getGroup_image().equals("")){
-            holder.group_image.setImageResource(R.drawable.placeholder);
+            holder.group_image.setImageResource(R.drawable.chat_bg);
         }
         else {
 
             Glide.with(mContext)
                     .load(group.getGroup_image())
-                    .placeholder(R.drawable.placeholder)
+                    .placeholder(R.drawable.chat_bg)
                     .thumbnail(0.1f)
                     .into(holder.group_image);
         }

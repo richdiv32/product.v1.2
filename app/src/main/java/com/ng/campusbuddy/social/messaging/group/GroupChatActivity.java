@@ -87,6 +87,8 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.ng.campusbuddy.utils.GlideExtentions.isValidContextForGlide;
+
 public class GroupChatActivity extends AppCompatActivity {
     CircleImageView group_image;
     TextView title, description;
@@ -228,13 +230,14 @@ public class GroupChatActivity extends AppCompatActivity {
                 title.setText(group.getGroup_title());
 
                 if (group.getGroup_image().equals("")){
-                    group_image.setImageResource(R.drawable.placeholder);
+                    group_image.setImageResource(R.drawable.chat_bg);
                 }
                 else {
 
                     Glide.with(getApplicationContext())
                             .load(group.getGroup_image())
-                            .placeholder(R.drawable.placeholder)
+                            .placeholder(R.drawable.chat_bg)
+                            .thumbnail(0.1f)
                             .into(group_image);
                 }
 
@@ -569,7 +572,6 @@ public class GroupChatActivity extends AppCompatActivity {
         final ImageButton EditButton = headerview.findViewById(R.id.edit_button);
         final ImageButton AddButton = headerview.findViewById(R.id.add_user);
 
-//        String CreatorUID;
 
 
         RelativeLayout Nav_button = findViewById(R.id.profile_layout);
@@ -604,7 +606,8 @@ public class GroupChatActivity extends AppCompatActivity {
 
                     Glide.with(GroupChatActivity.this)
                             .load(group.getGroup_image())
-                            .placeholder(R.drawable.placeholder)
+                            .placeholder(R.drawable.chat_bg)
+                            .thumbnail(0.1f)
                             .into(Group_image);
                 }
 
@@ -779,11 +782,13 @@ public class GroupChatActivity extends AppCompatActivity {
     private void ChangeGroupImage(Uri image_rui) {
         //progressDialog
         final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Sending image.....");
+        progressDialog.setTitle("Changing image.....");
         progressDialog.setMessage("few seconds left");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
-        final String timeStamp = "" + System.currentTimeMillis();
-        String fileNameAndPath = "group_profile_images/"+"groupImage_"+timeStamp;
+        String fileNameAndPath = "group_profile_images/"+ groupid +":groupImage.jpg";
 
         //get bitmap from image uri
         Bitmap bitmap = null;
@@ -832,38 +837,6 @@ public class GroupChatActivity extends AppCompatActivity {
                 });
 
     }
-
-    DatabaseReference ref;
-    private void online_status(String online_status){
-        ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("online_status", online_status);
-
-        ref.updateChildren(hashMap);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        online_status("online");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        online_status("online");
-    }
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//
-//        String timestamp = String.valueOf(System.currentTimeMillis());
-//
-//        ref.removeEventListener(seenListener);
-//        online_status(timestamp);
-//    }
 
 
     private class GroupUsersAdapter extends RecyclerView.Adapter<GroupUsersAdapter.ViewHolder> {
@@ -1224,12 +1197,16 @@ public class GroupChatActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
-                    Glide.with(mContext)
-                            .load(user.getImageurl())
-                            .placeholder(R.drawable.profile_bg)
-                            .thumbnail(0.1f)
-                            .into(image_profile);
-                    username.setText(user.getUsername());
+
+                    if (isValidContextForGlide(mContext)){
+                        Glide.with(mContext)
+                                .load(user.getImageurl())
+                                .placeholder(R.drawable.profile_bg)
+                                .thumbnail(0.1f)
+                                .into(image_profile);
+                        username.setText(user.getUsername());
+                    }
+
                 }
 
                 @Override

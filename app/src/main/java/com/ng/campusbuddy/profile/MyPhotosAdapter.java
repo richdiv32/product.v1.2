@@ -74,7 +74,7 @@ public class MyPhotosAdapter extends RecyclerView.Adapter<MyPhotosAdapter.ImageV
 
             Glide.with(mContext)
                     .load(post.getPostimage())
-                    .placeholder(R.drawable.placeholder)
+                    .placeholder(R.drawable.chat_bg)
 //                    .override(600, 900)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .listener(new RequestListener<Drawable>() {

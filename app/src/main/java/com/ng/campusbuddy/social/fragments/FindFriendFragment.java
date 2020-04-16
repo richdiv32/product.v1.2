@@ -156,7 +156,7 @@ public class FindFriendFragment extends Fragment {
 
         Glide.with(getContext())
                 .load(contest.getImageURL())
-                .placeholder(R.drawable.placeholder)
+                .placeholder(R.drawable.chat_bg)
                 .listener(new RequestListener<Drawable>() {
                   @Override
                   public boolean onLoadFailed(@Nullable GlideException e, Object o, Target<Drawable> target, boolean b) {

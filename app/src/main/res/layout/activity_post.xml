@@ -138,12 +138,17 @@
                 android:layout_toRightOf="@id/add_btn"
                 android:background="@android:color/transparent"
                 android:backgroundTint="@color/grey"
-                android:drawableLeft="@drawable/ic_edit"
+                android:drawableRight="@drawable/ic_edit"
                 android:drawablePadding="10dp"
+                android:autoLink="all"
+                android:textColorLink="@color/colorPrimary"
+                android:linksClickable="true"
                 android:ems="10"
+                android:autoText="true"
                 android:hint="Type something here..."
-                android:maxLines="8"
+                android:maxLines="10"
                 android:padding="20dp"
+
                 android:textColor="@color/white"
                 android:textColorHint="@color/grey" />
 

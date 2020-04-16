@@ -52,9 +52,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.auth.SetUpProfileActivity;
-import com.ng.campusbuddy.education.EducationActivity;
+
 import com.ng.campusbuddy.R;
-import com.ng.campusbuddy.home.HomeActivity;
 import com.ng.campusbuddy.model.Notification;
 import com.ng.campusbuddy.profile.ProfileActivity;
 import com.ng.campusbuddy.social.fragments.ChatRoomFragment;
@@ -66,15 +65,10 @@ import com.ng.campusbuddy.social.messaging.chat.Chat;
 import com.ng.campusbuddy.start.WelcomeActivity;
 import com.ng.campusbuddy.tools.NotificationsActivity;
 import com.ng.campusbuddy.tools.SettingsActivity;
-//import com.ng.campusbuddy.tools.WebViewActivity;
 import com.ng.campusbuddy.tools.WebViewActivity;
 import com.ng.campusbuddy.utils.ForceUpdateChecker;
 import com.ng.campusbuddy.utils.SharedPref;
 
-import java.security.Permission;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -176,13 +170,12 @@ public class SocialActivity extends AppCompatActivity implements
 
 
 
-        BubbleNavigationLinearView bubbleNavigationLinearView = findViewById(R.id.bubbleNavigation);
+        final BubbleNavigationLinearView bubbleNavigationLinearView = findViewById(R.id.bubbleNavigation);
 
 
-        bubbleNavigationLinearView.setBadgeValue(0, "10");
-        bubbleNavigationLinearView.setBadgeValue(1, "200");
-        bubbleNavigationLinearView.setBadgeValue(2, "6");
-        bubbleNavigationLinearView.setBadgeValue(3, "1203");
+//        bubbleNavigationLinearView.setBadgeValue(0, "10");
+//        bubbleNavigationLinearView.setBadgeValue(1, "200");
+//        bubbleNavigationLinearView.setBadgeValue(2, "6");
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new FeedsFragment()).commit();
@@ -210,6 +203,36 @@ public class SocialActivity extends AppCompatActivity implements
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         selectedfragment).commit();
+            }
+        });
+
+
+        final FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int unread = 0;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Chat chat = snapshot.getValue(Chat.class);
+                    if (chat.getReceiver().equals(fuser.getUid()) && !chat.isIsseen()){
+                        unread++;
+                    }
+                }
+
+                if (unread == 0){
+
+                }
+                else {
+                    //TODO: Attend to this
+//                    bubbleNavigationLinearView.setBadgeValue(1, String.valueOf(unread));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
         /*---------------------------------------------*/

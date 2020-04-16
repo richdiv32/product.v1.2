@@ -6,18 +6,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -89,9 +94,6 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
         final Post post = mPosts.get(position);
 
         if (post.getPostimage().equals("")){
-//            removeItem(holder.getAdapterPosition(), holder.itemView);
-
-//            holder.post_image.setImageResource(R.drawable.placeholder);
             holder.itemView.setVisibility(View.GONE);
             holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0,0));
         }
@@ -99,8 +101,7 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
 
             Glide.with(mContext)
                     .load(post.getPostimage())
-                    .placeholder(R.drawable.placeholder)
-//                    .override(600, 900)
+                    .placeholder(R.drawable.chat_bg)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .listener(new RequestListener<Drawable>() {
                         @Override
@@ -156,6 +157,26 @@ public class AllPostAdapter extends RecyclerView.Adapter<AllPostAdapter.ImageVie
 
             }
         });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+//                ShowPopUp();
+
+                return false;
+            }
+        });
+
+
+    }
+
+    private void ShowPopUp() {
+        final  View popup_view = LayoutInflater.from(mContext).inflate(R.layout.dialog_post, null);
+        final PopupWindow popupWindow = new PopupWindow(popup_view, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        popupWindow.setOutsideTouchable(true);
+//        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(popup_view, Gravity.CENTER, 0, 0);
 
 
     }

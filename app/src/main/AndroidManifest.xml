@@ -51,11 +51,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/TransStatusBar"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".education.LibraryActivity" />
-        <activity
-            android:name=".education.reader.BookDetailActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".education.reader.PDFActivity" />
         <activity
             android:name=".social.messaging.group.GroupChatActivity"
             android:screenOrientation="portrait" />
@@ -129,9 +124,6 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".education.EducationActivity"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".social.SocialActivity"
             android:screenOrientation="portrait" />

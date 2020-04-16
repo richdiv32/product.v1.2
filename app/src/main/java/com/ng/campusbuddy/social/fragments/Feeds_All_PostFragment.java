@@ -119,8 +119,11 @@ public class Feeds_All_PostFragment extends Fragment {
                 UserpostList.clear();
                 for (DataSnapshot ds:dataSnapshot.getChildren()){
                     Post post = ds.getValue(Post.class);
+                    if (!post.getPostimage().equals("")){
+                        UserpostList.add(post);
+                    }
 
-                    UserpostList.add(post);
+
 
                 }
 

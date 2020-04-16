@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -242,6 +243,9 @@ public class FeedsFragment extends Fragment {
 
                 if (!isFABOpen[0]){
                     showFABMenu();
+                    //plays sound
+                    MediaPlayer mediaPlayer = MediaPlayer.create(getContext(), R.raw.pop);
+                    mediaPlayer.start();
                 }
                 else {
                     closeFABMenu();

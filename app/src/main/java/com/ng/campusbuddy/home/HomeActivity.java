@@ -70,7 +70,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.RemoteMessage;
 import com.ng.campusbuddy.R;
 import com.ng.campusbuddy.auth.SetUpProfileActivity;
-import com.ng.campusbuddy.education.EducationActivity;
 import com.ng.campusbuddy.model.AD;
 import com.ng.campusbuddy.social.match.MatchesActivity;
 import com.ng.campusbuddy.social.messaging.chat.ChatActivity;
@@ -716,17 +715,6 @@ public class HomeActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
                 switch (menuItem.getItemId()) {
-//                    case R.id.nav_home:
-//                        Toast.makeText(mcontext, "Home", Toast.LENGTH_SHORT).show();
-//                        drawerLayout.closeDrawer(GravityCompat.START, true);
-//                        break;
-//                    case R.id.nav_education:
-//                        drawerLayout.closeDrawer(GravityCompat.START, true);
-//                        Intent education = new Intent(mcontext, EducationActivity.class);
-//                        startActivity(education);
-//                        Animatoo.animateSlideLeft(mcontext);
-//                        finish();
-//                        break;
                     case R.id.nav_social:
                         drawerLayout.closeDrawer(GravityCompat.START, true);
                         Intent social = new Intent(mcontext, SocialActivity.class);

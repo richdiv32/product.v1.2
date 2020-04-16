@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -73,6 +74,7 @@ public class MessagesFragment extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!isAdded()) return;
                 final MessagesPagerAdapter mPagerViewAdapter = new MessagesPagerAdapter(getChildFragmentManager());
                 int unread = 0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
@@ -209,6 +211,9 @@ public class MessagesFragment extends Fragment {
 
                 if (!isFABOpen[0]){
                     showFABMenu();
+                    //plays sound
+                    MediaPlayer mediaPlayer = MediaPlayer.create(getContext(), R.raw.pop);
+                    mediaPlayer.start();
                 }
                 else {
                     closeFABMenu();
@@ -290,7 +295,7 @@ public class MessagesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Chat with a counselor", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getActivity(), AdActivity.class));
+//                startActivity(new Intent(getActivity(), AdActivity.class));
             }
         });
     }

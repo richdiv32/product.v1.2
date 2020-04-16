@@ -109,7 +109,6 @@ public class Messages_ChatFragment extends Fragment {
                     usersList.add(chatlist);
                 }
 
-                Collections.reverse(usersList);
                 chatList();
             }
 
@@ -138,6 +137,9 @@ public class Messages_ChatFragment extends Fragment {
                 }
                 userAdapter = new ChatListAdapter(getContext(), mUsers, true);
                 Chats_recycler.setAdapter(userAdapter);
+
+                Collections.reverse(usersList);
+                userAdapter.notifyDataSetChanged();
             }
 
             @Override

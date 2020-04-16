@@ -3,6 +3,7 @@ package com.ng.campusbuddy.social.post;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,10 +29,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ng.campusbuddy.R;
+import com.ng.campusbuddy.profile.UserProfileActivity;
 import com.ng.campusbuddy.social.SocialActivity;
 import com.ng.campusbuddy.social.User;
 
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ImageViewHolder> {
 
@@ -66,10 +72,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ImageVie
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(mContext, SocialActivity.class);
-                intent.putExtra("publisherid", comment.getPublisher());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                mContext.startActivity(intent);
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                editor.putString("profileid", comment.getPublisher());
+                editor.apply();
+
+                ((FragmentActivity)mContext).startActivity(new Intent(mContext, UserProfileActivity.class));
+                Animatoo.animateZoom(mContext);
 
             }
         });
@@ -77,10 +85,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ImageVie
         holder.Profile_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, SocialActivity.class);
-                intent.putExtra("publisherid", comment.getPublisher());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                mContext.startActivity(intent);
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                editor.putString("profileid", comment.getPublisher());
+                editor.apply();
+
+                ((FragmentActivity)mContext).startActivity(new Intent(mContext, UserProfileActivity.class));
+                Animatoo.animateZoom(mContext);
             }
         });
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -137,7 +138,6 @@ public class MatchUpFragment extends Fragment {
                 obj = (Match) dataObject;
                 userId= obj.getUserId();
                 usersDb.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
-//                Toast.makeText(getActivity(), "NOPE", Toast.LENGTH_SHORT).show();
 
                 //inflate layout for dialog
                 View view = LayoutInflater.from(getActivity()).inflate(R.layout.toast_layout, null);
@@ -298,9 +298,11 @@ public class MatchUpFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     showPopup(userId);
+                    //plays sound
+                    MediaPlayer mediaPlayer = MediaPlayer.create(getContext(), R.raw.matched);
+                    mediaPlayer.start();
 
 
-//                    String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
 
                     usersDb.child(userId).child("connections").child("matches").child(currentUId).child("userId").setValue(currentUId);
                     usersDb.child(currentUId).child("connections").child("matches").child(userId).child("userId").setValue(userId);

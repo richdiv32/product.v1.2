@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -131,6 +132,9 @@ public class FullscreenActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (addcomment.getText().toString().equals("")){
                     Toast.makeText(FullscreenActivity.this, "You can't send empty message", Toast.LENGTH_SHORT).show();
+                    //plays sound
+                    MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.error);
+                    mediaPlayer.start();
                 } else {
                     addComment();
                 }
@@ -147,7 +151,6 @@ public class FullscreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
-                Animatoo.animateFade(getApplicationContext());
             }
         });
     }
@@ -196,6 +199,10 @@ public class FullscreenActivity extends AppCompatActivity {
                             FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                     .child(firebaseUser.getUid()).setValue(true);
                             addNotificationLike(post.getPublisher(), post.getPostid());
+
+                            //plays sound
+                            MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.pop);
+                            mediaPlayer.start();
                         } else {
                             FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                     .child(firebaseUser.getUid()).removeValue();
@@ -374,6 +381,9 @@ public class FullscreenActivity extends AppCompatActivity {
                             .into(image_profile);
                     username.setText(user.getUsername());
                 }
+//                if (isValidContextForGlide(mContext)){
+//
+//                }
 
             }
 
@@ -584,6 +594,9 @@ public class FullscreenActivity extends AppCompatActivity {
         reference.child(commentid).setValue(hashMap);
         addNotificationComment();
         addcomment.setText("");
+        //plays sound
+        MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.send);
+        mediaPlayer.start();
 
     }
 

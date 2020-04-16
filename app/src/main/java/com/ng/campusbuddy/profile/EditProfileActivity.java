@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -194,8 +195,11 @@ public class EditProfileActivity extends AppCompatActivity {
         pd.setMessage("Uploading");
         pd.show();
         if (mImageUri != null){
-            final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
-                    + "." + getFileExtension(mImageUri));
+//            final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
+//                    + "." + getFileExtension(mImageUri));
+
+            final StorageReference fileReference = storageRef.child(firebaseUser.getUid() + ":profile.jpg");
+
 
             uploadTask = fileReference.putFile(mImageUri);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -231,7 +235,8 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             });
 
-        } else {
+        }
+        else {
             Toast.makeText(EditProfileActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
         }
     }

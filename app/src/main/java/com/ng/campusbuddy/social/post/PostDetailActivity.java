@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,6 +30,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,6 +69,8 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.ng.campusbuddy.utils.GlideExtentions.isValidContextForGlide;
+
 public class
 PostDetailActivity extends AppCompatActivity {
     Context mContext = PostDetailActivity.this;
@@ -86,6 +90,8 @@ PostDetailActivity extends AppCompatActivity {
 
     String postid;
     String publisherid;
+
+    CardView post_container;
 
     Intent intent;
 
@@ -122,6 +128,8 @@ PostDetailActivity extends AppCompatActivity {
         like = findViewById(R.id.like);
         likes = findViewById(R.id.likes);
         time_date = findViewById(R.id.time_date);
+
+        post_container = findViewById(R.id.post_container);
 
 
         share = findViewById(R.id.share);
@@ -165,6 +173,9 @@ PostDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (addcomment.getText().toString().equals("")){
                     Toast.makeText(PostDetailActivity.this, "You can't send empty message", Toast.LENGTH_SHORT).show();
+                    //plays sound
+                    MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.error);
+                    mediaPlayer.start();
                 } else {
                     addComment();
                 }
@@ -190,6 +201,11 @@ PostDetailActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final Post post = dataSnapshot.getValue(Post.class);
+
+                if (post.getPostimage().equals("") && !post.getDescription().equals("")){
+                    post_container.setVisibility(View.GONE);
+
+                }
 
                 publisherInfo(profile_image, username, post.getPublisher());
                 isLiked(post.getPostid(), like);
@@ -225,6 +241,9 @@ PostDetailActivity extends AppCompatActivity {
                             FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                     .child(firebaseUser.getUid()).setValue(true);
                             addNotificationLike(post.getPublisher(), post.getPostid());
+                            //plays sound
+                            MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.pop);
+                            mediaPlayer.start();
                         } else {
                             FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                     .child(firebaseUser.getUid()).removeValue();
@@ -465,11 +484,14 @@ PostDetailActivity extends AppCompatActivity {
 
                 if (PostDetailActivity.this != null){
 
-                    Glide.with(PostDetailActivity.this)
-                            .load(user.getImageurl())
-                            .thumbnail(0.1f)
-                            .into(image_profile);
-                    username.setText(user.getUsername());
+                    if (isValidContextForGlide(mContext)){
+                        Glide.with(PostDetailActivity.this)
+                                .load(user.getImageurl())
+                                .thumbnail(0.1f)
+                                .into(image_profile);
+                        username.setText(user.getUsername());
+                    }
+
                 }
 
             }
@@ -663,7 +685,9 @@ PostDetailActivity extends AppCompatActivity {
         reference.child(commentid).setValue(hashMap);
         addNotificationComment();
         addcomment.setText("");
-
+        //plays sound
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.send);
+        mediaPlayer.start();
     }
 
 

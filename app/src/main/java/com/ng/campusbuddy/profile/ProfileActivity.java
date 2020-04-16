@@ -3,10 +3,15 @@ package com.ng.campusbuddy.profile;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -60,7 +65,6 @@ public class ProfileActivity extends AppCompatActivity {
     Context mContext = ProfileActivity.this;
 
     FirebaseUser firebaseUser;
-    String profileid;
 
     CircleImageView image_profile;
     ImageView bg;
@@ -72,19 +76,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     ImageButton my_photos, saved_photos, Info;
 
-    TextView Email, Bio, Birthday, Gender, Relationship_status
-            , Institution, Faculty, Department,Telephone;
+
 
     private LinearLayout profile_info_layout;
 
-    private RecyclerView recyclerView;
-    private MyPhotosAdapter myPhotosAdapter;
-    private List<Post> postList;
 
-    private RecyclerView recyclerView_saves;
-    private MyPhotosAdapter myPhotosAdapter_saves;
-    private List<Post> postList_saves;
-    private List<String> mySaves;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +110,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        profileid = firebaseUser.getUid();
 
         image_profile = findViewById(R.id.image_profile);
         bg = findViewById(R.id.image_profile_bg);
@@ -128,117 +125,84 @@ public class ProfileActivity extends AppCompatActivity {
         saved_photos = findViewById(R.id.saved_photos);
         Info = findViewById(R.id.info);
 
-        Email = findViewById(R.id.email);
-        Bio = findViewById(R.id.bio);
-        Birthday = findViewById(R.id.birthday);
-        Relationship_status = findViewById(R.id.relationship_status);
-        Institution = findViewById(R.id.institution);
-        Faculty = findViewById(R.id.faculty);
-        Department = findViewById(R.id.department);
-        Telephone = findViewById(R.id.telephone_number);
-        Gender = findViewById(R.id.gender);
-
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerView_saves = findViewById(R.id.recycler_view_save);
         profile_info_layout = findViewById(R.id.profile_info);
 
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new GridLayoutManager(mContext, 3);
-        recyclerView.setLayoutManager(mLayoutManager);
-        postList = new ArrayList<>();
-        myPhotosAdapter = new MyPhotosAdapter(mContext, postList);
-        recyclerView.setAdapter(myPhotosAdapter);
+        edit_profile.setText("Edit");
 
-        recyclerView_saves.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManagers = new GridLayoutManager(mContext, 3);
-        recyclerView_saves.setLayoutManager(mLayoutManagers);
-        postList_saves = new ArrayList<>();
-        myPhotosAdapter_saves = new MyPhotosAdapter(mContext, postList_saves);
-        recyclerView_saves.setAdapter(myPhotosAdapter_saves);
+//        Bundle bundle = new Bundle();
+//        bundle.putString("profileid", firebaseUser.getUid());
+//        //set Fragment class Arguments
+//        ProfileInfoFragment Info = new ProfileInfoFragment();
+//        ProfileSavesFragment Saves = new ProfileSavesFragment();
+//        Profile_PostFragment Post = new Profile_PostFragment();
+//
+//        Info.setArguments(bundle);
+//        Saves.setArguments(bundle);
+//        Post.setArguments(bundle);
 
 
-        recyclerView.setVisibility(View.VISIBLE);
-        recyclerView_saves.setVisibility(View.GONE);
-        profile_info_layout.setVisibility(View.GONE);
-
-        if (profileid.equals(profileid)){
-            edit_profile.setText("Edit");
-        }
-        else {
-            checkFollow();
-        }
 
         Init();
-
         userInfo();
         getFollowers();
         getNrPosts();
-         myPhotos();
-        mySaves();
+
+
 
 
     }
 
 
     private void Init() {
-        Info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                profile_info_layout.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
-                recyclerView_saves.setVisibility(View.GONE);
+        final ViewPager ProfilePager = findViewById(R.id.profilePager);
+        ProfilePager.setOffscreenPageLimit(2);
 
-
-                final DatabaseReference Info_reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
-                Info_reference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
-                        Bio.setText(user.getBio());
-                        Birthday.setText(user.getBirthday());
-                        Gender.setText(user.getGender());
-                        Institution.setText(user.getInstitution());
-                        Faculty.setText(user.getFaculty());
-                        Department.setText(user.getDepartment());
-                        Telephone.setText(user.getTelephone());
-                        Relationship_status.setText(user.getRelationship_status());
-                        if (!dataSnapshot.child("email").exists()){
-                            Info_reference.child("email").setValue(firebaseUser.getEmail());
-                        }
-                        else {
-                            Email.setText(user.getEmail());
-                        }
+        ProfilePagerViewAdapter mPagerViewAdapter = new ProfilePagerViewAdapter(getSupportFragmentManager());
+        ProfilePager.setAdapter(mPagerViewAdapter);
 
 
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-        });
 
         my_photos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profile_info_layout.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-                recyclerView_saves.setVisibility(View.GONE);
+                ProfilePager.setCurrentItem(0);
             }
         });
 
         saved_photos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profile_info_layout.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
-                recyclerView_saves.setVisibility(View.VISIBLE);
+                ProfilePager.setCurrentItem(1);
             }
         });
+
+        Info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProfilePager.setCurrentItem(2);
+            }
+        });
+
+        ProfilePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                changeTabs(position);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
 
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -273,7 +237,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, FollowersActivity.class);
-                intent.putExtra("id", profileid);
+                intent.putExtra("id", firebaseUser.getUid());
                 intent.putExtra("title", "followers");
                 startActivity(intent);
             }
@@ -283,12 +247,31 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, FollowersActivity.class);
-                intent.putExtra("id", profileid);
+                intent.putExtra("id", firebaseUser.getUid());
                 intent.putExtra("title", "following");
                 startActivity(intent);
             }
         });
 
+    }
+
+    private void changeTabs(int position) {
+
+        if(position == 0){
+            my_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.white));
+            saved_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+            Info.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+        }
+        if(position == 1){
+            my_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+            saved_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.white));
+            Info.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+        }
+        if(position == 2){
+            my_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+            saved_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+            Info.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.white));
+        }
     }
 
     private void showUpdateEmail() {
@@ -451,7 +434,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void userInfo(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
-        reference.child(profileid).addValueEventListener(new ValueEventListener() {
+        reference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
@@ -489,28 +472,8 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void checkFollow(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
-                .child("Follow").child(firebaseUser.getUid()).child("following");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(profileid).exists()){
-                    edit_profile.setText("following");
-                } else{
-                    edit_profile.setText("follow");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     private void getFollowers(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow").child(profileid).child("followers");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow").child(firebaseUser.getUid()).child("followers");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -523,7 +486,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Follow").child(profileid).child("following");
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Follow").child(firebaseUser.getUid()).child("following");
         reference1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -545,7 +508,7 @@ public class ProfileActivity extends AppCompatActivity {
                 int i = 0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Post post = snapshot.getValue(Post.class);
-                    if (post.getPublisher().equals(profileid)){
+                    if (post.getPublisher().equals(firebaseUser.getUid()) && !post.getPostimage().equals("")){
                         i++;
                     }
                 }
@@ -559,70 +522,40 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void myPhotos(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                postList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Post post = snapshot.getValue(Post.class);
-                    if (post.getPublisher().equals(profileid)){
-                        postList.add(post);
-                    }
-                }
-                Collections.reverse(postList);
-                myPhotosAdapter.notifyDataSetChanged();
+    class ProfilePagerViewAdapter extends FragmentPagerAdapter {
+
+        public ProfilePagerViewAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position) {
+                case 0:
+                    Profile_PostFragment profile_postFragment = new Profile_PostFragment();
+                    return profile_postFragment;
+
+                case 1:
+                    ProfileSavesFragment profileSavesFragment = new ProfileSavesFragment();
+                    return profileSavesFragment;
+
+                case 2:
+                    ProfileInfoFragment profileInfoFragment = new ProfileInfoFragment();
+                    return profileInfoFragment;
+
+                default:
+                    return null;
+
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        }
 
-            }
-        });
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
     }
 
-    private void mySaves(){
-        mySaves = new ArrayList<>();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saves").child(firebaseUser.getUid());
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    mySaves.add(snapshot.getKey());
-                }
-                readSaves();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void readSaves(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                postList_saves.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Post post = snapshot.getValue(Post.class);
-
-                    for (String id : mySaves) {
-                        if (post.getPostid().equals(id)) {
-                            postList_saves.add(post);
-                        }
-                    }
-                }
-                myPhotosAdapter_saves.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 }

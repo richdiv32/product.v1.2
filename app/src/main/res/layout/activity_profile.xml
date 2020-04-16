@@ -190,18 +190,23 @@
 
             </RelativeLayout>
 
-            <ImageButton
-                android:id="@+id/back_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/bg_circle_gradient"
-                android:tint="@color/white"
-                tools:ignore="VectorDrawableCompat"
-                tools:src="@drawable/ic_arrow_back"
-                tools:srcCompat="@drawable/ic_arrow_back" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="10dp">
+
+                <ImageButton
+                    android:id="@+id/back_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/bg_circle_gradient"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_arrow_back"
+                    tools:ignore="VectorDrawableCompat" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
@@ -247,35 +252,18 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/backgroundcolor"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <LinearLayout
+        <androidx.viewpager.widget.ViewPager
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="visible"
-                android:id="@+id/recycler_view" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:id="@+id/recycler_view_save" />
-
-            <include layout="@layout/content_profile"
-                android:id="@+id/profile_info"
-                android:visibility="gone"/>
-        </LinearLayout>
+            android:id="@+id/profilePager"/>
 
 
-    </androidx.core.widget.NestedScrollView>
+    </RelativeLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

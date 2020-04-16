@@ -19,15 +19,14 @@
             android:gravity="center">
 
             <EditText
-                android:id="@+id/description"
+                android:id="@+id/description_note"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                android:ems="10"
                 android:gravity="center|center_vertical"
                 android:hint="Type something here..."
-                android:maxLines="8"
-                android:padding="20dp"
+
+                android:padding="10dp"
                 android:textColor="?attr/title_textcolor"
                 android:textColorHint="?attr/textcolor"
                 android:textSize="30sp" />

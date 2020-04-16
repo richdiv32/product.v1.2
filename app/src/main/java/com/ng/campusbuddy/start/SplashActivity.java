@@ -30,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
     ImageView iv;
 
     private static int SPLASH_SCREEN_TIME_OUT=1000;
-//    After completion of 1500 ms (1.5s), the next activity will get started.
+//    After completion of 1500 ms (1s), the next activity will get started.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -73,6 +73,9 @@
             android:layout_gravity="left"
             android:padding="8dp"
             android:text="hello"
+            android:linksClickable="true"
+            android:textColorLink="@color/colorPrimary"
+            android:autoLink="all"
             android:textColor="?attr/title_textcolor"
             android:textSize="18sp" />
 

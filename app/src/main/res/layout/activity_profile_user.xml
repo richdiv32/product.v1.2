@@ -203,16 +203,23 @@
 
             </RelativeLayout>
 
-            <ImageButton
-                android:id="@+id/back_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/bg_circle_gradient"
-                android:tint="@color/white"
-                tools:src="@drawable/ic_globe" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="10dp">
+
+                <ImageButton
+                    android:id="@+id/back_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/bg_circle_gradient"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_arrow_back"
+                    tools:ignore="VectorDrawableCompat" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
@@ -273,9 +280,33 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="10dp">
 
-            <androidx.recyclerview.widget.RecyclerView
+            <LinearLayout
+                android:id="@+id/empty_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="No posts yet... "
+                    android:textColor="?attr/textcolor"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    app:srcCompat="@drawable/ic_image" />
+            </LinearLayout>
+
+            <com.ng.campusbuddy.utils.CustomRecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="visible"

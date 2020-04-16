@@ -121,7 +121,7 @@ public class AdInfoActivity extends AppCompatActivity {
 
                 Glide.with(AdInfoActivity.this)
                         .load(ad.getFull_image())
-                        .placeholder(R.drawable.placeholder)
+                        .placeholder(R.drawable.chat_bg)
                         .thumbnail(0.1f)
                         .into(ADimage);
 

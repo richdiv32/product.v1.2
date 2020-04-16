@@ -39,8 +39,10 @@
                     android:orientation="vertical">
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/post_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        app:cardBackgroundColor="?attr/cardbackground"
                         app:cardCornerRadius="6dp">
 
                         <RelativeLayout
@@ -48,7 +50,6 @@
                             android:layout_height="300dp">
 
                             <RelativeLayout
-                                android:id="@+id/post_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:visibility="visible">
@@ -59,19 +60,18 @@
                                     android:layout_height="match_parent"
                                     android:adjustViewBounds="true"
                                     android:scaleType="centerCrop"
-                                    android:background="@drawable/placeholder"
-                                    android:transitionName="@string/PostTransition"/>
+                                    android:transitionName="@string/PostTransition" />
 
                                 <com.agrawalsuneet.dotsloader.loaders.LightsLoader
                                     android:id="@+id/loader"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="10dp"
                                     android:layout_centerInParent="true"
+                                    android:layout_margin="10dp"
                                     app:lights_circleColor="@color/colorPrimary"
                                     app:lights_circleDistance="4dp"
                                     app:lights_circleRadius="4dp"
-                                    app:lights_noOfCircles="5"/>
+                                    app:lights_noOfCircles="5" />
 
                             </RelativeLayout>
 
@@ -156,14 +156,14 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginStart="15dp"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="15dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="15dp"
+                    android:background="@drawable/button_background_line"
                     android:tint="?attr/textcolor"
                     app:srcCompat="@drawable/ic_more"
-                    tools:ignore="VectorDrawableCompat"
-                    android:background="@drawable/button_background_line"/>
+                    tools:ignore="VectorDrawableCompat" />
             </RelativeLayout>
 
 
@@ -225,6 +225,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
+                        android:layout_marginTop="5dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="20dp"
                         android:text=""
@@ -239,9 +240,11 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginRight="20dp"
                         android:layout_marginBottom="10dp"
-                        android:maxLines="5"
+                        android:autoLink="all"
+                        android:linksClickable="true"
                         android:text="description"
-                        android:textColor="?attr/textcolor" />
+                        android:textColor="?attr/textcolor"
+                        android:textColorLink="@color/colorPrimary" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 

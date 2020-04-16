@@ -6,15 +6,25 @@ public class Room {
     String image_chatroom;
     String title_chatroom;
     String room_users;
+    String id_parentroom;
 
-    public Room(String id_chatroom, String image_chatroom, String title_chatroom, String room_users) {
+    public Room(String id_chatroom, String image_chatroom, String title_chatroom, String room_users, String id_parentroom) {
         this.id_chatroom = id_chatroom;
         this.image_chatroom = image_chatroom;
         this.title_chatroom = title_chatroom;
         this.room_users = room_users;
+        this.id_parentroom = id_parentroom;
     }
 
     public Room() {
+    }
+
+    public String getId_parentroom() {
+        return id_parentroom;
+    }
+
+    public void setId_parentroom(String id_parentroom) {
+        this.id_parentroom = id_parentroom;
     }
 
     public String getId_chatroom() {

@@ -2,6 +2,7 @@ package com.ng.campusbuddy.profile;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,6 +50,7 @@ import com.ng.campusbuddy.social.messaging.PhotoActivity;
 import com.ng.campusbuddy.social.messaging.chat.ChatActivity;
 import com.ng.campusbuddy.social.post.Post;
 import com.ng.campusbuddy.social.User;
+import com.ng.campusbuddy.utils.CustomRecyclerView;
 import com.ng.campusbuddy.utils.Data;
 import com.ng.campusbuddy.utils.Sender;
 import com.ng.campusbuddy.utils.SharedPref;
@@ -88,7 +90,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private LinearLayout profile_info_layout;
 
-    private RecyclerView recyclerView;
+    private CustomRecyclerView recyclerView;
     private MyPhotosAdapter myPhotosAdapter;
     private List<Post> postList;
 
@@ -203,6 +205,7 @@ public class UserProfileActivity extends AppCompatActivity {
         Gender = findViewById(R.id.gender);
 
         recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setEmptyView(findViewById(R.id.empty_item));
         recyclerView_saves = findViewById(R.id.recycler_view_save);
         profile_info_layout = findViewById(R.id.profile_info);
 
@@ -283,6 +286,22 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void Init() {
+        my_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.white));
+        saved_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+        Info.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+
+        saved_photos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                profile_info_layout.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                recyclerView_saves.setVisibility(View.VISIBLE);
+
+                my_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+                saved_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.white));
+                Info.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+            }
+        });
         message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -296,6 +315,9 @@ public class UserProfileActivity extends AppCompatActivity {
         Info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                my_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+                saved_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+                Info.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.white));
 
                 profile_info_layout.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
@@ -340,6 +362,10 @@ public class UserProfileActivity extends AppCompatActivity {
                 profile_info_layout.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 recyclerView_saves.setVisibility(View.GONE);
+
+                my_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.white));
+                saved_photos.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+                Info.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.grey));
             }
         });
 
@@ -548,7 +574,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 int i = 0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Post post = snapshot.getValue(Post.class);
-                    if (post.getPublisher().equals(profileid)){
+                    if (post.getPublisher().equals(profileid) && !post.getPostimage().equals("")){
                         i++;
                     }
                 }
@@ -570,7 +596,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 postList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Post post = snapshot.getValue(Post.class);
-                    if (post.getPublisher().equals(profileid)){
+                    if (post.getPublisher().equals(profileid) && !post.getPostimage().equals("")){
                         postList.add(post);
                     }
                 }

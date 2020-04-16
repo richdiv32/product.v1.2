@@ -46,15 +46,15 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
+                android:layout_centerVertical="false"
+                android:layout_marginTop="15dp"
                 android:layout_toRightOf="@id/chat_room_imgae"
-                android:text="Title"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:textColor="?attr/title_textcolor"
+                android:shadowColor="@color/grey"
                 android:shadowRadius="5"
-                android:shadowColor="@color/grey"/>
+                android:text="Title"
+                android:textColor="?attr/title_textcolor"
+                android:textSize="25sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/count"

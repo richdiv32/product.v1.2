@@ -46,10 +46,10 @@ public class IntroActivity extends AppCompatActivity  {
         }
         super.onCreate(savedInstanceState);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        //This method is used so that your splash activity
-        //can cover the entire screen.
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        //This method is used so that your splash activity
+//        //can cover the entire screen.
 
 
         // when this activity is about to be launch we need to check if its openened before or not
@@ -66,10 +66,10 @@ public class IntroActivity extends AppCompatActivity  {
 
         // fill list screen
         final List<ScreenItem> mList = new ArrayList<>();
-        mList.add(new ScreenItem("POST","Be Updated on recent information's, tips, gist and more revolving on campus",R.drawable.slide_entertainment));
-        mList.add(new ScreenItem("CHAT","Cultivating a much better Academic life made easy, get easy access to crucial academic related resources to aid your College Education",R.drawable.slide_education));
-        mList.add(new ScreenItem("MATCH UP","Stay in touch with friends and colleagues on campus. Build your social life by posting and engaging in our social platform by acquiring more followers",R.drawable.slide_social));
-        mList.add(new ScreenItem("CONNET","Establish yourself and become to better version of yourself",R.drawable.slide_work));
+        mList.add(new ScreenItem("CONNECT WITH STUDENTS","Stay in touch with friends and colleagues across campuses in the country. The fun never ends.",R.drawable.splash1));
+        mList.add(new ScreenItem("MATCH UP WITH SOMEONE SPECIAL","Find your match on campus, say  hi to your crushes.",R.drawable.splash4));
+        mList.add(new ScreenItem("POST YOUR FAVOURITE MOMENTS","Build your social life by posting and engaging in our social platform, acquire more followers and likes to your post.",R.drawable.splash2));
+        mList.add(new ScreenItem("CHAT WITH NEW AND OLD FRIENDS","Send messages to friends through Direct Messaging, Groups and Chat Rooms.",R.drawable.splash3));
 
         final SliderView sliderView = findViewById(R.id.Intor_Slider);
         final SliderAdapter adapter = new SliderAdapter(this, mList);
@@ -77,36 +77,30 @@ public class IntroActivity extends AppCompatActivity  {
 
         sliderView.setIndicatorAnimation(IndicatorAnimations.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
         sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
-        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
         sliderView.setIndicatorSelectedColor(Color.RED);
-        sliderView.setIndicatorUnselectedColor(Color.GRAY);
-        sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
-        sliderView.startAutoCycle();
+        sliderView.setIndicatorUnselectedColor(Color.WHITE);
 
         btnAnim = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.button_animation);
 
-//        Permissions();
-//
         // next button click Listner
         btnNext = findViewById(R.id.btn_next);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-//                position = sliderView.getCurrentPagePosition();
-//                if (position < mList.size()) {
-//
-//                    position++;
-//                    sliderView.setCurrentPagePosition(position);
-//
-//                }
-//
-//                if (position == mList.size()-1) { // when we rech to the last screen
-//
-//                    loaddLastScreen();
-//
-//                }
-                loaddLastScreen();
+                position = sliderView.getCurrentPagePosition();
+                if (position < mList.size()) {
+
+                    position++;
+                    sliderView.setCurrentPagePosition(position);
+
+                }
+
+                if (position == mList.size()-1) { // when we rech to the last screen
+
+                    loaddLastScreen();
+
+                }
 
             }
         });

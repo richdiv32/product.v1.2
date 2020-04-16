@@ -342,6 +342,7 @@ public class Feeds_Follow_PostFragment extends Fragment {
 
             Glide.with(context)
                     .load(ad.getImage())
+                    .placeholder(R.drawable.chat_bg)
                     .thumbnail(0.1f)
                     .into(viewHolder.imageViewBackground);
 

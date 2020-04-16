@@ -95,6 +95,7 @@ public class Messages_GroupFragment extends Fragment {
 
     private void LoadGrouplist() {
         GroupChats_recycler = view.findViewById(R.id.recycler_view_group_chat);
+        GroupChats_recycler.setEmptyView(view.findViewById(R.id.empty_item));
         GroupChats_recycler.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
         GroupChats_recycler.setLayoutManager(mLayoutManager);
@@ -111,7 +112,6 @@ public class Messages_GroupFragment extends Fragment {
                     usersGroupList.add(grouplist);
                 }
 
-                Collections.reverse(usersGroupList);
                 GroupList();
             }
 
@@ -125,6 +125,8 @@ public class Messages_GroupFragment extends Fragment {
 
     private void GroupList() {
         mGroup = new ArrayList<>();
+        groupListAdapter = new GroupListAdapter(getContext(), mGroup);
+        GroupChats_recycler.setAdapter(groupListAdapter);
         reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -138,8 +140,9 @@ public class Messages_GroupFragment extends Fragment {
                         }
                     }
                 }
-                groupListAdapter = new GroupListAdapter(getContext(), mGroup);
-                GroupChats_recycler.setAdapter(groupListAdapter);
+
+                Collections.reverse(mGroup);
+                groupListAdapter.notifyDataSetChanged();
             }
 
             @Override

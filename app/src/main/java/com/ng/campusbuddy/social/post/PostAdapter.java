@@ -1,5 +1,9 @@
 package com.ng.campusbuddy.social.post;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
@@ -8,14 +12,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -72,10 +81,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.ng.campusbuddy.utils.GlideExtentions.isValidContextForGlide;
 
 public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 //        implements Filterable
@@ -189,6 +200,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
                 post_holder.time_date.setText(dateTime);
 
+//                int post_height = post_holder.post_image.getHeight();
+//                ViewGroup.LayoutParams heart_height = post_holder.heart.getLayoutParams();
+//                heart_height.height = post_height;
+//                post_holder.heart.setLayoutParams(heart_height);
+
+
                 publisherInfo(post_holder.image_profile, post_holder.username, post_holder.publisher, post.getPublisher());
                 isLiked(post.getPostid(), post_holder.like);
                 isSaved(post.getPostid(), post_holder.save);
@@ -202,6 +219,22 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                     .child(firebaseUser.getUid()).setValue(true);
                             addNotificationLike(post.getPublisher(), post.getPostid());
+
+
+
+                            //plays sound
+                            MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.pop);
+                            mediaPlayer.start();
+
+
+//                            new Handler().postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    post_holder.heart.setVisibility(View.INVISIBLE);
+//                                    post_holder.bg.setVisibility(View.INVISIBLE);
+//
+//                                }
+//                            }, 3000);
                         } else {
                             FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                     .child(firebaseUser.getUid()).removeValue();
@@ -375,8 +408,6 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                         Toast.makeText(mContext, "Post Reported!", Toast.LENGTH_SHORT).show();
                                         return true;
                                     case R.id.save:
-                                        Toast.makeText(mContext, "Downloaded to gallery", Toast.LENGTH_SHORT).show();
-
                                         downloadImage(post.getPostimage(), post.getPostid());
                                         return true;
                                     default:
@@ -388,6 +419,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         if (!post.getPublisher().equals(firebaseUser.getUid())){
                             popupMenu.getMenu().findItem(R.id.edit).setVisible(false);
                             popupMenu.getMenu().findItem(R.id.delete).setVisible(false);
+                            if (post.getPostimage().isEmpty()){
+                                popupMenu.getMenu().findItem(R.id.save).setVisible(false);
+                            }
                         }
                         popupMenu.show();
                     }
@@ -442,7 +476,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public ImageView image_profile, post_image, like, comment, save, more, share;
         public TextView username, time_date, likes, publisher, description, comments;
         public TextView post_text_container;
-        public RelativeLayout post_container;
+        public RelativeLayout post_container, post_layout;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -461,8 +495,10 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             comments = itemView.findViewById(R.id.comments);
             more = itemView.findViewById(R.id.more);
 
+
             post_text_container = itemView.findViewById(R.id.post_text_container);
             post_container = itemView.findViewById(R.id.post_container);
+            post_layout = itemView.findViewById(R.id.post_layout);
         }
     }
 
@@ -557,6 +593,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalFilesDir(mContext, Environment.getExternalStorageDirectory().toString(), "CB_post"+ extention + ".jpg");
 
+
+        Toast.makeText(mContext, "Downloaded to gallery", Toast.LENGTH_SHORT).show();
         return downloadManager.enqueue(request);
     }
 
@@ -722,12 +760,15 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(mContext)
-                        .load(user.getImageurl())
-                        .thumbnail(0.1f)
-                        .into(image_profile);
-                username.setText(user.getUsername());
-                publisher.setText(user.getUsername());
+                if (isValidContextForGlide(mContext)){
+                    Glide.with(mContext)
+                            .load(user.getImageurl())
+                            .thumbnail(0.1f)
+                            .into(image_profile);
+                    username.setText(user.getUsername());
+                    publisher.setText(user.getUsername());
+                }
+
             }
 
             @Override

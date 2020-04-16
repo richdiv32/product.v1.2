@@ -7,9 +7,40 @@
     android:layout_height="match_parent"
     tools:context=".social.fragments.Messages_GroupFragment">
 
-    <com.ng.campusbuddy.utils.CustomRecyclerView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/recycler_view_group_chat"
-        android:visibility="visible"/>
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/empty_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="You have no group chat. click the button below to create a group chat and add your friends."
+                android:textColor="?attr/textcolor"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_group_chat" />
+        </LinearLayout>
+
+        <com.ng.campusbuddy.utils.CustomRecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recycler_view_group_chat"
+            android:visibility="visible"/>
+
+
+    </RelativeLayout>
+
+
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

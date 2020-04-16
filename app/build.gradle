@@ -13,6 +13,12 @@ android {
 
         // Enabling multidex support.
         multiDexEnabled true
+
+        //for vectors
+        vectorDrawables.useSupportLibrary = true
+
+        //for english
+        resConfigs "en"
     }
     buildTypes {
         release {

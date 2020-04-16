@@ -72,6 +72,7 @@ public class PostActivity extends AppCompatActivity {
     StorageReference storageRef;
 
     EditText description;
+    EditText note;
 
     Intent intent;
 
@@ -103,6 +104,7 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         description = findViewById(R.id.description);
+        note = findViewById(R.id.description_note);
 
         storageRef = FirebaseStorage.getInstance().getReference("posts");
 
@@ -206,7 +208,8 @@ public class PostActivity extends AppCompatActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                uploadImage_10();
+                checkLayout();
+
             }
         });
 
@@ -229,6 +232,56 @@ public class PostActivity extends AppCompatActivity {
 
 
 
+    }
+
+    private void checkLayout() {
+
+        if (mImageUri == null && description.getText().toString().equals("")){
+            uploadNote();
+        }
+        else {
+            uploadImage_10();
+        }
+
+    }
+
+    private void uploadNote() {
+        final AllianceLoader Pd = findViewById(R.id.loader);
+        Pd.setVisibility(View.VISIBLE);
+
+        if (note.getText().toString() != null){
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            String postid = reference.push().getKey();
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("postid", postid);
+            hashMap.put("postimage", "");
+            hashMap.put("description", note.getText().toString());
+            hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
+            hashMap.put("timestamp", timestamp);
+
+
+            reference.child(postid).setValue(hashMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+//                            pd.dismiss();
+                            Pd.setVisibility(View.GONE);
+
+                            prepareNotification(
+                                    "",
+                                    "" + Username + " added new post",
+                                    ""+ description,
+                                    "PostNotification",
+                                    "POST" );
+
+                            startActivity(new Intent(PostActivity.this, SocialActivity.class));
+                            finish();
+                        }
+                    });
+        }
     }
 
     private void  prepareNotification(String pID, String title, String description, String notificationType, String notifiactionTopic){
